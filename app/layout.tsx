@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
+
 const dmSans = localFont({
   src: '/fonts/DMSans.ttf',
   variable: "--font-dm-sans",
+  weight: "100 200 300 400 500 700 800 900",
 });
 const sequelSans = localFont({
   src: '/fonts/SequelSans.ttf',
@@ -26,7 +28,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${dmSans.variable} ${sequelSans.variable} h-full antialiased`}
+      className={`h-full antialiased ${dmSans.variable} ${sequelSans.variable}`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
