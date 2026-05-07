@@ -1,179 +1,144 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { Clock3, Flame, Radar, Trophy } from "lucide-react";
+import { ArrowLeft, ArrowRight, Clock, Star, Trophy } from "lucide-react";
+import { SPORTS, SPORT_LIST } from "@/lib/sports-data";
 import { PageHeader } from "@/components/PageHeader";
-import { SPORTS, getSportBySlug } from "@/lib/sports";
+import Link from "next/link";
 
-type SportPageProps = {
-  params: Promise<{
-    sport_name: string;
-  }>;
+
+type Props = {
+  params: Promise<{ sport_name: any }>;
 };
-
-const heatStyles = {
-  High: "bg-gradient-primary text-primary-foreground",
-  Medium: "bg-muted text-muted-foreground",
-  Rising: "bg-gradient-electric text-primary-foreground",
-} as const;
-
-export async function generateStaticParams() {
-  return SPORTS.map((sport) => ({
-    sport_name: sport.slug,
-  }));
-}
-
-export async function generateMetadata({
-  params,
-}: SportPageProps): Promise<Metadata> {
+const SportDetail = async ({ params }: Props) => {
   const { sport_name } = await params;
-  const sport = getSportBySlug(sport_name);
+  const sportName = sport_name;
+
+  const sport = sportName ? SPORTS[sportName.toLowerCase()] : undefined;
 
   if (!sport) {
-    return {
-      title: "Sport Not Found | Sport News",
-    };
+    return (
+      <div className="container py-32 text-center mx-auto">
+        <div className="text-6xl mb-4">🤷</div>
+        <h1 className="text-4xl font-black mb-3">Sport not found</h1>
+        <p className="text-muted-foreground mb-8">We don&apos;t cover {sportName} yet.</p>
+        <Link href="/category" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-primary text-primary-foreground font-bold shadow-glow">
+          <ArrowLeft className="w-4 h-4" /> Browse all sports
+        </Link>
+      </div>
+    );
   }
 
-  return {
-    title: `${sport.name} News | Sport News`,
-    description: sport.description,
-  };
-}
-
-const SportPage = async ({ params }: SportPageProps) => {
-  const { sport_name } = await params;
-  const sport = getSportBySlug(sport_name);
-
-  if (!sport) {
-    notFound();
-  }
+  const others = SPORT_LIST.filter((s) => s.slug !== sport.slug).slice(0, 5);
 
   return (
     <div>
-      <PageHeader
-        eyebrow={`${sport.icon} ${sport.name}`}
-        title={`${sport.name} Coverage`}
-        subtitle={sport.tagline}
-      />
-
-      <section className="container py-12 md:py-16 mx-auto px-4 md:px-0">
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          <article className="rounded-3xl border border-border bg-card p-6 animate-fade-in">
-            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-              Stories tracked
-            </p>
-            <p className="text-4xl font-black text-gradient-primary">{sport.stories}</p>
-          </article>
-
-          <article className="rounded-3xl border border-border bg-card p-6 animate-fade-in [animation-delay:70ms]">
-            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-              Active events
-            </p>
-            <p className="text-4xl font-black">{sport.activeEvents}</p>
-          </article>
-
-          <article className="rounded-3xl border border-border bg-card p-6 animate-fade-in [animation-delay:140ms]">
-            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-              Followers
-            </p>
-            <p className="text-4xl font-black">{sport.followers}</p>
-          </article>
-
-          <article className="rounded-3xl border border-border bg-card p-6 animate-fade-in [animation-delay:210ms]">
-            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-              Pulse score
-            </p>
-            <div className="flex items-end gap-2">
-              <p className="text-4xl font-black">{sport.pulseScore}</p>
-              <span className="text-xs font-semibold text-accent mb-1">/100</span>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section className="container pb-16 grid gap-8 lg:grid-cols-3 mx-auto px-4 md:px-0">
-        <article className="rounded-3xl border border-border bg-card p-7 lg:col-span-2">
-          <div className="flex items-center gap-2 mb-4">
-            <Flame className="w-4 h-4 text-primary" />
-            <h2 className="text-2xl font-black">Trending in {sport.name}</h2>
-          </div>
-
-          <div className="space-y-4">
-            {sport.trendingStories.map((story, index) => (
-              <div
-                key={story.title}
-                style={{ animationDelay: `${index * 70}ms` }}
-                className="rounded-2xl border border-border bg-background/40 p-5 animate-slide-in-right"
-              >
-                <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <span
-                    className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${heatStyles[story.heat]}`}
-                  >
-                    {story.heat}
+      {/* HERO */}
+      {/* <section className="relative overflow-hidden border-b border-border mx-auto px-4 md:px-0">
+        <div className={`absolute inset-0 bg-linear-to-br ${sport.gradient} opacity-20`} />
+        <div className="absolute inset-0 grid-pattern opacity-30" />
+        <div className="absolute -top-32 -right-32 w-125 h-125 rounded-full bg-gradient-primary blur-3xl opacity-20 animate-float" />
+        <div className="container relative py-20 md:py-28 animate-fade-in ">
+          <Link href="/category" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-smooth mb-8">
+            <ArrowLeft className="w-4 h-4" /> All categories
+          </Link>
+          <div className="flex items-start gap-6 flex-wrap ">
+            <div className="text-8xl md:text-9xl animate-float">{sport.icon}</div>
+            <div className="flex-1 min-w-0">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-muted border border-border text-xs font-bold uppercase tracking-widest mb-4">
+                {sport.tagline}
+              </span>
+              <h1 className="text-5xl md:text-7xl font-black leading-[0.95] mb-4">
+                {sport.name.split(" ").map((w, i, arr) => (
+                  <span key={i} className={i === arr.length - 1 ? "text-gradient-primary" : ""}>
+                    {w}{i < arr.length - 1 ? " " : ""}
                   </span>
-                  <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                    <Clock3 className="w-3 h-3" />
-                    {story.time}
-                  </span>
-                </div>
-                <h3 className="text-lg font-bold mb-1">{story.title}</h3>
-                <p className="text-sm text-muted-foreground mb-3">{story.excerpt}</p>
-                <p className="text-xs font-semibold text-primary">{story.source}</p>
+                ))}
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl mb-6">{sport.description}</p>
+              <div className="flex flex-wrap gap-3">
+                <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">{sport.count} stories</span>
+                <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">Live coverage</span>
+                <span className="px-3 py-1.5 rounded-full bg-gradient-primary text-primary-foreground text-xs font-bold">Editor's pick</span>
               </div>
+            </div>
+          </div>
+        </div>
+      </section> */}
+
+      <section>
+
+        <PageHeader title={sport.name} subtitle="From Premier League thrillers to Champions League nights — the deepest coverage of world football." eyebrow={sport.tagline} >
+          <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">{sport.count} stories</span>
+          <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">Live coverage</span>
+          <span className="px-3 py-1.5 rounded-full bg-gradient-primary text-primary-foreground text-xs font-bold">Editor's pick</span>
+        </PageHeader>
+
+      </section >
+
+      {/* CONTENT */}
+      < section className="container py-16 grid lg:grid-cols-3 gap-10 mx-auto px-4 md:px-0" >
+        {/* News */}
+        <div className="lg:col-span-2" >
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-3xl font-black">Top {sport.name} News</h2>
+            <Link href="/trending" className="text-sm font-semibold text-primary hover:underline inline-flex items-center gap-1">
+              View all <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="space-y-4">
+            {sport.topNews.map((n, i) => (
+              <article key={i} style={{ animationDelay: `${i * 80}ms` }} className="group p-6 rounded-2xl bg-card border border-border hover:border-primary hover:shadow-glow transition-smooth cursor-pointer animate-fade-in">
+                <div className="flex items-center gap-3 mb-2 text-xs">
+                  <span className="inline-flex items-center gap-1 text-primary font-bold"><Clock className="w-3 h-3" /> {n.time}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-muted font-bold uppercase tracking-wider">{sport.name}</span>
+                </div>
+                <h3 className="text-xl font-bold mb-2 group-hover:text-gradient-primary transition-smooth">{n.title}</h3>
+                <p className="text-sm text-muted-foreground">{n.excerpt}</p>
+              </article>
             ))}
           </div>
-        </article>
+        </div >
 
-        <div className="space-y-6">
-          <article className="rounded-3xl border border-border bg-card p-7">
-            <div className="flex items-center gap-2 mb-4">
-              <Trophy className="w-4 h-4 text-primary" />
-              <h2 className="text-xl font-black">Top Competitions</h2>
-            </div>
-            <div className="space-y-3">
-              {sport.topLeagues.map((league, index) => (
-                <div
-                  key={league}
-                  style={{ animationDelay: `${index * 65}ms` }}
-                  className="flex items-center justify-between rounded-xl border border-border bg-background/40 px-4 py-3 animate-fade-in"
-                >
-                  <span className="font-semibold">{league}</span>
-                  <span className="text-xs text-muted-foreground">Live</span>
-                </div>
+        {/* Sidebar */}
+        <aside aside className="space-y-8" >
+          <div className="p-6 rounded-3xl bg-card border border-border">
+            <h3 className="text-lg font-black mb-4 inline-flex items-center gap-2"><Star className="w-5 h-5 text-primary" /> Top Performers</h3>
+            <ul className="space-y-3">
+              {sport.topPlayers.map((p, i) => (
+                <li key={p.name} className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm ${i === 0 ? "bg-gradient-primary text-primary-foreground shadow-glow" : "bg-muted"}`}>{i + 1}</div>
+                  <div className="flex-1">
+                    <div className="font-bold text-sm">{p.name}</div>
+                    <div className="text-xs text-muted-foreground">{p.team}</div>
+                  </div>
+                  <div className="text-xs font-bold text-primary tabular-nums">{p.stat}</div>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="p-6 rounded-3xl bg-gradient-primary text-primary-foreground relative overflow-hidden">
+            <div className="absolute inset-0 grid-pattern opacity-20" />
+            <Trophy className="w-8 h-8 mb-3 relative" />
+            <h3 className="text-xl font-black mb-2 relative">Follow {sport.name}</h3>
+            <p className="text-sm opacity-90 mb-4 relative">Get instant alerts for every {sport.name.toLowerCase()} story that matters.</p>
+            <button className="relative px-5 py-2.5 rounded-full bg-background text-foreground font-bold text-sm hover:scale-105 transition-smooth">Subscribe Free</button>
+          </div>
+
+          <div className="p-6 rounded-3xl bg-card border border-border">
+            <h3 className="text-lg font-black mb-4">Other Sports</h3>
+            <div className="space-y-2">
+              {others.map((o) => (
+                <Link key={o.slug} href={`/sport/${o.slug}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted transition-smooth group">
+                  <span className="text-2xl">{o.icon}</span>
+                  <span className="font-semibold text-sm flex-1 group-hover:text-primary transition-smooth">{o.name}</span>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-smooth" />
+                </Link>
               ))}
             </div>
-          </article>
-
-          <article className="rounded-3xl border border-border bg-card p-7 ">
-            <div className="flex items-center gap-2 mb-4">
-              <Radar className="w-4 h-4 text-primary" />
-              <h2 className="text-xl font-black">Upcoming</h2>
-            </div>
-            <div className="space-y-3">
-              {sport.upcoming.map((fixture, index) => (
-                <div
-                  key={fixture.matchup}
-                  style={{ animationDelay: `${index * 75}ms` }}
-                  className="rounded-xl border border-border bg-background/40 p-4 animate-fade-in"
-                >
-                  <p className="font-bold">{fixture.matchup}</p>
-                  <p className="text-xs text-muted-foreground">{fixture.competition}</p>
-                  <p className="text-xs text-primary font-semibold mt-1">{fixture.kickoff}</p>
-                </div>
-              ))}
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section className="container pb-20 mx-auto px-4 md:px-0">
-        <article className="rounded-3xl border border-border bg-card p-8">
-          <h2 className="text-2xl font-black mb-3">About {sport.name}</h2>
-          <p className="text-muted-foreground max-w-3xl">{sport.description}</p>
-        </article>
-      </section>
-    </div>
+          </div>
+        </aside >
+      </section >
+    </div >
   );
 };
 
-export default SportPage;
+export default SportDetail;

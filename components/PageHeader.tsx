@@ -1,6 +1,6 @@
-interface Props { eyebrow?: string; title: string; subtitle?: string; }
+interface Props { eyebrow?: string; title: string; subtitle?: string; children?: React.ReactNode }
 
-export const PageHeader = ({ eyebrow, title, subtitle }: Props) => (
+export const PageHeader = ({ eyebrow, title, subtitle, children }: Props) => (
   <section className="relative overflow-hidden border-b border-border flex items-center justify-center px-4 md:px-0">
     <div className="absolute inset-0 grid-pattern opacity-30" />
     <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-primary blur-3xl opacity-20" />
@@ -19,6 +19,8 @@ export const PageHeader = ({ eyebrow, title, subtitle }: Props) => (
         ))}
       </h1>
       {subtitle && <p className="text-lg text-muted-foreground max-w-2xl">{subtitle}</p>}
+      {children && <div className="mt-6 flex items-center gap-3 flex-wrap">{children}</div>}
     </div>
+
   </section>
 );
