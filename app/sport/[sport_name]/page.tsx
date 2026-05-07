@@ -142,3 +142,5 @@ const SportDetail = async ({ params }: Props) => {
 };
 
 export default SportDetail;
+
+
