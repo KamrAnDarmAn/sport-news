@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 
 
 const dmSans = localFont({
@@ -30,7 +32,11 @@ export default function RootLayout({
       lang="en"
       className={`h-full antialiased ${dmSans.variable} ${sequelSans.variable}`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col ">
+        <Navbar />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }
