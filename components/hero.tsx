@@ -5,8 +5,9 @@ import Link from "next/link";
 const Hero = () => {
     return (
         <section className="relative min-h-[92vh]   flex items-center justify-center overflow-hidden text-white">
+
             <Image src={hero} alt="Football action" width={1600} height={900} className="absolute inset-0 w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-linear-to-r from-background via-background/85 to-background/30" />
+            <div className="absolute inset-0 bg-linear-50 from-black  via-background/60 to-background/30" />
             <div className="absolute inset-0 grid-pattern opacity-20" />
 
             <div className="container relative z-10 grid md:grid-cols-2 gap-12 items-center py-20">
@@ -34,7 +35,7 @@ const Hero = () => {
                             [{ n: "12K+", l: "Articles" }, { n: "850+", l: "Clubs" }, { n: "24/7", l: "Live" }].map((s) => (
                                 <div key={s.l}>
                                     <div className="text-4xl font-black text-gradient-primary ">{s.n}</div>
-                                    <div className="text-sm text-black uppercase tracking-wider font-semibold">{s.l}</div>
+                                    <div className="text-sm  uppercase tracking-wider ">{s.l}</div>
                                 </div>
                             ))
                         }

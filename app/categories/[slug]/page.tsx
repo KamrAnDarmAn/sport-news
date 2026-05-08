@@ -1,24 +1,24 @@
+'use client'
 import { ArrowLeft, ArrowRight, Clock, Star, Trophy } from "lucide-react";
 import { SPORTS, SPORT_LIST } from "@/lib/sports-data";
 import { PageHeader } from "@/components/PageHeader";
+import { SEO, breadcrumbJsonLd } from "@/components/SEO";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 
-
-type Props = {
-  params: Promise<{ sport_name: any }>;
-};
-const SportDetail = async ({ params }: Props) => {
-  const { sport_name } = await params;
-  const sportName = sport_name;
-
+const SportDetail = () => {
+  const { slug } = useParams<{ slug: string }>();
+  const sportName = slug;
   const sport = sportName ? SPORTS[sportName.toLowerCase()] : undefined;
 
   if (!sport) {
     return (
-      <div className="container py-32 text-center mx-auto">
+      <div className="container py-32 text-center">
+        <SEO title="Sport not found" noIndex />
         <div className="text-6xl mb-4">🤷</div>
         <h1 className="text-4xl font-black mb-3">Sport not found</h1>
-        <p className="text-muted-foreground mb-8">We don&apos;t cover {sportName} yet.</p>
+        <p className="text-muted-foreground mb-8">We don't cover "{sportName}" yet.</p>
         <Link href="/category" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-primary text-primary-foreground font-bold shadow-glow">
           <ArrowLeft className="w-4 h-4" /> Browse all sports
         </Link>
@@ -27,19 +27,27 @@ const SportDetail = async ({ params }: Props) => {
   }
 
   const others = SPORT_LIST.filter((s) => s.slug !== sport.slug).slice(0, 5);
+  const crumbs = [{ name: "Category", href: "/category" }, { name: sport.name, href: `/sport/${sport.slug}` }];
 
   return (
-    <div>
+    <div className="mx-auto">
+      <SEO
+        title={`${sport.name} News & Coverage`}
+        description={sport.description}
+        canonical={typeof window !== "undefined" ? `${window.location.origin}/sport/${sport.slug}` : undefined}
+        jsonLd={breadcrumbJsonLd(crumbs)}
+      />
+      <Breadcrumbs items={crumbs} />
       {/* HERO */}
-      {/* <section className="relative overflow-hidden border-b border-border mx-auto px-4 md:px-0">
-        <div className={`absolute inset-0 bg-linear-to-br ${sport.gradient} opacity-20`} />
+      <section className="relative overflow-hidden border-b border-border mx-auto">
+        <div className={`absolute inset-0 bg-gradient-to-br ${sport.gradient} opacity-20`} />
         <div className="absolute inset-0 grid-pattern opacity-30" />
-        <div className="absolute -top-32 -right-32 w-125 h-125 rounded-full bg-gradient-primary blur-3xl opacity-20 animate-float" />
-        <div className="container relative py-20 md:py-28 animate-fade-in ">
+        <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-gradient-primary blur-3xl opacity-20 animate-float" />
+        <div className="container relative py-20 md:py-28 animate-fade-in">
           <Link href="/category" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-smooth mb-8">
             <ArrowLeft className="w-4 h-4" /> All categories
           </Link>
-          <div className="flex items-start gap-6 flex-wrap ">
+          <div className="flex items-start gap-6 flex-wrap">
             <div className="text-8xl md:text-9xl animate-float">{sport.icon}</div>
             <div className="flex-1 min-w-0">
               <span className="inline-block px-4 py-1.5 rounded-full bg-muted border border-border text-xs font-bold uppercase tracking-widest mb-4">
@@ -61,22 +69,12 @@ const SportDetail = async ({ params }: Props) => {
             </div>
           </div>
         </div>
-      </section> */}
-
-      <section>
-
-        <PageHeader title={sport.name} subtitle="From Premier League thrillers to Champions League nights — the deepest coverage of world football." eyebrow={sport.tagline} >
-          <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">{sport.count} stories</span>
-          <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">Live coverage</span>
-          <span className="px-3 py-1.5 rounded-full bg-gradient-primary text-primary-foreground text-xs font-bold">Editor's pick</span>
-        </PageHeader>
-
-      </section >
+      </section>
 
       {/* CONTENT */}
-      < section className="container py-16 grid lg:grid-cols-3 gap-10 mx-auto px-4 md:px-0" >
+      <section className="container py-16 grid lg:grid-cols-3 gap-10">
         {/* News */}
-        <div className="lg:col-span-2" >
+        <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-3xl font-black">Top {sport.name} News</h2>
             <Link href="/trending" className="text-sm font-semibold text-primary hover:underline inline-flex items-center gap-1">
@@ -95,10 +93,10 @@ const SportDetail = async ({ params }: Props) => {
               </article>
             ))}
           </div>
-        </div >
+        </div>
 
         {/* Sidebar */}
-        <aside aside className="space-y-8" >
+        <aside className="space-y-8">
           <div className="p-6 rounded-3xl bg-card border border-border">
             <h3 className="text-lg font-black mb-4 inline-flex items-center gap-2"><Star className="w-5 h-5 text-primary" /> Top Performers</h3>
             <ul className="space-y-3">
@@ -135,12 +133,10 @@ const SportDetail = async ({ params }: Props) => {
               ))}
             </div>
           </div>
-        </aside >
-      </section >
-    </div >
+        </aside>
+      </section>
+    </div>
   );
 };
 
 export default SportDetail;
-
-

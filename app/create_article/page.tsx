@@ -1,15 +1,15 @@
+'use client'
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/use-auth";
+// import { supabase } from "@/integrations/supabase/client";
+// import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/PageHeader";
-import { PenLine, ShieldAlert } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 
 const schema = z.object({
@@ -24,13 +24,16 @@ const schema = z.object({
 const slugify = (s: string) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
 
 export default function CreateArticle() {
-    const { user, isAdmin, loading } = useAuth();
-    const nav = useNavigate();
+    // const { user, isAdmin, loading } = useAuth();
+    // const nav = useNavigate();
+    const user = { name: 'karman' }
+    const isAdmin = true;
+    const loading = false;
     const [form, setForm] = useState({ title: "", excerpt: "", content: "", cover_image_url: "", sport: "", type: "article" as "news" | "article" });
     const [saving, setSaving] = useState(false);
 
     if (loading) return <div className="container py-20 text-muted-foreground">Loading…</div>;
-    if (!user) { nav("/auth"); return null; }
+    // if (!user) { nav("/auth"); return null; }
     if (!isAdmin) return (
         <div className="container py-20 max-w-xl">
             <Card className="p-8 text-center">
@@ -47,16 +50,7 @@ export default function CreateArticle() {
         if (!parsed.success) { toast.error(parsed.error.issues[0].message); return; }
         setSaving(true);
         try {
-            const slug = `${slugify(form.title)}-${Date.now().toString(36)}`;
-            const { error } = await supabase.from("posts").insert({
-                author_id: user.id, title: form.title.trim(), slug,
-                excerpt: form.excerpt.trim() || null, content: form.content.trim(),
-                cover_image_url: form.cover_image_url.trim() || null,
-                sport: form.sport.trim() || null, type: form.type,
-            });
-            if (error) throw error;
-            toast.success("Published!");
-            nav(`/article/${slug}`);
+            // TODO implement creattion of post.
         } catch (err: any) {
             toast.error(err.message || "Failed to publish");
         } finally { setSaving(false); }
@@ -65,7 +59,7 @@ export default function CreateArticle() {
     return (
         <div>
             <PageHeader eyebrow="Editor" title="Publish a Story" subtitle="Craft news flashes or long-form articles for the Pulse audience." />
-            <section className="container max-w-3xl py-12">
+            <section className="container max-w-3xl py-12 mx-auto">
                 <Card className="p-6 md:p-8">
                     <form onSubmit={submit} className="space-y-5">
                         <div className="grid grid-cols-2 gap-4">
@@ -97,7 +91,7 @@ export default function CreateArticle() {
                             <Label>Content</Label>
                             <Textarea value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} rows={14} required minLength={20} maxLength={50000} placeholder="Tell the story…" />
                         </div>
-                        <Button type="submit" disabled={saving} className="bg-gradient-primary text-primary-foreground hover:opacity-90 shadow-glow">
+                        <Button type="submit" disabled={saving} className="bg-gradient-primary text-primary-foreground hover:opacity-90 shadow-glow rounded-md">
                             {saving ? "Publishing…" : "Publish post"}
                         </Button>
                     </form>

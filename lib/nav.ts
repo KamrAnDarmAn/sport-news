@@ -1,6 +1,6 @@
 export const NAV_LINKS = [
   { name: "Home", href: "/" },
-  { name: "Category", href: "/category" },
+  { name: "Category", href: "/categories" },
   { name: "Trending News", href: "/trending" },
   { name: "Recent News", href: "/recent" },
   { name: "Clubs Rankings", href: "/rankings" },

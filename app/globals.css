@@ -240,8 +240,11 @@
     linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
   background-size: 60px 60px;
 }
-/* } */
-
+@layer components {
+  .container {
+    @apply p-8;
+  }
+}
 /* Custom Components */
 .logo {
   @apply h-24 p-6 transition-[filter] duration-300 will-change-[filter];

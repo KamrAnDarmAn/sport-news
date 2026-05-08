@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/PageHeader";
 import { Flame, Eye, MessageCircle } from "lucide-react";
+import Link from "next/link";
 
 const news = [
     { rank: 1, tag: "Football", title: "Madrid stuns Barcelona in 92nd-minute Clásico thriller", views: "284K", comments: 1240 },
@@ -20,17 +21,19 @@ const Trending = () => (
                         <div className="text-5xl md:text-6xl font-black text-gradient-primary tabular-nums w-16 text-center">
                             {String(n.rank).padStart(2, "0")}
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-3 mb-2">
-                                <span className="px-2.5 py-0.5 rounded-full bg-muted text-xs font-bold uppercase tracking-wider">{n.tag}</span>
-                                <span className="inline-flex items-center gap-1 text-xs text-primary font-bold"><Flame className="w-3 h-3" /> Trending</span>
+                        <Link href={`news/${i}`}>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <span className="px-2.5 py-0.5 rounded-full bg-muted text-xs font-bold uppercase tracking-wider">{n.tag}</span>
+                                    <span className="inline-flex items-center gap-1 text-xs text-primary font-bold"><Flame className="w-3 h-3" /> Trending</span>
+                                </div>
+                                <h3 className="text-lg md:text-xl font-bold group-hover:text-primary transition-smooth">{n.title}</h3>
+                                <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                                    <span className="inline-flex items-center gap-1"><Eye className="w-3 h-3" /> {n.views}</span>
+                                    <span className="inline-flex items-center gap-1"><MessageCircle className="w-3 h-3" /> {n.comments}</span>
+                                </div>
                             </div>
-                            <h3 className="text-lg md:text-xl font-bold group-hover:text-primary transition-smooth">{n.title}</h3>
-                            <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                                <span className="inline-flex items-center gap-1"><Eye className="w-3 h-3" /> {n.views}</span>
-                                <span className="inline-flex items-center gap-1"><MessageCircle className="w-3 h-3" /> {n.comments}</span>
-                            </div>
-                        </div>
+                        </Link>
                     </article>
                 ))}
             </div>

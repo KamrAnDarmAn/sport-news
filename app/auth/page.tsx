@@ -45,8 +45,8 @@ export default function Auth() {
     };
 
     return (
-        <div className="relative min-h-[calc(100vh-8rem)] flex items-center justify-center px-4 py-10  before:absolute before:inset-0 before:grid-pattern before:opacity-20">
-            <Card className="relative w-full max-w-md p-8 md:p-9 rounded-3xl backdrop-blur-xl bg-card/85 border border-border shadow-2xl animate-fade-in ring-1 ring-primary/10">
+        <div className="relative min-h-[calc(100vh-8rem)] flex items-center justify-center px-4 py-10  before:absolute before:inset-0 before:grid-pattern before:opacity-20 bg-gradient-hero">
+            <Card className="relative w-full max-w-md p-8 md:p-9 rounded-3xl backdrop-blur-xl bg-card  border-0 shadow-2xl animate-fade-in lg:min-w-130 ">
                 <Link href="/" className="group flex items-center gap-2 justify-center mb-7 transition-smooth hover:scale-[1.02]">
                     <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow transition-smooth group-hover:scale-110 group-hover:shadow-electric">
                         <Flame className="w-5 h-5 text-primary-foreground" />

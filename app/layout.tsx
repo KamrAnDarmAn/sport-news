@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-
+import { ThemeProvider } from "@/components/theme-provider"
 
 const dmSans = localFont({
   src: '/fonts/DMSans.ttf',
@@ -31,11 +31,20 @@ export default function RootLayout({
     <html
       lang="en"
       className={`h-full antialiased ${dmSans.variable} ${sequelSans.variable}`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col ">
-        <Navbar />
-        {children}
-        <Footer />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+
+          <Navbar />
+          {children}
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );

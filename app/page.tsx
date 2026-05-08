@@ -35,7 +35,7 @@ const Index = () => {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {categories.map((c, i) => (
-            <Link key={c.name} href="/category" style={{ animationDelay: `${i * 80}ms` }} className="group relative overflow-hidden rounded-2xl bg-card border border-border p-6 hover:border-primary transition-smooth animate-fade-in">
+            <Link key={c.name} href='categories' style={{ animationDelay: `${i * 80}ms` }} className="group relative overflow-hidden rounded-2xl bg-card border border-border p-6 hover:border-primary transition-smooth animate-fade-in">
               <div className={`absolute -inset-px bg-linear-to-br ${c.gradient} opacity-0 group-hover:opacity-100 transition-smooth`} style={{ filter: "blur(20px)" }} />
               <div className="relative">
                 <div className="text-4xl mb-3">{c.icon}</div>
