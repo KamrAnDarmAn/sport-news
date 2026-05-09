@@ -20,13 +20,21 @@ interface Post {
 const SPORTS = ["all", "football", "basketball", "tennis", "f1-racing", "cricket", "esports"];
 const PAGE_SIZE = 9;
 
+const posts: Post[] = [
+    { tag: "Tactics", read: "12 min", title: "The False 9 Renaissance: How modern teams are reinventing Cruyff's idea", author: "M. Calvo", cover_image_url: '', created_at: '', excerpt: " teams are reinventing Cruyff's idea", id: " teams are reinventing Cruyff's idea", slug: " teams are reinventing Cruyff's idea", sport: 'footbal', type: 'news' },
+    { tag: "Long Read", read: "18 min", title: "Inside the academy that quietly produces half of Europe's top defenders", author: "S. Okafor", cover_image_url: '', created_at: '', excerpt: " teams are reinventing Cruyff's idea", id: " teams are reinventing Cruyff's idea", slug: " teams are reinventing Cruyff's idea", sport: 'footbal', type: 'news' },
+    { tag: "Interview", read: "8 min", title: "On burnout, comebacks, and what's next: a candid sit-down", author: "L. Tanaka", cover_image_url: '', created_at: '', excerpt: " teams are reinventing Cruyff's idea", id: " teams are reinventing Cruyff's idea", slug: " teams are reinventing Cruyff's idea", sport: 'footbal', type: 'news' },
+    { tag: "Data", read: "10 min", title: "xG isn't enough anymore — meet the metrics shaping 2026", author: "R. Patel" },
+    { tag: "Culture", read: "15 min", title: "Ultras 2.0: how fan culture is being rewritten by Gen Z", author: "A. Nowak", cover_image_url: '', created_at: '', excerpt: " teams are reinventing Cruyff's idea", id: " teams are reinventing Cruyff's idea", slug: " teams are reinventing Cruyff's idea", sport: 'footbal', type: 'news' },
+    { tag: "Opinion", read: "6 min", title: "Why the salary cap conversation is finally serious", author: "J. Brooks", cover_image_url: '', created_at: '', excerpt: " teams are reinventing Cruyff's idea", id: " teams are reinventing Cruyff's idea", slug: " teams are reinventing Cruyff's idea", sport: 'footbal', type: 'news' },
+];
+
 export default function News() {
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [loading, setLoading] = useState(true);
+
     const [q, setQ] = useState("");
     const [sport, setSport] = useState("all");
     const [page, setPage] = useState(1);
-
+    const loading = false;
 
 
     useEffect(() => { setPage(1); }, [q, sport]);

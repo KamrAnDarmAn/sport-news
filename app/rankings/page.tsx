@@ -1,4 +1,6 @@
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { PageHeader } from "@/components/PageHeader";
+import { breadcrumbJsonLd, SEO } from "@/components/SEO";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 
 const clubs = [
@@ -19,6 +21,12 @@ const ChangeIcon = ({ c }: { c: number }) =>
 
 const Rankings = () => (
     <div>
+        {/* <SEO
+            title="Trending News"
+            description="Live, breaking sports news as it happens. Football, basketball, tennis, F1, cricket and more on Pulse."
+            jsonLd={breadcrumbJsonLd([{ name: "News", href: "/news" }])}
+        /> */}
+        <Breadcrumbs items={[{ name: "News", href: "/news" }]} />
         <PageHeader eyebrow="Power Index" title="Clubs Rankings" subtitle="Live power rankings updated weekly using form, results, and our Pulse algorithm." />
         <section className="container py-16 mx-auto">
             <div className="rounded-3xl bg-card border border-border overflow-hidden">

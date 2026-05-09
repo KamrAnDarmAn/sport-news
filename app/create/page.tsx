@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/PageHeader";
 import { ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
+import Editor from "@/components/editor";
 
 const schema = z.object({
     title: z.string().trim().min(3).max(200),
