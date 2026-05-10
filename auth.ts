@@ -21,6 +21,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
+
       async authorize(credentials) {
         try {
           const parsed = LoginSchema.safeParse(credentials);
@@ -28,11 +29,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           const user = await prisma.user.findUnique({
             where: { email: parsed.data.email },
+            include: {
+              accounts: true,
+            },
           });
 
-          if (!user?.password) return null;
+          if (!user) return null;
 
-          const ok = await bcrypt.compare(parsed.data.password, user.password);
+          const ok = await bcrypt.compare(
+            parsed.data.password,
+            user.accounts[0].password!,
+          );
           if (!ok) return null;
 
           return {

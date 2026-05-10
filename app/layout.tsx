@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthSessionProvider } from "@/components/auth-session-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const dmSans = localFont({
   src: '/fonts/DMSans.ttf',
@@ -45,6 +46,7 @@ export default function RootLayout({
             <Navbar />
             {children}
             <Footer />
+            <Toaster />
           </ThemeProvider>
         </AuthSessionProvider>
       </body>

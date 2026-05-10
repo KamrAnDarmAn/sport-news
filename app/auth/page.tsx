@@ -45,7 +45,7 @@ function AuthForm() {
             if (mode === "signup") {
                 const result = await signUpWithCredentials(parsed.data);
                 if (!result.success) {
-                    toast.error(result.error);
+                    toast.error(result.message);
                     return;
                 }
                 console.log('RESULT', result)
@@ -56,13 +56,14 @@ function AuthForm() {
                 return;
             }
 
+
             const res = await signInWithCredentials({
                 email: parsed.data.email,
                 password: parsed.data.password,
             });
             console.log('RESPONSE:', res)
-            if (res?.error) {
-                toast.error("Invalid email or password.");
+            if (!res.success) {
+                toast.error(res.message);
                 return;
             }
             router.push(callbackUrl);
