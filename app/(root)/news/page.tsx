@@ -1,5 +1,7 @@
-'use client'
+"use client";
+
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { SEO, breadcrumbJsonLd } from "@/components/SEO";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -13,8 +15,17 @@ import { formatDistanceToNow } from "date-fns";
 import { track } from "@/lib/analytics";
 
 interface Post {
-    id: string; title: string; slug: string; excerpt: string | null;
-    cover_image_url: string | null; sport: string | null; type: "news" | "article"; created_at: string;
+    id: string;
+    title: string;
+    slug: string;
+    excerpt: string | null;
+    cover_image_url: string | null;
+    sport: string | null;
+    type: "news" | "article";
+    created_at: string;
+    tag?: string;
+    read?: string;
+    author?: string;
 }
 
 const SPORTS = ["all", "football", "basketball", "tennis", "f1-racing", "cricket", "esports"];
@@ -24,7 +35,7 @@ const posts: Post[] = [
     { tag: "Tactics", read: "12 min", title: "The False 9 Renaissance: How modern teams are reinventing Cruyff's idea", author: "M. Calvo", cover_image_url: '', created_at: '', excerpt: " teams are reinventing Cruyff's idea", id: " teams are reinventing Cruyff's idea", slug: " teams are reinventing Cruyff's idea", sport: 'footbal', type: 'news' },
     { tag: "Long Read", read: "18 min", title: "Inside the academy that quietly produces half of Europe's top defenders", author: "S. Okafor", cover_image_url: '', created_at: '', excerpt: " teams are reinventing Cruyff's idea", id: " teams are reinventing Cruyff's idea", slug: " teams are reinventing Cruyff's idea", sport: 'footbal', type: 'news' },
     { tag: "Interview", read: "8 min", title: "On burnout, comebacks, and what's next: a candid sit-down", author: "L. Tanaka", cover_image_url: '', created_at: '', excerpt: " teams are reinventing Cruyff's idea", id: " teams are reinventing Cruyff's idea", slug: " teams are reinventing Cruyff's idea", sport: 'footbal', type: 'news' },
-    { tag: "Data", read: "10 min", title: "xG isn't enough anymore — meet the metrics shaping 2026", author: "R. Patel" },
+    { tag: "Data", read: "10 min", title: "xG isn't enough anymore — meet the metrics shaping 2026", author: "R. Patel", cover_image_url: "", created_at: new Date().toISOString(), excerpt: "Metrics recap", id: "data-xg", slug: "xg-metrics-2026", sport: "football", type: "news" },
     { tag: "Culture", read: "15 min", title: "Ultras 2.0: how fan culture is being rewritten by Gen Z", author: "A. Nowak", cover_image_url: '', created_at: '', excerpt: " teams are reinventing Cruyff's idea", id: " teams are reinventing Cruyff's idea", slug: " teams are reinventing Cruyff's idea", sport: 'footbal', type: 'news' },
     { tag: "Opinion", read: "6 min", title: "Why the salary cap conversation is finally serious", author: "J. Brooks", cover_image_url: '', created_at: '', excerpt: " teams are reinventing Cruyff's idea", id: " teams are reinventing Cruyff's idea", slug: " teams are reinventing Cruyff's idea", sport: 'footbal', type: 'news' },
 ];
@@ -91,7 +102,7 @@ export default function News() {
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {paged.map((p, i) => (
                                 <div key={p.id} className="group relative animate-fade-in" style={{ animationDelay: `${i * 40}ms` }}>
-                                    <Link to={`/article/${p.slug}`} onClick={() => track("article_open", { id: p.id, scope: "news" })}>
+                                    <Link href={`/article/${p.slug}`} onClick={() => track("article_open", { id: p.id, scope: "news" })}>
                                         <Card className="overflow-hidden h-full hover:shadow-glow transition-smooth border-border/50">
                                             {p.cover_image_url ? (
                                                 <img src={p.cover_image_url} alt={p.title} className="w-full h-48 object-cover group-hover:scale-105 transition-smooth" />

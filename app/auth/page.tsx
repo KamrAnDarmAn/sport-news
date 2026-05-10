@@ -1,8 +1,9 @@
-'use client'
-import { useState } from "react";
+"use client";
+
+import { useState, Suspense } from "react";
+import { useSession, signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
-// import { supabase } from "@/integrations/supabase/client";
-// import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +11,8 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Flame, Mail, Lock, User as UserIcon } from "lucide-react";
 import Link from "next/link";
+import { registerUser } from "@/lib/actions/register-user";
+import { signInWithCredentials, signUpWithCredentials } from "@/lib/actions/auth.actions";
 
 const schema = z.object({
     email: z.string().trim().email("Invalid email").max(255),
@@ -17,8 +20,12 @@ const schema = z.object({
     displayName: z.string().trim().min(1).max(60).optional(),
 });
 
-export default function Auth() {
-    // const nav = useNavigate();
+function AuthForm() {
+    const { status } = useSession();
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+
     const [mode, setMode] = useState<"signin" | "signup">("signin");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -27,22 +34,64 @@ export default function Auth() {
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (mode === "signup" && !displayName.trim()) {
+            toast.error("Please enter a display name.");
+            return;
+        }
         const parsed = schema.safeParse({ email, password, displayName: mode === "signup" ? displayName : undefined });
         if (!parsed.success) { toast.error(parsed.error.issues[0].message); return; }
         setLoading(true);
         try {
-            // TODO: wire this to Supabase/Auth provider.
-            await new Promise((resolve) => setTimeout(resolve, 700));
-            toast.success(mode === "signin" ? "Signed in successfully" : "Account created successfully");
+            if (mode === "signup") {
+                const result = await signUpWithCredentials(parsed.data);
+                if (!result.success) {
+                    toast.error(result.error);
+                    return;
+                }
+                console.log('RESULT', result)
+                toast.success('success');
+
+                router.push(callbackUrl);
+                router.refresh();
+                return;
+            }
+
+            const res = await signInWithCredentials({
+                email: parsed.data.email,
+                password: parsed.data.password,
+            });
+            console.log('RESPONSE:', res)
+            if (res?.error) {
+                toast.error("Invalid email or password.");
+                return;
+            }
+            router.push(callbackUrl);
+            router.refresh();
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : "Something went wrong";
             toast.error(message);
         } finally { setLoading(false); }
     };
 
-    const google = () => {
-        toast.info("Google auth will be connected in the next step.");
+
+    const google = async () => {
+        setLoading(true);
+        try {
+            await signIn("google", { callbackUrl });
+        } catch {
+            toast.error("Google sign-in failed. Check GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET.");
+        } finally {
+            setLoading(false);
+        }
     };
+
+    if (status === "loading") {
+        return (
+            <div className="relative min-h-[calc(100vh-8rem)] flex items-center justify-center px-4 py-10 before:absolute before:inset-0 before:grid-pattern before:opacity-20 bg-gradient-hero">
+                <p className="text-muted-foreground">Loading session…</p>
+            </div>
+        );
+    }
 
     return (
         <div className="relative min-h-[calc(100vh-8rem)] flex items-center justify-center px-4 py-10  before:absolute before:inset-0 before:grid-pattern before:opacity-20 bg-gradient-hero">
@@ -104,5 +153,18 @@ export default function Auth() {
                 </p>
             </Card>
         </div>
+    );
+}
+
+export default function Auth() {
+    return (
+        <Suspense fallback={
+            <div className="relative min-h-[calc(100vh-8rem)] flex items-center justify-center px-4 py-10 before:absolute before:inset-0 before:grid-pattern before:opacity-20 bg-gradient-hero">
+                <p className="text-muted-foreground">Loading…</p>
+            </div>
+        }
+        >
+            <AuthForm />
+        </Suspense>
     );
 }

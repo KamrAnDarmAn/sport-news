@@ -5,6 +5,7 @@
 
 generator client {
   provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -23,25 +24,73 @@ enum PostType {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  fullName  String
-  role      Role     @default(USER)
-  posts     Post[]
-  createdAt DateTime @default(now())
+  id                  Int                  @id @default(autoincrement())
+  email               String               @unique
+  fullName            String
+  role                Role                 @default(USER)
+  posts               Post[]
+  createdAt           DateTime             @default(now())
+  comments            Comment[]
+  bookmarks           Bookmark[]
+  subscribeForASports SubscribeForASport[]
+  accounts            Account[]
+}
+
+model Account {
+  id                Int     @id @default(autoincrement())
+  userId            Int
+  user              User    @relation(fields: [userId], references: [id])
+  provider          String
+  providerAccountId String
+  password          String? // Store hashed password here for credentials provider
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   title     String
-  slug      String   @unique
-  type      PostType @default(ARTICLE)
+  slug      String     @unique
+  type      PostType   @default(ARTICLE)
   excerpt   String
   content   String?
   sport     String
+  topic     String
+  readTime  Int // I can also calculate this on the fly based on the content length, but that way you should calculate for every request. so I prefer to calculate it once and store it in the database.
   coverUrl  String?
-  published Boolean  @default(false)
+  published Boolean    @default(false)
+  authorId  Int
+  author    User       @relation(fields: [authorId], references: [id])
+  createdAt DateTime   @default(now())
+  comments  Comment[]
+  bookmarks Bookmark[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id])
   authorId  Int
   author    User     @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
+
+model Bookmark {
+  id        Int      @id @default(autoincrement())
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model SubscribeForASport {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  sport     String
+  createdAt DateTime @default(now())
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+// I can fetch ranking from external api. don't need to store in db.

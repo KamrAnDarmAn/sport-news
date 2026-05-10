@@ -18,7 +18,7 @@ const Index = () => {
         <div>
             {/* HERO */}
             <section className="relative min-h-[92vh] flex items-center overflow-hidden">
-                <img src={hero} alt="Football action" width={1600} height={900} className="absolute inset-0 w-full h-full object-cover" />
+                <img src={hero.src} alt="Football action" width={1600} height={900} className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30" />
                 <div className="absolute inset-0 grid-pattern opacity-20" />
 

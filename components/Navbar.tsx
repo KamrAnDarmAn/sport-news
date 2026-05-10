@@ -1,7 +1,9 @@
-'use client'
+"use client";
+
 import { useState } from "react";
+import { useSession, signOut } from "next-auth/react";
 // import { NavLink, Link, useNavigate } from "react-router-dom";
-import { Menu, X, Flame, LogOut, PenLine, LogIn } from "lucide-react";
+import { Menu, X, Flame, LogOut, PenLine, LogIn, Settings } from "lucide-react";
 import { NAV_LINKS } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 // import { useAuth } from "@/hooks/use-auth";
@@ -9,12 +11,14 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ModeToggle } from "./theme-toggle";
+import { canPublish } from "@/lib/authz";
 
 export const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const path = usePathname()
-  const isAdmin = false;
-  const user = null;
+  const path = usePathname();
+  const { data: session } = useSession();
+  const user = session?.user ?? null;
+  const canWrite = canPublish(session?.user?.role);
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border ">
@@ -46,13 +50,18 @@ export const Navbar = () => {
         </nav>
 
         <div className="hidden lg:flex items-center gap-2">
-          {isAdmin && (
+          {canWrite && (
             <Button asChild size="sm" variant="outline" className="gap-1.5">
               <Link href="/create"><PenLine className="w-4 h-4" />Write</Link>
             </Button>
           )}
           {user ? (
-            <Button size="sm" variant="ghost" onClick={async () => { }} className="gap-1.5">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="gap-1.5"
+            >
               <LogOut className="w-4 h-4" />Sign out
             </Button>
           ) : (
@@ -91,9 +100,12 @@ export const Navbar = () => {
               </Link>
             ))}
             <div className="border-t border-border pt-2 mt-2 flex flex-col gap-1">
-              {isAdmin && <Link href="/create" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">✍️ Write a post</Link>}
+              {canWrite && <Link href="/create" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">✍️ Write a post</Link>}
               {user ? (
-                <button onClick={async () => { }} className="text-left px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">Sign out</button>
+                <div className="flex">
+                  <Link href='/'> Hello <Settings /></Link>
+                  <button type="button" onClick={() => { void signOut({ callbackUrl: "/" }); }} className="text-left px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">Sign out</button>
+                </div>
               ) : (
                 <Link href="/auth" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold bg-gradient-primary text-primary-foreground">Sign in</Link>
               )}

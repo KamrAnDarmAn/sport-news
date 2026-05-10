@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { PageHeader } from "@/components/PageHeader";
 import { SEO, breadcrumbJsonLd } from "@/components/SEO";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -26,20 +26,6 @@ const roleTone: Record<Role, string> = {
 };
 
 const Roles = () => {
-
-    const isAdmin = true;
-
-    if (!isAdmin) {
-        return (
-            <div className="container py-32 text-center">
-                <SEO title="Roles — Access Denied" noIndex />
-                <h1 className="text-3xl font-black mb-4">Admin access required</h1>
-                <p className="text-muted-foreground mb-6">Only admins can manage roles.</p>
-                <Button asChild><Link href="/auth">Sign in</Link></Button>
-            </div>
-        );
-    }
-
     return (
         <div >
             <SEO title="Roles & Permissions" description="Manage Pulse admins, editors and contributors." noIndex

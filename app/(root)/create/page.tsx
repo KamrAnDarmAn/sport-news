@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useState } from "react";
 import { z } from "zod";
 // import { supabase } from "@/integrations/supabase/client";
@@ -9,9 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/PageHeader";
-import { ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
-import Editor from "@/components/editor";
 
 const schema = z.object({
     title: z.string().trim().min(3).max(200),
@@ -25,25 +23,8 @@ const schema = z.object({
 const slugify = (s: string) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
 
 export default function CreateArticle() {
-    // const { user, isAdmin, loading } = useAuth();
-    // const nav = useNavigate();
-    const user = { name: 'karman' }
-    const isAdmin = true;
-    const loading = false;
     const [form, setForm] = useState({ title: "", excerpt: "", content: "", cover_image_url: "", sport: "", type: "article" as "news" | "article" });
     const [saving, setSaving] = useState(false);
-
-    if (loading) return <div className="container py-20 text-muted-foreground">Loading…</div>;
-    // if (!user) { nav("/auth"); return null; }
-    if (!isAdmin) return (
-        <div className="container py-20 max-w-xl">
-            <Card className="p-8 text-center">
-                <ShieldAlert className="w-12 h-12 mx-auto mb-4 text-primary" />
-                <h2 className="text-2xl font-bold mb-2">Admins only</h2>
-                <p className="text-muted-foreground">Only editors with admin privileges can publish posts. Ask an admin to grant you the role.</p>
-            </Card>
-        </div>
-    );
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
