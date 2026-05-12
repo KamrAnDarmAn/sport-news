@@ -19,7 +19,7 @@ enum StoryType {
 }
 
 model User {
-  id                  Int                  @id @default(autoincrement())
+  id                  String               @id @default(uuid())
   email               String               @unique
   fullName            String
   role                Role                 @default(USER)
@@ -32,8 +32,8 @@ model User {
 }
 
 model Account {
-  id                Int     @id @default(autoincrement())
-  userId            Int
+  id                String  @id @default(uuid())
+  userId            String
   user              User    @relation(fields: [userId], references: [id])
   provider          String
   providerAccountId String
@@ -41,7 +41,7 @@ model Account {
 }
 
 model Story {
-  id        Int        @id @default(autoincrement())
+  id        String     @id @default(uuid())
   title     String
   slug      String     @unique
   type      StoryType  @default(ARTICLE)
@@ -52,7 +52,7 @@ model Story {
   readTime  Int // I can also calculate this on the fly based on the content length, but that way you should calculate for every request. so I prefer to calculate it once and store it in the database.
   coverUrl  String?
   published Boolean    @default(false)
-  authorId  Int
+  authorId  String
   author    User       @relation(fields: [authorId], references: [id])
   createdAt DateTime   @default(now())
   comments  Comment[]
@@ -60,21 +60,21 @@ model Story {
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   content   String
-  storyId   Int
+  storyId   String
   story     Story    @relation(fields: [storyId], references: [id])
-  authorId  Int
+  authorId  String
   author    User     @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Bookmark {
-  id        Int      @id @default(autoincrement())
-  storyId   Int
+  id        String   @id @default(uuid())
+  storyId   String
   story     Story    @relation(fields: [storyId], references: [id])
-  userId    Int
+  userId    String
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
@@ -84,7 +84,7 @@ model SubscribeForASport {
   email     String   @unique
   sport     String
   createdAt DateTime @default(now())
-  userId    Int?
+  userId    String?
   user      User?    @relation(fields: [userId], references: [id])
 }
 
