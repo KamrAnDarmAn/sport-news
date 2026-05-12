@@ -1,28 +1,40 @@
-"use client";
+'use client';
 
 import { useState } from "react";
-import { useSession, signOut } from "next-auth/react";
-// import { NavLink, Link, useNavigate } from "react-router-dom";
-import { Menu, X, Flame, LogOut, PenLine, LogIn, Settings } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+
+import Link from "next/link";
+
+import { Menu, X, Flame, LogOut, PenLine, LogIn, Bookmark, LayoutDashboard } from "lucide-react";
 import { NAV_LINKS } from "@/lib/nav";
 import { cn } from "@/lib/utils";
-// import { useAuth } from "@/hooks/use-auth";
+// import { signOut } from "@/auth";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ModeToggle } from "./theme-toggle";
+import { GlobalSearch } from "@/components/GlobalSearch";
+import { signOutUser } from "@/lib/actions/auth.actions";
+import { useSession } from "next-auth/react";
 import { canPublish } from "@/lib/authz";
 
 export const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const path = usePathname();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const { data: session } = useSession();
-  const user = session?.user ?? null;
-  const canWrite = canPublish(session?.user?.role);
+  const user = session?.user;
+  const isAdmin = user ? session.user.role === 'ADMIN' : false;
+  const bookmarks = []
+
+  console.log('SESSION: ', session)
+  const signOut = () => {
+    signOutUser();
+  }
+
+
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border ">
-      <div className="container flex h-16 items-center justify-between mx-auto">
+      <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
           <div className="w-9 h-9 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow group-hover:scale-110 transition-smooth">
             <Flame className="w-5 h-5 text-primary-foreground" />
@@ -30,7 +42,7 @@ export const Navbar = () => {
           <span className="text-xl font-black tracking-tight">PULSE<span className="text-gradient-primary">.</span></span>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden lg:flex items-center gap-1 mx-auto">
           {NAV_LINKS.map((l) => (
             <Link
               key={l.href}
@@ -38,7 +50,7 @@ export const Navbar = () => {
               className={
                 cn(
                   "px-4 py-2 text-sm font-semibold rounded-full transition-smooth relative",
-                  path === l.href
+                  pathname === l.href
                     ? "text-primary-foreground bg-gradient-primary shadow-glow"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 )
@@ -50,18 +62,34 @@ export const Navbar = () => {
         </nav>
 
         <div className="hidden lg:flex items-center gap-2">
-          {canWrite && (
-            <Button asChild size="sm" variant="outline" className="gap-1.5">
-              <Link href="/create"><PenLine className="w-4 h-4" />Write</Link>
+          <GlobalSearch />
+          <Button asChild size="sm" variant="ghost" className="gap-1.5 relative">
+            <Link href="/bookmarks" aria-label="Bookmarks">
+              <Bookmark className="w-4 h-4" />
+              {bookmarks.length > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-gradient-primary text-primary-foreground text-[10px] font-black flex items-center justify-center">
+                  {bookmarks.length}
+                </span>
+              )}
+            </Link>
+          </Button>
+          {user && (
+            <Button asChild size="sm" variant="ghost" className="gap-1.5" aria-label="Dashboard">
+              <Link href="/dashboard"><LayoutDashboard className="w-4 h-4" /></Link>
             </Button>
           )}
+          {canPublish(session?.user.role) && (
+            <>
+              <Button asChild size="sm" variant="outline" className="gap-1.5">
+                <Link href="/editorial">Editorial</Link>
+              </Button>
+              <Button asChild size="sm" variant="outline" className="gap-1.5">
+                <Link href="/create"><PenLine className="w-4 h-4" />Write</Link>
+              </Button>
+            </>
+          )}
           {user ? (
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="gap-1.5"
-            >
+            <Button size="sm" variant="ghost" onClick={async () => { await signOut(); router.replace("/"); }} className="gap-1.5">
               <LogOut className="w-4 h-4" />Sign out
             </Button>
           ) : (
@@ -71,19 +99,22 @@ export const Navbar = () => {
           )}
         </div>
 
-        <button
-          onClick={() => setOpen((v) => !v)}
-          className="lg:hidden p-2 rounded-lg hover:bg-muted transition-smooth"
-          aria-label="Toggle menu"
-        >
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="lg:hidden flex items-center gap-1">
+          <GlobalSearch />
+          <button
+            onClick={() => setOpen((v) => !v)}
+            className="p-2 rounded-lg hover:bg-muted transition-smooth"
+            aria-label="Toggle menu"
+          >
+            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
 
       {open && (
-        <nav className="lg:hidden border-t border-border bg-card animate-fade-in ">
-          <div className="container py-4 flex flex-col gap-1 mx-auto">
+        <nav className="lg:hidden border-t border-border bg-card animate-fade-in px-4">
+          <div className="container py-4 flex flex-col gap-1">
             {NAV_LINKS.map((l) => (
               <Link
                 key={l.href}
@@ -92,7 +123,7 @@ export const Navbar = () => {
                 className={
                   cn(
                     "px-4 py-3 rounded-lg text-sm font-semibold transition-smooth",
-                    path === l.href ? "bg-gradient-primary text-primary-foreground" : "hover:bg-muted"
+                    pathname === l.href ? "bg-gradient-primary text-primary-foreground" : "hover:bg-muted"
                   )
                 }
               >
@@ -100,12 +131,13 @@ export const Navbar = () => {
               </Link>
             ))}
             <div className="border-t border-border pt-2 mt-2 flex flex-col gap-1">
-              {canWrite && <Link href="/create" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">✍️ Write a post</Link>}
+              {user && <Link href="/dashboard" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">📊 Dashboard</Link>}
+              <Link href="/bookmarks" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">🔖 Bookmarks {bookmarks.length > 0 && <span className="ml-1 text-xs text-primary">({bookmarks.length})</span>}</Link>
+              {canPublish(session?.user.role) && <Link href="/editorial" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">📋 Editorial</Link>}
+              {canPublish(session?.user.role) && <Link href="/roles" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">🛡️ Roles</Link>}
+              {canPublish(session?.user.role) && <Link href="/create" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">✍️ Write a post</Link>}
               {user ? (
-                <div className="flex">
-                  <Link href='/'> Hello <Settings /></Link>
-                  <button type="button" onClick={() => { void signOut({ callbackUrl: "/" }); }} className="text-left px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">Sign out</button>
-                </div>
+                <button onClick={async () => { await signOut(); setOpen(false); /* router.push('/') */ }} className="text-left px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">Sign out</button>
               ) : (
                 <Link href="/auth" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold bg-gradient-primary text-primary-foreground">Sign in</Link>
               )}
@@ -113,7 +145,6 @@ export const Navbar = () => {
           </div>
         </nav>
       )}
-      {/* <ModeToggle /> */}
     </header>
   );
 };

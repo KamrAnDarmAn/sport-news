@@ -2,7 +2,7 @@
 
 import bcrypt from "bcryptjs";
 
-import { signIn } from "@/auth";
+import { signIn, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
 import { SignInSchema, SignUpSchema } from "../validations";
@@ -140,4 +140,8 @@ export async function signInWithCredentials(params: {
       error: error,
     };
   }
+}
+
+export async function signOutUser() {
+  await signOut();
 }

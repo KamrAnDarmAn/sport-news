@@ -28,33 +28,33 @@ export type AggregateBookmark = {
 
 export type BookmarkAvgAggregateOutputType = {
   id: number | null
-  postId: number | null
+  storyId: number | null
   userId: number | null
 }
 
 export type BookmarkSumAggregateOutputType = {
   id: number | null
-  postId: number | null
+  storyId: number | null
   userId: number | null
 }
 
 export type BookmarkMinAggregateOutputType = {
   id: number | null
-  postId: number | null
+  storyId: number | null
   userId: number | null
   createdAt: Date | null
 }
 
 export type BookmarkMaxAggregateOutputType = {
   id: number | null
-  postId: number | null
+  storyId: number | null
   userId: number | null
   createdAt: Date | null
 }
 
 export type BookmarkCountAggregateOutputType = {
   id: number
-  postId: number
+  storyId: number
   userId: number
   createdAt: number
   _all: number
@@ -63,33 +63,33 @@ export type BookmarkCountAggregateOutputType = {
 
 export type BookmarkAvgAggregateInputType = {
   id?: true
-  postId?: true
+  storyId?: true
   userId?: true
 }
 
 export type BookmarkSumAggregateInputType = {
   id?: true
-  postId?: true
+  storyId?: true
   userId?: true
 }
 
 export type BookmarkMinAggregateInputType = {
   id?: true
-  postId?: true
+  storyId?: true
   userId?: true
   createdAt?: true
 }
 
 export type BookmarkMaxAggregateInputType = {
   id?: true
-  postId?: true
+  storyId?: true
   userId?: true
   createdAt?: true
 }
 
 export type BookmarkCountAggregateInputType = {
   id?: true
-  postId?: true
+  storyId?: true
   userId?: true
   createdAt?: true
   _all?: true
@@ -183,7 +183,7 @@ export type BookmarkGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 
 export type BookmarkGroupByOutputType = {
   id: number
-  postId: number
+  storyId: number
   userId: number
   createdAt: Date
   _count: BookmarkCountAggregateOutputType | null
@@ -213,19 +213,19 @@ export type BookmarkWhereInput = {
   OR?: Prisma.BookmarkWhereInput[]
   NOT?: Prisma.BookmarkWhereInput | Prisma.BookmarkWhereInput[]
   id?: Prisma.IntFilter<"Bookmark"> | number
-  postId?: Prisma.IntFilter<"Bookmark"> | number
+  storyId?: Prisma.IntFilter<"Bookmark"> | number
   userId?: Prisma.IntFilter<"Bookmark"> | number
   createdAt?: Prisma.DateTimeFilter<"Bookmark"> | Date | string
-  post?: Prisma.XOR<Prisma.PostScalarRelationFilter, Prisma.PostWhereInput>
+  story?: Prisma.XOR<Prisma.StoryScalarRelationFilter, Prisma.StoryWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type BookmarkOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  postId?: Prisma.SortOrder
+  storyId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  post?: Prisma.PostOrderByWithRelationInput
+  story?: Prisma.StoryOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -234,16 +234,16 @@ export type BookmarkWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.BookmarkWhereInput | Prisma.BookmarkWhereInput[]
   OR?: Prisma.BookmarkWhereInput[]
   NOT?: Prisma.BookmarkWhereInput | Prisma.BookmarkWhereInput[]
-  postId?: Prisma.IntFilter<"Bookmark"> | number
+  storyId?: Prisma.IntFilter<"Bookmark"> | number
   userId?: Prisma.IntFilter<"Bookmark"> | number
   createdAt?: Prisma.DateTimeFilter<"Bookmark"> | Date | string
-  post?: Prisma.XOR<Prisma.PostScalarRelationFilter, Prisma.PostWhereInput>
+  story?: Prisma.XOR<Prisma.StoryScalarRelationFilter, Prisma.StoryWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
 export type BookmarkOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  postId?: Prisma.SortOrder
+  storyId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.BookmarkCountOrderByAggregateInput
@@ -258,40 +258,40 @@ export type BookmarkScalarWhereWithAggregatesInput = {
   OR?: Prisma.BookmarkScalarWhereWithAggregatesInput[]
   NOT?: Prisma.BookmarkScalarWhereWithAggregatesInput | Prisma.BookmarkScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Bookmark"> | number
-  postId?: Prisma.IntWithAggregatesFilter<"Bookmark"> | number
+  storyId?: Prisma.IntWithAggregatesFilter<"Bookmark"> | number
   userId?: Prisma.IntWithAggregatesFilter<"Bookmark"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Bookmark"> | Date | string
 }
 
 export type BookmarkCreateInput = {
   createdAt?: Date | string
-  post: Prisma.PostCreateNestedOneWithoutBookmarksInput
+  story: Prisma.StoryCreateNestedOneWithoutBookmarksInput
   user: Prisma.UserCreateNestedOneWithoutBookmarksInput
 }
 
 export type BookmarkUncheckedCreateInput = {
   id?: number
-  postId: number
+  storyId: number
   userId: number
   createdAt?: Date | string
 }
 
 export type BookmarkUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  post?: Prisma.PostUpdateOneRequiredWithoutBookmarksNestedInput
+  story?: Prisma.StoryUpdateOneRequiredWithoutBookmarksNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutBookmarksNestedInput
 }
 
 export type BookmarkUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  postId?: Prisma.IntFieldUpdateOperationsInput | number
+  storyId?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type BookmarkCreateManyInput = {
   id?: number
-  postId: number
+  storyId: number
   userId: number
   createdAt?: Date | string
 }
@@ -302,7 +302,7 @@ export type BookmarkUpdateManyMutationInput = {
 
 export type BookmarkUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  postId?: Prisma.IntFieldUpdateOperationsInput | number
+  storyId?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -319,34 +319,34 @@ export type BookmarkOrderByRelationAggregateInput = {
 
 export type BookmarkCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  postId?: Prisma.SortOrder
+  storyId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type BookmarkAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  postId?: Prisma.SortOrder
+  storyId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
 export type BookmarkMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  postId?: Prisma.SortOrder
+  storyId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type BookmarkMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  postId?: Prisma.SortOrder
+  storyId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type BookmarkSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  postId?: Prisma.SortOrder
+  storyId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -392,56 +392,56 @@ export type BookmarkUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.BookmarkScalarWhereInput | Prisma.BookmarkScalarWhereInput[]
 }
 
-export type BookmarkCreateNestedManyWithoutPostInput = {
-  create?: Prisma.XOR<Prisma.BookmarkCreateWithoutPostInput, Prisma.BookmarkUncheckedCreateWithoutPostInput> | Prisma.BookmarkCreateWithoutPostInput[] | Prisma.BookmarkUncheckedCreateWithoutPostInput[]
-  connectOrCreate?: Prisma.BookmarkCreateOrConnectWithoutPostInput | Prisma.BookmarkCreateOrConnectWithoutPostInput[]
-  createMany?: Prisma.BookmarkCreateManyPostInputEnvelope
+export type BookmarkCreateNestedManyWithoutStoryInput = {
+  create?: Prisma.XOR<Prisma.BookmarkCreateWithoutStoryInput, Prisma.BookmarkUncheckedCreateWithoutStoryInput> | Prisma.BookmarkCreateWithoutStoryInput[] | Prisma.BookmarkUncheckedCreateWithoutStoryInput[]
+  connectOrCreate?: Prisma.BookmarkCreateOrConnectWithoutStoryInput | Prisma.BookmarkCreateOrConnectWithoutStoryInput[]
+  createMany?: Prisma.BookmarkCreateManyStoryInputEnvelope
   connect?: Prisma.BookmarkWhereUniqueInput | Prisma.BookmarkWhereUniqueInput[]
 }
 
-export type BookmarkUncheckedCreateNestedManyWithoutPostInput = {
-  create?: Prisma.XOR<Prisma.BookmarkCreateWithoutPostInput, Prisma.BookmarkUncheckedCreateWithoutPostInput> | Prisma.BookmarkCreateWithoutPostInput[] | Prisma.BookmarkUncheckedCreateWithoutPostInput[]
-  connectOrCreate?: Prisma.BookmarkCreateOrConnectWithoutPostInput | Prisma.BookmarkCreateOrConnectWithoutPostInput[]
-  createMany?: Prisma.BookmarkCreateManyPostInputEnvelope
+export type BookmarkUncheckedCreateNestedManyWithoutStoryInput = {
+  create?: Prisma.XOR<Prisma.BookmarkCreateWithoutStoryInput, Prisma.BookmarkUncheckedCreateWithoutStoryInput> | Prisma.BookmarkCreateWithoutStoryInput[] | Prisma.BookmarkUncheckedCreateWithoutStoryInput[]
+  connectOrCreate?: Prisma.BookmarkCreateOrConnectWithoutStoryInput | Prisma.BookmarkCreateOrConnectWithoutStoryInput[]
+  createMany?: Prisma.BookmarkCreateManyStoryInputEnvelope
   connect?: Prisma.BookmarkWhereUniqueInput | Prisma.BookmarkWhereUniqueInput[]
 }
 
-export type BookmarkUpdateManyWithoutPostNestedInput = {
-  create?: Prisma.XOR<Prisma.BookmarkCreateWithoutPostInput, Prisma.BookmarkUncheckedCreateWithoutPostInput> | Prisma.BookmarkCreateWithoutPostInput[] | Prisma.BookmarkUncheckedCreateWithoutPostInput[]
-  connectOrCreate?: Prisma.BookmarkCreateOrConnectWithoutPostInput | Prisma.BookmarkCreateOrConnectWithoutPostInput[]
-  upsert?: Prisma.BookmarkUpsertWithWhereUniqueWithoutPostInput | Prisma.BookmarkUpsertWithWhereUniqueWithoutPostInput[]
-  createMany?: Prisma.BookmarkCreateManyPostInputEnvelope
+export type BookmarkUpdateManyWithoutStoryNestedInput = {
+  create?: Prisma.XOR<Prisma.BookmarkCreateWithoutStoryInput, Prisma.BookmarkUncheckedCreateWithoutStoryInput> | Prisma.BookmarkCreateWithoutStoryInput[] | Prisma.BookmarkUncheckedCreateWithoutStoryInput[]
+  connectOrCreate?: Prisma.BookmarkCreateOrConnectWithoutStoryInput | Prisma.BookmarkCreateOrConnectWithoutStoryInput[]
+  upsert?: Prisma.BookmarkUpsertWithWhereUniqueWithoutStoryInput | Prisma.BookmarkUpsertWithWhereUniqueWithoutStoryInput[]
+  createMany?: Prisma.BookmarkCreateManyStoryInputEnvelope
   set?: Prisma.BookmarkWhereUniqueInput | Prisma.BookmarkWhereUniqueInput[]
   disconnect?: Prisma.BookmarkWhereUniqueInput | Prisma.BookmarkWhereUniqueInput[]
   delete?: Prisma.BookmarkWhereUniqueInput | Prisma.BookmarkWhereUniqueInput[]
   connect?: Prisma.BookmarkWhereUniqueInput | Prisma.BookmarkWhereUniqueInput[]
-  update?: Prisma.BookmarkUpdateWithWhereUniqueWithoutPostInput | Prisma.BookmarkUpdateWithWhereUniqueWithoutPostInput[]
-  updateMany?: Prisma.BookmarkUpdateManyWithWhereWithoutPostInput | Prisma.BookmarkUpdateManyWithWhereWithoutPostInput[]
+  update?: Prisma.BookmarkUpdateWithWhereUniqueWithoutStoryInput | Prisma.BookmarkUpdateWithWhereUniqueWithoutStoryInput[]
+  updateMany?: Prisma.BookmarkUpdateManyWithWhereWithoutStoryInput | Prisma.BookmarkUpdateManyWithWhereWithoutStoryInput[]
   deleteMany?: Prisma.BookmarkScalarWhereInput | Prisma.BookmarkScalarWhereInput[]
 }
 
-export type BookmarkUncheckedUpdateManyWithoutPostNestedInput = {
-  create?: Prisma.XOR<Prisma.BookmarkCreateWithoutPostInput, Prisma.BookmarkUncheckedCreateWithoutPostInput> | Prisma.BookmarkCreateWithoutPostInput[] | Prisma.BookmarkUncheckedCreateWithoutPostInput[]
-  connectOrCreate?: Prisma.BookmarkCreateOrConnectWithoutPostInput | Prisma.BookmarkCreateOrConnectWithoutPostInput[]
-  upsert?: Prisma.BookmarkUpsertWithWhereUniqueWithoutPostInput | Prisma.BookmarkUpsertWithWhereUniqueWithoutPostInput[]
-  createMany?: Prisma.BookmarkCreateManyPostInputEnvelope
+export type BookmarkUncheckedUpdateManyWithoutStoryNestedInput = {
+  create?: Prisma.XOR<Prisma.BookmarkCreateWithoutStoryInput, Prisma.BookmarkUncheckedCreateWithoutStoryInput> | Prisma.BookmarkCreateWithoutStoryInput[] | Prisma.BookmarkUncheckedCreateWithoutStoryInput[]
+  connectOrCreate?: Prisma.BookmarkCreateOrConnectWithoutStoryInput | Prisma.BookmarkCreateOrConnectWithoutStoryInput[]
+  upsert?: Prisma.BookmarkUpsertWithWhereUniqueWithoutStoryInput | Prisma.BookmarkUpsertWithWhereUniqueWithoutStoryInput[]
+  createMany?: Prisma.BookmarkCreateManyStoryInputEnvelope
   set?: Prisma.BookmarkWhereUniqueInput | Prisma.BookmarkWhereUniqueInput[]
   disconnect?: Prisma.BookmarkWhereUniqueInput | Prisma.BookmarkWhereUniqueInput[]
   delete?: Prisma.BookmarkWhereUniqueInput | Prisma.BookmarkWhereUniqueInput[]
   connect?: Prisma.BookmarkWhereUniqueInput | Prisma.BookmarkWhereUniqueInput[]
-  update?: Prisma.BookmarkUpdateWithWhereUniqueWithoutPostInput | Prisma.BookmarkUpdateWithWhereUniqueWithoutPostInput[]
-  updateMany?: Prisma.BookmarkUpdateManyWithWhereWithoutPostInput | Prisma.BookmarkUpdateManyWithWhereWithoutPostInput[]
+  update?: Prisma.BookmarkUpdateWithWhereUniqueWithoutStoryInput | Prisma.BookmarkUpdateWithWhereUniqueWithoutStoryInput[]
+  updateMany?: Prisma.BookmarkUpdateManyWithWhereWithoutStoryInput | Prisma.BookmarkUpdateManyWithWhereWithoutStoryInput[]
   deleteMany?: Prisma.BookmarkScalarWhereInput | Prisma.BookmarkScalarWhereInput[]
 }
 
 export type BookmarkCreateWithoutUserInput = {
   createdAt?: Date | string
-  post: Prisma.PostCreateNestedOneWithoutBookmarksInput
+  story: Prisma.StoryCreateNestedOneWithoutBookmarksInput
 }
 
 export type BookmarkUncheckedCreateWithoutUserInput = {
   id?: number
-  postId: number
+  storyId: number
   createdAt?: Date | string
 }
 
@@ -476,89 +476,89 @@ export type BookmarkScalarWhereInput = {
   OR?: Prisma.BookmarkScalarWhereInput[]
   NOT?: Prisma.BookmarkScalarWhereInput | Prisma.BookmarkScalarWhereInput[]
   id?: Prisma.IntFilter<"Bookmark"> | number
-  postId?: Prisma.IntFilter<"Bookmark"> | number
+  storyId?: Prisma.IntFilter<"Bookmark"> | number
   userId?: Prisma.IntFilter<"Bookmark"> | number
   createdAt?: Prisma.DateTimeFilter<"Bookmark"> | Date | string
 }
 
-export type BookmarkCreateWithoutPostInput = {
+export type BookmarkCreateWithoutStoryInput = {
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutBookmarksInput
 }
 
-export type BookmarkUncheckedCreateWithoutPostInput = {
+export type BookmarkUncheckedCreateWithoutStoryInput = {
   id?: number
   userId: number
   createdAt?: Date | string
 }
 
-export type BookmarkCreateOrConnectWithoutPostInput = {
+export type BookmarkCreateOrConnectWithoutStoryInput = {
   where: Prisma.BookmarkWhereUniqueInput
-  create: Prisma.XOR<Prisma.BookmarkCreateWithoutPostInput, Prisma.BookmarkUncheckedCreateWithoutPostInput>
+  create: Prisma.XOR<Prisma.BookmarkCreateWithoutStoryInput, Prisma.BookmarkUncheckedCreateWithoutStoryInput>
 }
 
-export type BookmarkCreateManyPostInputEnvelope = {
-  data: Prisma.BookmarkCreateManyPostInput | Prisma.BookmarkCreateManyPostInput[]
+export type BookmarkCreateManyStoryInputEnvelope = {
+  data: Prisma.BookmarkCreateManyStoryInput | Prisma.BookmarkCreateManyStoryInput[]
   skipDuplicates?: boolean
 }
 
-export type BookmarkUpsertWithWhereUniqueWithoutPostInput = {
+export type BookmarkUpsertWithWhereUniqueWithoutStoryInput = {
   where: Prisma.BookmarkWhereUniqueInput
-  update: Prisma.XOR<Prisma.BookmarkUpdateWithoutPostInput, Prisma.BookmarkUncheckedUpdateWithoutPostInput>
-  create: Prisma.XOR<Prisma.BookmarkCreateWithoutPostInput, Prisma.BookmarkUncheckedCreateWithoutPostInput>
+  update: Prisma.XOR<Prisma.BookmarkUpdateWithoutStoryInput, Prisma.BookmarkUncheckedUpdateWithoutStoryInput>
+  create: Prisma.XOR<Prisma.BookmarkCreateWithoutStoryInput, Prisma.BookmarkUncheckedCreateWithoutStoryInput>
 }
 
-export type BookmarkUpdateWithWhereUniqueWithoutPostInput = {
+export type BookmarkUpdateWithWhereUniqueWithoutStoryInput = {
   where: Prisma.BookmarkWhereUniqueInput
-  data: Prisma.XOR<Prisma.BookmarkUpdateWithoutPostInput, Prisma.BookmarkUncheckedUpdateWithoutPostInput>
+  data: Prisma.XOR<Prisma.BookmarkUpdateWithoutStoryInput, Prisma.BookmarkUncheckedUpdateWithoutStoryInput>
 }
 
-export type BookmarkUpdateManyWithWhereWithoutPostInput = {
+export type BookmarkUpdateManyWithWhereWithoutStoryInput = {
   where: Prisma.BookmarkScalarWhereInput
-  data: Prisma.XOR<Prisma.BookmarkUpdateManyMutationInput, Prisma.BookmarkUncheckedUpdateManyWithoutPostInput>
+  data: Prisma.XOR<Prisma.BookmarkUpdateManyMutationInput, Prisma.BookmarkUncheckedUpdateManyWithoutStoryInput>
 }
 
 export type BookmarkCreateManyUserInput = {
   id?: number
-  postId: number
+  storyId: number
   createdAt?: Date | string
 }
 
 export type BookmarkUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  post?: Prisma.PostUpdateOneRequiredWithoutBookmarksNestedInput
+  story?: Prisma.StoryUpdateOneRequiredWithoutBookmarksNestedInput
 }
 
 export type BookmarkUncheckedUpdateWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  postId?: Prisma.IntFieldUpdateOperationsInput | number
+  storyId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type BookmarkUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  postId?: Prisma.IntFieldUpdateOperationsInput | number
+  storyId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type BookmarkCreateManyPostInput = {
+export type BookmarkCreateManyStoryInput = {
   id?: number
   userId: number
   createdAt?: Date | string
 }
 
-export type BookmarkUpdateWithoutPostInput = {
+export type BookmarkUpdateWithoutStoryInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutBookmarksNestedInput
 }
 
-export type BookmarkUncheckedUpdateWithoutPostInput = {
+export type BookmarkUncheckedUpdateWithoutStoryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type BookmarkUncheckedUpdateManyWithoutPostInput = {
+export type BookmarkUncheckedUpdateManyWithoutStoryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -568,61 +568,61 @@ export type BookmarkUncheckedUpdateManyWithoutPostInput = {
 
 export type BookmarkSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  postId?: boolean
+  storyId?: boolean
   userId?: boolean
   createdAt?: boolean
-  post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
+  story?: boolean | Prisma.StoryDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bookmark"]>
 
 export type BookmarkSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  postId?: boolean
+  storyId?: boolean
   userId?: boolean
   createdAt?: boolean
-  post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
+  story?: boolean | Prisma.StoryDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bookmark"]>
 
 export type BookmarkSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  postId?: boolean
+  storyId?: boolean
   userId?: boolean
   createdAt?: boolean
-  post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
+  story?: boolean | Prisma.StoryDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bookmark"]>
 
 export type BookmarkSelectScalar = {
   id?: boolean
-  postId?: boolean
+  storyId?: boolean
   userId?: boolean
   createdAt?: boolean
 }
 
-export type BookmarkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "postId" | "userId" | "createdAt", ExtArgs["result"]["bookmark"]>
+export type BookmarkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "storyId" | "userId" | "createdAt", ExtArgs["result"]["bookmark"]>
 export type BookmarkInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
+  story?: boolean | Prisma.StoryDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type BookmarkIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
+  story?: boolean | Prisma.StoryDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type BookmarkIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
+  story?: boolean | Prisma.StoryDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $BookmarkPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Bookmark"
   objects: {
-    post: Prisma.$PostPayload<ExtArgs>
+    story: Prisma.$StoryPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    postId: number
+    storyId: number
     userId: number
     createdAt: Date
   }, ExtArgs["result"]["bookmark"]>
@@ -1019,7 +1019,7 @@ readonly fields: BookmarkFieldRefs;
  */
 export interface Prisma__BookmarkClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  post<T extends Prisma.PostDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PostDefaultArgs<ExtArgs>>): Prisma.Prisma__PostClient<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  story<T extends Prisma.StoryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StoryDefaultArgs<ExtArgs>>): Prisma.Prisma__StoryClient<runtime.Types.Result.GetResult<Prisma.$StoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1051,7 +1051,7 @@ export interface Prisma__BookmarkClient<T, Null = never, ExtArgs extends runtime
  */
 export interface BookmarkFieldRefs {
   readonly id: Prisma.FieldRef<"Bookmark", 'Int'>
-  readonly postId: Prisma.FieldRef<"Bookmark", 'Int'>
+  readonly storyId: Prisma.FieldRef<"Bookmark", 'Int'>
   readonly userId: Prisma.FieldRef<"Bookmark", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Bookmark", 'DateTime'>
 }

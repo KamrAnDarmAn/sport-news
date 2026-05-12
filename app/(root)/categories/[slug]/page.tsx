@@ -1,7 +1,6 @@
 'use client'
 import { ArrowLeft, ArrowRight, Clock, Star, Trophy } from "lucide-react";
 import { SPORTS, SPORT_LIST } from "@/lib/sports-data";
-import { PageHeader } from "@/components/PageHeader";
 import { SEO, breadcrumbJsonLd } from "@/components/SEO";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { useParams } from "next/navigation";

@@ -5,6 +5,41 @@
 @plugin "@tailwindcss/typography";
 @custom-variant dark (&:is(.dark *));
 
+/*
+  Shadcn-style HSL channels (no hsl() wrapper). @theme below maps --color-* to hsl(var(--…)).
+  Without these, Tailwind v4 utilities like bg-background / border-border resolve to invalid colors.
+*/
+:root {
+  --background: 230 25% 7%;
+  --foreground: 40 30% 96%;
+  --card: 230 22% 10%;
+  --card-foreground: 40 30% 96%;
+  --popover: 230 22% 10%;
+  --popover-foreground: 40 30% 96%;
+  --primary: 18 95% 55%;
+  --primary-foreground: 230 25% 7%;
+  --secondary: 200 100% 50%;
+  --secondary-foreground: 230 25% 7%;
+  --muted: 230 18% 16%;
+  --muted-foreground: 40 10% 70%;
+  --accent: 145 80% 50%;
+  --accent-foreground: 230 25% 7%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 40 30% 96%;
+  --border: 230 18% 18%;
+  --input: 230 18% 18%;
+  --ring: 18 95% 55%;
+  --radius: 0.5rem;
+  --sidebar-background: 230 22% 10%;
+  --sidebar-foreground: 40 30% 96%;
+  --sidebar-primary: 18 95% 55%;
+  --sidebar-primary-foreground: 230 25% 7%;
+  --sidebar-accent: 230 18% 16%;
+  --sidebar-accent-foreground: 40 30% 96%;
+  --sidebar-border: 230 18% 18%;
+  --sidebar-ring: 18 95% 55%;
+}
+
 @theme {
   /* Colors - v4 uses a direct mapping. 
      Note: Using oklch is recommended for v4, but we'll stick to your HSL for compatibility. */
@@ -199,10 +234,6 @@
     @apply font-black tracking-tight;
     font-family: var(--font-space);
   }
-
-  #root {
-    @apply mx-auto max-w-(--spacing-320) p-8 text-center;
-  }
 }
 
 /* @layer utilities { */
@@ -240,11 +271,6 @@
     linear-gradient(var(--color-border) 1px, transparent 1px),
     linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
   background-size: 60px 60px;
-}
-@layer components {
-  .container {
-    @apply p-8;
-  }
 }
 /* Custom Components */
 .logo {

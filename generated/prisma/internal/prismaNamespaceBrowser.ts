@@ -53,7 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   Account: 'Account',
-  Post: 'Post',
+  Story: 'Story',
   Comment: 'Comment',
   Bookmark: 'Bookmark',
   SubscribeForASport: 'SubscribeForASport'
@@ -79,7 +79,6 @@ export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   fullName: 'fullName',
-  password: 'password',
   role: 'role',
   createdAt: 'createdAt'
 } as const
@@ -98,7 +97,7 @@ export const AccountScalarFieldEnum = {
 export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
 
 
-export const PostScalarFieldEnum = {
+export const StoryScalarFieldEnum = {
   id: 'id',
   title: 'title',
   slug: 'slug',
@@ -114,13 +113,13 @@ export const PostScalarFieldEnum = {
   createdAt: 'createdAt'
 } as const
 
-export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
+export type StoryScalarFieldEnum = (typeof StoryScalarFieldEnum)[keyof typeof StoryScalarFieldEnum]
 
 
 export const CommentScalarFieldEnum = {
   id: 'id',
   content: 'content',
-  postId: 'postId',
+  storyId: 'storyId',
   authorId: 'authorId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -131,7 +130,7 @@ export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeo
 
 export const BookmarkScalarFieldEnum = {
   id: 'id',
-  postId: 'postId',
+  storyId: 'storyId',
   userId: 'userId',
   createdAt: 'createdAt'
 } as const

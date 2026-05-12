@@ -13,6 +13,7 @@ import { Card } from "@/components/ui/card";
 import { Newspaper, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { track } from "@/lib/analytics";
+import Image from "next/image";
 
 interface Post {
     id: string;
@@ -72,7 +73,7 @@ export default function News() {
             <Breadcrumbs items={[{ name: "News", href: "/news" }]} />
             <PageHeader eyebrow="Live Wire" title="Breaking News" subtitle="Every story as it happens — straight from the touchline." />
 
-            <section className="container py-12">
+            <section className="container py-12 mx-auto">
                 <div className="grid gap-4 mb-8">
                     <SearchBar value={q} onChange={(v) => { setQ(v); if (v.length > 2) track("search", { q: v, scope: "news" }); }} placeholder="Search breaking news…" />
                     <FilterChips
@@ -105,14 +106,15 @@ export default function News() {
                                     <Link href={`/article/${p.slug}`} onClick={() => track("article_open", { id: p.id, scope: "news" })}>
                                         <Card className="overflow-hidden h-full hover:shadow-glow transition-smooth border-border/50">
                                             {p.cover_image_url ? (
-                                                <img src={p.cover_image_url} alt={p.title} className="w-full h-48 object-cover group-hover:scale-105 transition-smooth" />
+                                                <Image height={200} src={p.cover_image_url} alt={p.title} className="w-full h-48 object-cover group-hover:scale-105 transition-smooth" />
                                             ) : (
+                                                // Placeholder for articles without a cover image
                                                 <div className="w-full h-48 bg-gradient-primary opacity-80" />
                                             )}
                                             <div className="p-5">
                                                 <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
                                                     {p.sport && <span className="px-2 py-0.5 rounded-full bg-muted font-semibold uppercase tracking-wider">{p.sport}</span>}
-                                                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{formatDistanceToNow(new Date(p.created_at), { addSuffix: true })}</span>
+                                                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{new Date().toISOString()}</span>
                                                 </div>
                                                 <h3 className="text-lg font-bold mb-2 group-hover:text-gradient-primary transition-smooth line-clamp-2">{p.title}</h3>
                                                 {p.excerpt && <p className="text-sm text-muted-foreground line-clamp-3">{p.excerpt}</p>}

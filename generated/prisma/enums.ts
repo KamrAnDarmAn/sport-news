@@ -18,9 +18,9 @@ export const Role = {
 export type Role = (typeof Role)[keyof typeof Role]
 
 
-export const PostType = {
+export const StoryType = {
   ARTICLE: 'ARTICLE',
   NEWS: 'NEWS'
 } as const
 
-export type PostType = (typeof PostType)[keyof typeof PostType]
+export type StoryType = (typeof StoryType)[keyof typeof StoryType]

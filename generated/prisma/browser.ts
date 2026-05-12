@@ -28,10 +28,10 @@ export type User = Prisma.UserModel
  */
 export type Account = Prisma.AccountModel
 /**
- * Model Post
+ * Model Story
  * 
  */
-export type Post = Prisma.PostModel
+export type Story = Prisma.StoryModel
 /**
  * Model Comment
  * 

@@ -26,7 +26,7 @@ const Bookmarks = () => {
             <Breadcrumbs items={[{ name: "Bookmarks", href: "/bookmarks" }]} />
             <PageHeader eyebrow="Your Library" title="Saved Stories" subtitle="Your personal feed — every story you've bookmarked, in one place." />
 
-            <section className="container py-12">
+            <section className="container py-12 mx-auto">
                 {items.length === 0 ? (
                     <Card className="p-16 text-center max-w-xl mx-auto">
                         <BIcon className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
