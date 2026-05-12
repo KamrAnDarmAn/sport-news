@@ -28,12 +28,10 @@ export type AggregateSubscribeForASport = {
 
 export type SubscribeForASportAvgAggregateOutputType = {
   id: number | null
-  userId: number | null
 }
 
 export type SubscribeForASportSumAggregateOutputType = {
   id: number | null
-  userId: number | null
 }
 
 export type SubscribeForASportMinAggregateOutputType = {
@@ -41,7 +39,7 @@ export type SubscribeForASportMinAggregateOutputType = {
   email: string | null
   sport: string | null
   createdAt: Date | null
-  userId: number | null
+  userId: string | null
 }
 
 export type SubscribeForASportMaxAggregateOutputType = {
@@ -49,7 +47,7 @@ export type SubscribeForASportMaxAggregateOutputType = {
   email: string | null
   sport: string | null
   createdAt: Date | null
-  userId: number | null
+  userId: string | null
 }
 
 export type SubscribeForASportCountAggregateOutputType = {
@@ -64,12 +62,10 @@ export type SubscribeForASportCountAggregateOutputType = {
 
 export type SubscribeForASportAvgAggregateInputType = {
   id?: true
-  userId?: true
 }
 
 export type SubscribeForASportSumAggregateInputType = {
   id?: true
-  userId?: true
 }
 
 export type SubscribeForASportMinAggregateInputType = {
@@ -188,7 +184,7 @@ export type SubscribeForASportGroupByOutputType = {
   email: string
   sport: string
   createdAt: Date
-  userId: number | null
+  userId: string | null
   _count: SubscribeForASportCountAggregateOutputType | null
   _avg: SubscribeForASportAvgAggregateOutputType | null
   _sum: SubscribeForASportSumAggregateOutputType | null
@@ -219,7 +215,7 @@ export type SubscribeForASportWhereInput = {
   email?: Prisma.StringFilter<"SubscribeForASport"> | string
   sport?: Prisma.StringFilter<"SubscribeForASport"> | string
   createdAt?: Prisma.DateTimeFilter<"SubscribeForASport"> | Date | string
-  userId?: Prisma.IntNullableFilter<"SubscribeForASport"> | number | null
+  userId?: Prisma.StringNullableFilter<"SubscribeForASport"> | string | null
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
@@ -240,7 +236,7 @@ export type SubscribeForASportWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.SubscribeForASportWhereInput | Prisma.SubscribeForASportWhereInput[]
   sport?: Prisma.StringFilter<"SubscribeForASport"> | string
   createdAt?: Prisma.DateTimeFilter<"SubscribeForASport"> | Date | string
-  userId?: Prisma.IntNullableFilter<"SubscribeForASport"> | number | null
+  userId?: Prisma.StringNullableFilter<"SubscribeForASport"> | string | null
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id" | "email">
 
@@ -265,7 +261,7 @@ export type SubscribeForASportScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<"SubscribeForASport"> | string
   sport?: Prisma.StringWithAggregatesFilter<"SubscribeForASport"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"SubscribeForASport"> | Date | string
-  userId?: Prisma.IntNullableWithAggregatesFilter<"SubscribeForASport"> | number | null
+  userId?: Prisma.StringNullableWithAggregatesFilter<"SubscribeForASport"> | string | null
 }
 
 export type SubscribeForASportCreateInput = {
@@ -280,7 +276,7 @@ export type SubscribeForASportUncheckedCreateInput = {
   email: string
   sport: string
   createdAt?: Date | string
-  userId?: number | null
+  userId?: string | null
 }
 
 export type SubscribeForASportUpdateInput = {
@@ -295,7 +291,7 @@ export type SubscribeForASportUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   sport?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  userId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SubscribeForASportCreateManyInput = {
@@ -303,7 +299,7 @@ export type SubscribeForASportCreateManyInput = {
   email: string
   sport: string
   createdAt?: Date | string
-  userId?: number | null
+  userId?: string | null
 }
 
 export type SubscribeForASportUpdateManyMutationInput = {
@@ -317,7 +313,7 @@ export type SubscribeForASportUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   sport?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  userId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SubscribeForASportListRelationFilter = {
@@ -340,7 +336,6 @@ export type SubscribeForASportCountOrderByAggregateInput = {
 
 export type SubscribeForASportAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
 }
 
 export type SubscribeForASportMaxOrderByAggregateInput = {
@@ -361,7 +356,6 @@ export type SubscribeForASportMinOrderByAggregateInput = {
 
 export type SubscribeForASportSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
 }
 
 export type SubscribeForASportCreateNestedManyWithoutUserInput = {
@@ -404,14 +398,6 @@ export type SubscribeForASportUncheckedUpdateManyWithoutUserNestedInput = {
   update?: Prisma.SubscribeForASportUpdateWithWhereUniqueWithoutUserInput | Prisma.SubscribeForASportUpdateWithWhereUniqueWithoutUserInput[]
   updateMany?: Prisma.SubscribeForASportUpdateManyWithWhereWithoutUserInput | Prisma.SubscribeForASportUpdateManyWithWhereWithoutUserInput[]
   deleteMany?: Prisma.SubscribeForASportScalarWhereInput | Prisma.SubscribeForASportScalarWhereInput[]
-}
-
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
 }
 
 export type SubscribeForASportCreateWithoutUserInput = {
@@ -461,7 +447,7 @@ export type SubscribeForASportScalarWhereInput = {
   email?: Prisma.StringFilter<"SubscribeForASport"> | string
   sport?: Prisma.StringFilter<"SubscribeForASport"> | string
   createdAt?: Prisma.DateTimeFilter<"SubscribeForASport"> | Date | string
-  userId?: Prisma.IntNullableFilter<"SubscribeForASport"> | number | null
+  userId?: Prisma.StringNullableFilter<"SubscribeForASport"> | string | null
 }
 
 export type SubscribeForASportCreateManyUserInput = {
@@ -549,7 +535,7 @@ export type $SubscribeForASportPayload<ExtArgs extends runtime.Types.Extensions.
     email: string
     sport: string
     createdAt: Date
-    userId: number | null
+    userId: string | null
   }, ExtArgs["result"]["subscribeForASport"]>
   composites: {}
 }
@@ -978,7 +964,7 @@ export interface SubscribeForASportFieldRefs {
   readonly email: Prisma.FieldRef<"SubscribeForASport", 'String'>
   readonly sport: Prisma.FieldRef<"SubscribeForASport", 'String'>
   readonly createdAt: Prisma.FieldRef<"SubscribeForASport", 'DateTime'>
-  readonly userId: Prisma.FieldRef<"SubscribeForASport", 'Int'>
+  readonly userId: Prisma.FieldRef<"SubscribeForASport", 'String'>
 }
     
 

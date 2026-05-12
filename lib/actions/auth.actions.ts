@@ -89,8 +89,6 @@ export async function signInWithCredentials(params: {
   password: string;
 }): Promise<ActionResponse> {
   const validationResult = SignInSchema.safeParse(params);
-  // console.log("LOG - 1", params);
-  // console.log("LOG - 2", validationResult);
 
   if (!validationResult.success) {
     return {

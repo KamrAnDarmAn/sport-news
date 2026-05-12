@@ -20,35 +20,21 @@ export type BookmarkModel = runtime.Types.Result.DefaultSelection<Prisma.$Bookma
 
 export type AggregateBookmark = {
   _count: BookmarkCountAggregateOutputType | null
-  _avg: BookmarkAvgAggregateOutputType | null
-  _sum: BookmarkSumAggregateOutputType | null
   _min: BookmarkMinAggregateOutputType | null
   _max: BookmarkMaxAggregateOutputType | null
 }
 
-export type BookmarkAvgAggregateOutputType = {
-  id: number | null
-  storyId: number | null
-  userId: number | null
-}
-
-export type BookmarkSumAggregateOutputType = {
-  id: number | null
-  storyId: number | null
-  userId: number | null
-}
-
 export type BookmarkMinAggregateOutputType = {
-  id: number | null
-  storyId: number | null
-  userId: number | null
+  id: string | null
+  storyId: string | null
+  userId: string | null
   createdAt: Date | null
 }
 
 export type BookmarkMaxAggregateOutputType = {
-  id: number | null
-  storyId: number | null
-  userId: number | null
+  id: string | null
+  storyId: string | null
+  userId: string | null
   createdAt: Date | null
 }
 
@@ -60,18 +46,6 @@ export type BookmarkCountAggregateOutputType = {
   _all: number
 }
 
-
-export type BookmarkAvgAggregateInputType = {
-  id?: true
-  storyId?: true
-  userId?: true
-}
-
-export type BookmarkSumAggregateInputType = {
-  id?: true
-  storyId?: true
-  userId?: true
-}
 
 export type BookmarkMinAggregateInputType = {
   id?: true
@@ -133,18 +107,6 @@ export type BookmarkAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inter
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: BookmarkAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: BookmarkSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: BookmarkMinAggregateInputType
@@ -175,20 +137,16 @@ export type BookmarkGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   _count?: BookmarkCountAggregateInputType | true
-  _avg?: BookmarkAvgAggregateInputType
-  _sum?: BookmarkSumAggregateInputType
   _min?: BookmarkMinAggregateInputType
   _max?: BookmarkMaxAggregateInputType
 }
 
 export type BookmarkGroupByOutputType = {
-  id: number
-  storyId: number
-  userId: number
+  id: string
+  storyId: string
+  userId: string
   createdAt: Date
   _count: BookmarkCountAggregateOutputType | null
-  _avg: BookmarkAvgAggregateOutputType | null
-  _sum: BookmarkSumAggregateOutputType | null
   _min: BookmarkMinAggregateOutputType | null
   _max: BookmarkMaxAggregateOutputType | null
 }
@@ -212,9 +170,9 @@ export type BookmarkWhereInput = {
   AND?: Prisma.BookmarkWhereInput | Prisma.BookmarkWhereInput[]
   OR?: Prisma.BookmarkWhereInput[]
   NOT?: Prisma.BookmarkWhereInput | Prisma.BookmarkWhereInput[]
-  id?: Prisma.IntFilter<"Bookmark"> | number
-  storyId?: Prisma.IntFilter<"Bookmark"> | number
-  userId?: Prisma.IntFilter<"Bookmark"> | number
+  id?: Prisma.StringFilter<"Bookmark"> | string
+  storyId?: Prisma.StringFilter<"Bookmark"> | string
+  userId?: Prisma.StringFilter<"Bookmark"> | string
   createdAt?: Prisma.DateTimeFilter<"Bookmark"> | Date | string
   story?: Prisma.XOR<Prisma.StoryScalarRelationFilter, Prisma.StoryWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -230,12 +188,12 @@ export type BookmarkOrderByWithRelationInput = {
 }
 
 export type BookmarkWhereUniqueInput = Prisma.AtLeast<{
-  id?: number
+  id?: string
   AND?: Prisma.BookmarkWhereInput | Prisma.BookmarkWhereInput[]
   OR?: Prisma.BookmarkWhereInput[]
   NOT?: Prisma.BookmarkWhereInput | Prisma.BookmarkWhereInput[]
-  storyId?: Prisma.IntFilter<"Bookmark"> | number
-  userId?: Prisma.IntFilter<"Bookmark"> | number
+  storyId?: Prisma.StringFilter<"Bookmark"> | string
+  userId?: Prisma.StringFilter<"Bookmark"> | string
   createdAt?: Prisma.DateTimeFilter<"Bookmark"> | Date | string
   story?: Prisma.XOR<Prisma.StoryScalarRelationFilter, Prisma.StoryWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -247,63 +205,64 @@ export type BookmarkOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.BookmarkCountOrderByAggregateInput
-  _avg?: Prisma.BookmarkAvgOrderByAggregateInput
   _max?: Prisma.BookmarkMaxOrderByAggregateInput
   _min?: Prisma.BookmarkMinOrderByAggregateInput
-  _sum?: Prisma.BookmarkSumOrderByAggregateInput
 }
 
 export type BookmarkScalarWhereWithAggregatesInput = {
   AND?: Prisma.BookmarkScalarWhereWithAggregatesInput | Prisma.BookmarkScalarWhereWithAggregatesInput[]
   OR?: Prisma.BookmarkScalarWhereWithAggregatesInput[]
   NOT?: Prisma.BookmarkScalarWhereWithAggregatesInput | Prisma.BookmarkScalarWhereWithAggregatesInput[]
-  id?: Prisma.IntWithAggregatesFilter<"Bookmark"> | number
-  storyId?: Prisma.IntWithAggregatesFilter<"Bookmark"> | number
-  userId?: Prisma.IntWithAggregatesFilter<"Bookmark"> | number
+  id?: Prisma.StringWithAggregatesFilter<"Bookmark"> | string
+  storyId?: Prisma.StringWithAggregatesFilter<"Bookmark"> | string
+  userId?: Prisma.StringWithAggregatesFilter<"Bookmark"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Bookmark"> | Date | string
 }
 
 export type BookmarkCreateInput = {
+  id?: string
   createdAt?: Date | string
   story: Prisma.StoryCreateNestedOneWithoutBookmarksInput
   user: Prisma.UserCreateNestedOneWithoutBookmarksInput
 }
 
 export type BookmarkUncheckedCreateInput = {
-  id?: number
-  storyId: number
-  userId: number
+  id?: string
+  storyId: string
+  userId: string
   createdAt?: Date | string
 }
 
 export type BookmarkUpdateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   story?: Prisma.StoryUpdateOneRequiredWithoutBookmarksNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutBookmarksNestedInput
 }
 
 export type BookmarkUncheckedUpdateInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  storyId?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  storyId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type BookmarkCreateManyInput = {
-  id?: number
-  storyId: number
-  userId: number
+  id?: string
+  storyId: string
+  userId: string
   createdAt?: Date | string
 }
 
 export type BookmarkUpdateManyMutationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type BookmarkUncheckedUpdateManyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  storyId?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  storyId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -324,12 +283,6 @@ export type BookmarkCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
 }
 
-export type BookmarkAvgOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  storyId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-}
-
 export type BookmarkMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   storyId?: Prisma.SortOrder
@@ -342,12 +295,6 @@ export type BookmarkMinOrderByAggregateInput = {
   storyId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-}
-
-export type BookmarkSumOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  storyId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
 }
 
 export type BookmarkCreateNestedManyWithoutUserInput = {
@@ -435,13 +382,14 @@ export type BookmarkUncheckedUpdateManyWithoutStoryNestedInput = {
 }
 
 export type BookmarkCreateWithoutUserInput = {
+  id?: string
   createdAt?: Date | string
   story: Prisma.StoryCreateNestedOneWithoutBookmarksInput
 }
 
 export type BookmarkUncheckedCreateWithoutUserInput = {
-  id?: number
-  storyId: number
+  id?: string
+  storyId: string
   createdAt?: Date | string
 }
 
@@ -475,20 +423,21 @@ export type BookmarkScalarWhereInput = {
   AND?: Prisma.BookmarkScalarWhereInput | Prisma.BookmarkScalarWhereInput[]
   OR?: Prisma.BookmarkScalarWhereInput[]
   NOT?: Prisma.BookmarkScalarWhereInput | Prisma.BookmarkScalarWhereInput[]
-  id?: Prisma.IntFilter<"Bookmark"> | number
-  storyId?: Prisma.IntFilter<"Bookmark"> | number
-  userId?: Prisma.IntFilter<"Bookmark"> | number
+  id?: Prisma.StringFilter<"Bookmark"> | string
+  storyId?: Prisma.StringFilter<"Bookmark"> | string
+  userId?: Prisma.StringFilter<"Bookmark"> | string
   createdAt?: Prisma.DateTimeFilter<"Bookmark"> | Date | string
 }
 
 export type BookmarkCreateWithoutStoryInput = {
+  id?: string
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutBookmarksInput
 }
 
 export type BookmarkUncheckedCreateWithoutStoryInput = {
-  id?: number
-  userId: number
+  id?: string
+  userId: string
   createdAt?: Date | string
 }
 
@@ -519,48 +468,50 @@ export type BookmarkUpdateManyWithWhereWithoutStoryInput = {
 }
 
 export type BookmarkCreateManyUserInput = {
-  id?: number
-  storyId: number
+  id?: string
+  storyId: string
   createdAt?: Date | string
 }
 
 export type BookmarkUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   story?: Prisma.StoryUpdateOneRequiredWithoutBookmarksNestedInput
 }
 
 export type BookmarkUncheckedUpdateWithoutUserInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  storyId?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  storyId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type BookmarkUncheckedUpdateManyWithoutUserInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  storyId?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  storyId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type BookmarkCreateManyStoryInput = {
-  id?: number
-  userId: number
+  id?: string
+  userId: string
   createdAt?: Date | string
 }
 
 export type BookmarkUpdateWithoutStoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutBookmarksNestedInput
 }
 
 export type BookmarkUncheckedUpdateWithoutStoryInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type BookmarkUncheckedUpdateManyWithoutStoryInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -621,9 +572,9 @@ export type $BookmarkPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: number
-    storyId: number
-    userId: number
+    id: string
+    storyId: string
+    userId: string
     createdAt: Date
   }, ExtArgs["result"]["bookmark"]>
   composites: {}
@@ -1050,9 +1001,9 @@ export interface Prisma__BookmarkClient<T, Null = never, ExtArgs extends runtime
  * Fields of the Bookmark model
  */
 export interface BookmarkFieldRefs {
-  readonly id: Prisma.FieldRef<"Bookmark", 'Int'>
-  readonly storyId: Prisma.FieldRef<"Bookmark", 'Int'>
-  readonly userId: Prisma.FieldRef<"Bookmark", 'Int'>
+  readonly id: Prisma.FieldRef<"Bookmark", 'String'>
+  readonly storyId: Prisma.FieldRef<"Bookmark", 'String'>
+  readonly userId: Prisma.FieldRef<"Bookmark", 'String'>
   readonly createdAt: Prisma.FieldRef<"Bookmark", 'DateTime'>
 }
     

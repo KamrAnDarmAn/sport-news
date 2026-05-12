@@ -27,19 +27,15 @@ export type AggregateStory = {
 }
 
 export type StoryAvgAggregateOutputType = {
-  id: number | null
   readTime: number | null
-  authorId: number | null
 }
 
 export type StorySumAggregateOutputType = {
-  id: number | null
   readTime: number | null
-  authorId: number | null
 }
 
 export type StoryMinAggregateOutputType = {
-  id: number | null
+  id: string | null
   title: string | null
   slug: string | null
   type: $Enums.StoryType | null
@@ -50,12 +46,12 @@ export type StoryMinAggregateOutputType = {
   readTime: number | null
   coverUrl: string | null
   published: boolean | null
-  authorId: number | null
+  authorId: string | null
   createdAt: Date | null
 }
 
 export type StoryMaxAggregateOutputType = {
-  id: number | null
+  id: string | null
   title: string | null
   slug: string | null
   type: $Enums.StoryType | null
@@ -66,7 +62,7 @@ export type StoryMaxAggregateOutputType = {
   readTime: number | null
   coverUrl: string | null
   published: boolean | null
-  authorId: number | null
+  authorId: string | null
   createdAt: Date | null
 }
 
@@ -89,15 +85,11 @@ export type StoryCountAggregateOutputType = {
 
 
 export type StoryAvgAggregateInputType = {
-  id?: true
   readTime?: true
-  authorId?: true
 }
 
 export type StorySumAggregateInputType = {
-  id?: true
   readTime?: true
-  authorId?: true
 }
 
 export type StoryMinAggregateInputType = {
@@ -236,7 +228,7 @@ export type StoryGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 }
 
 export type StoryGroupByOutputType = {
-  id: number
+  id: string
   title: string
   slug: string
   type: $Enums.StoryType
@@ -247,7 +239,7 @@ export type StoryGroupByOutputType = {
   readTime: number
   coverUrl: string | null
   published: boolean
-  authorId: number
+  authorId: string
   createdAt: Date
   _count: StoryCountAggregateOutputType | null
   _avg: StoryAvgAggregateOutputType | null
@@ -275,7 +267,7 @@ export type StoryWhereInput = {
   AND?: Prisma.StoryWhereInput | Prisma.StoryWhereInput[]
   OR?: Prisma.StoryWhereInput[]
   NOT?: Prisma.StoryWhereInput | Prisma.StoryWhereInput[]
-  id?: Prisma.IntFilter<"Story"> | number
+  id?: Prisma.StringFilter<"Story"> | string
   title?: Prisma.StringFilter<"Story"> | string
   slug?: Prisma.StringFilter<"Story"> | string
   type?: Prisma.EnumStoryTypeFilter<"Story"> | $Enums.StoryType
@@ -286,7 +278,7 @@ export type StoryWhereInput = {
   readTime?: Prisma.IntFilter<"Story"> | number
   coverUrl?: Prisma.StringNullableFilter<"Story"> | string | null
   published?: Prisma.BoolFilter<"Story"> | boolean
-  authorId?: Prisma.IntFilter<"Story"> | number
+  authorId?: Prisma.StringFilter<"Story"> | string
   createdAt?: Prisma.DateTimeFilter<"Story"> | Date | string
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   comments?: Prisma.CommentListRelationFilter
@@ -313,7 +305,7 @@ export type StoryOrderByWithRelationInput = {
 }
 
 export type StoryWhereUniqueInput = Prisma.AtLeast<{
-  id?: number
+  id?: string
   slug?: string
   AND?: Prisma.StoryWhereInput | Prisma.StoryWhereInput[]
   OR?: Prisma.StoryWhereInput[]
@@ -327,7 +319,7 @@ export type StoryWhereUniqueInput = Prisma.AtLeast<{
   readTime?: Prisma.IntFilter<"Story"> | number
   coverUrl?: Prisma.StringNullableFilter<"Story"> | string | null
   published?: Prisma.BoolFilter<"Story"> | boolean
-  authorId?: Prisma.IntFilter<"Story"> | number
+  authorId?: Prisma.StringFilter<"Story"> | string
   createdAt?: Prisma.DateTimeFilter<"Story"> | Date | string
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   comments?: Prisma.CommentListRelationFilter
@@ -359,7 +351,7 @@ export type StoryScalarWhereWithAggregatesInput = {
   AND?: Prisma.StoryScalarWhereWithAggregatesInput | Prisma.StoryScalarWhereWithAggregatesInput[]
   OR?: Prisma.StoryScalarWhereWithAggregatesInput[]
   NOT?: Prisma.StoryScalarWhereWithAggregatesInput | Prisma.StoryScalarWhereWithAggregatesInput[]
-  id?: Prisma.IntWithAggregatesFilter<"Story"> | number
+  id?: Prisma.StringWithAggregatesFilter<"Story"> | string
   title?: Prisma.StringWithAggregatesFilter<"Story"> | string
   slug?: Prisma.StringWithAggregatesFilter<"Story"> | string
   type?: Prisma.EnumStoryTypeWithAggregatesFilter<"Story"> | $Enums.StoryType
@@ -370,11 +362,12 @@ export type StoryScalarWhereWithAggregatesInput = {
   readTime?: Prisma.IntWithAggregatesFilter<"Story"> | number
   coverUrl?: Prisma.StringNullableWithAggregatesFilter<"Story"> | string | null
   published?: Prisma.BoolWithAggregatesFilter<"Story"> | boolean
-  authorId?: Prisma.IntWithAggregatesFilter<"Story"> | number
+  authorId?: Prisma.StringWithAggregatesFilter<"Story"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Story"> | Date | string
 }
 
 export type StoryCreateInput = {
+  id?: string
   title: string
   slug: string
   type?: $Enums.StoryType
@@ -392,7 +385,7 @@ export type StoryCreateInput = {
 }
 
 export type StoryUncheckedCreateInput = {
-  id?: number
+  id?: string
   title: string
   slug: string
   type?: $Enums.StoryType
@@ -403,13 +396,14 @@ export type StoryUncheckedCreateInput = {
   readTime: number
   coverUrl?: string | null
   published?: boolean
-  authorId: number
+  authorId: string
   createdAt?: Date | string
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutStoryInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStoryInput
 }
 
 export type StoryUpdateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumStoryTypeFieldUpdateOperationsInput | $Enums.StoryType
@@ -427,7 +421,7 @@ export type StoryUpdateInput = {
 }
 
 export type StoryUncheckedUpdateInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumStoryTypeFieldUpdateOperationsInput | $Enums.StoryType
@@ -438,14 +432,14 @@ export type StoryUncheckedUpdateInput = {
   readTime?: Prisma.IntFieldUpdateOperationsInput | number
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  authorId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   comments?: Prisma.CommentUncheckedUpdateManyWithoutStoryNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStoryNestedInput
 }
 
 export type StoryCreateManyInput = {
-  id?: number
+  id?: string
   title: string
   slug: string
   type?: $Enums.StoryType
@@ -456,11 +450,12 @@ export type StoryCreateManyInput = {
   readTime: number
   coverUrl?: string | null
   published?: boolean
-  authorId: number
+  authorId: string
   createdAt?: Date | string
 }
 
 export type StoryUpdateManyMutationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumStoryTypeFieldUpdateOperationsInput | $Enums.StoryType
@@ -475,7 +470,7 @@ export type StoryUpdateManyMutationInput = {
 }
 
 export type StoryUncheckedUpdateManyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumStoryTypeFieldUpdateOperationsInput | $Enums.StoryType
@@ -486,7 +481,7 @@ export type StoryUncheckedUpdateManyInput = {
   readTime?: Prisma.IntFieldUpdateOperationsInput | number
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  authorId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -517,9 +512,7 @@ export type StoryCountOrderByAggregateInput = {
 }
 
 export type StoryAvgOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   readTime?: Prisma.SortOrder
-  authorId?: Prisma.SortOrder
 }
 
 export type StoryMaxOrderByAggregateInput = {
@@ -555,9 +548,7 @@ export type StoryMinOrderByAggregateInput = {
 }
 
 export type StorySumOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   readTime?: Prisma.SortOrder
-  authorId?: Prisma.SortOrder
 }
 
 export type StoryScalarRelationFilter = {
@@ -611,6 +602,14 @@ export type EnumStoryTypeFieldUpdateOperationsInput = {
   set?: $Enums.StoryType
 }
 
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
@@ -644,6 +643,7 @@ export type StoryUpdateOneRequiredWithoutBookmarksNestedInput = {
 }
 
 export type StoryCreateWithoutAuthorInput = {
+  id?: string
   title: string
   slug: string
   type?: $Enums.StoryType
@@ -660,7 +660,7 @@ export type StoryCreateWithoutAuthorInput = {
 }
 
 export type StoryUncheckedCreateWithoutAuthorInput = {
-  id?: number
+  id?: string
   title: string
   slug: string
   type?: $Enums.StoryType
@@ -706,7 +706,7 @@ export type StoryScalarWhereInput = {
   AND?: Prisma.StoryScalarWhereInput | Prisma.StoryScalarWhereInput[]
   OR?: Prisma.StoryScalarWhereInput[]
   NOT?: Prisma.StoryScalarWhereInput | Prisma.StoryScalarWhereInput[]
-  id?: Prisma.IntFilter<"Story"> | number
+  id?: Prisma.StringFilter<"Story"> | string
   title?: Prisma.StringFilter<"Story"> | string
   slug?: Prisma.StringFilter<"Story"> | string
   type?: Prisma.EnumStoryTypeFilter<"Story"> | $Enums.StoryType
@@ -717,11 +717,12 @@ export type StoryScalarWhereInput = {
   readTime?: Prisma.IntFilter<"Story"> | number
   coverUrl?: Prisma.StringNullableFilter<"Story"> | string | null
   published?: Prisma.BoolFilter<"Story"> | boolean
-  authorId?: Prisma.IntFilter<"Story"> | number
+  authorId?: Prisma.StringFilter<"Story"> | string
   createdAt?: Prisma.DateTimeFilter<"Story"> | Date | string
 }
 
 export type StoryCreateWithoutCommentsInput = {
+  id?: string
   title: string
   slug: string
   type?: $Enums.StoryType
@@ -738,7 +739,7 @@ export type StoryCreateWithoutCommentsInput = {
 }
 
 export type StoryUncheckedCreateWithoutCommentsInput = {
-  id?: number
+  id?: string
   title: string
   slug: string
   type?: $Enums.StoryType
@@ -749,7 +750,7 @@ export type StoryUncheckedCreateWithoutCommentsInput = {
   readTime: number
   coverUrl?: string | null
   published?: boolean
-  authorId: number
+  authorId: string
   createdAt?: Date | string
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStoryInput
 }
@@ -771,6 +772,7 @@ export type StoryUpdateToOneWithWhereWithoutCommentsInput = {
 }
 
 export type StoryUpdateWithoutCommentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumStoryTypeFieldUpdateOperationsInput | $Enums.StoryType
@@ -787,7 +789,7 @@ export type StoryUpdateWithoutCommentsInput = {
 }
 
 export type StoryUncheckedUpdateWithoutCommentsInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumStoryTypeFieldUpdateOperationsInput | $Enums.StoryType
@@ -798,12 +800,13 @@ export type StoryUncheckedUpdateWithoutCommentsInput = {
   readTime?: Prisma.IntFieldUpdateOperationsInput | number
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  authorId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStoryNestedInput
 }
 
 export type StoryCreateWithoutBookmarksInput = {
+  id?: string
   title: string
   slug: string
   type?: $Enums.StoryType
@@ -820,7 +823,7 @@ export type StoryCreateWithoutBookmarksInput = {
 }
 
 export type StoryUncheckedCreateWithoutBookmarksInput = {
-  id?: number
+  id?: string
   title: string
   slug: string
   type?: $Enums.StoryType
@@ -831,7 +834,7 @@ export type StoryUncheckedCreateWithoutBookmarksInput = {
   readTime: number
   coverUrl?: string | null
   published?: boolean
-  authorId: number
+  authorId: string
   createdAt?: Date | string
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutStoryInput
 }
@@ -853,6 +856,7 @@ export type StoryUpdateToOneWithWhereWithoutBookmarksInput = {
 }
 
 export type StoryUpdateWithoutBookmarksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumStoryTypeFieldUpdateOperationsInput | $Enums.StoryType
@@ -869,7 +873,7 @@ export type StoryUpdateWithoutBookmarksInput = {
 }
 
 export type StoryUncheckedUpdateWithoutBookmarksInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumStoryTypeFieldUpdateOperationsInput | $Enums.StoryType
@@ -880,13 +884,13 @@ export type StoryUncheckedUpdateWithoutBookmarksInput = {
   readTime?: Prisma.IntFieldUpdateOperationsInput | number
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  authorId?: Prisma.IntFieldUpdateOperationsInput | number
+  authorId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   comments?: Prisma.CommentUncheckedUpdateManyWithoutStoryNestedInput
 }
 
 export type StoryCreateManyAuthorInput = {
-  id?: number
+  id?: string
   title: string
   slug: string
   type?: $Enums.StoryType
@@ -901,6 +905,7 @@ export type StoryCreateManyAuthorInput = {
 }
 
 export type StoryUpdateWithoutAuthorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumStoryTypeFieldUpdateOperationsInput | $Enums.StoryType
@@ -917,7 +922,7 @@ export type StoryUpdateWithoutAuthorInput = {
 }
 
 export type StoryUncheckedUpdateWithoutAuthorInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumStoryTypeFieldUpdateOperationsInput | $Enums.StoryType
@@ -934,7 +939,7 @@ export type StoryUncheckedUpdateWithoutAuthorInput = {
 }
 
 export type StoryUncheckedUpdateManyWithoutAuthorInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumStoryTypeFieldUpdateOperationsInput | $Enums.StoryType
@@ -1080,7 +1085,7 @@ export type $StoryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     bookmarks: Prisma.$BookmarkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: number
+    id: string
     title: string
     slug: string
     type: $Enums.StoryType
@@ -1091,7 +1096,7 @@ export type $StoryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     readTime: number
     coverUrl: string | null
     published: boolean
-    authorId: number
+    authorId: string
     createdAt: Date
   }, ExtArgs["result"]["story"]>
   composites: {}
@@ -1519,7 +1524,7 @@ export interface Prisma__StoryClient<T, Null = never, ExtArgs extends runtime.Ty
  * Fields of the Story model
  */
 export interface StoryFieldRefs {
-  readonly id: Prisma.FieldRef<"Story", 'Int'>
+  readonly id: Prisma.FieldRef<"Story", 'String'>
   readonly title: Prisma.FieldRef<"Story", 'String'>
   readonly slug: Prisma.FieldRef<"Story", 'String'>
   readonly type: Prisma.FieldRef<"Story", 'StoryType'>
@@ -1530,7 +1535,7 @@ export interface StoryFieldRefs {
   readonly readTime: Prisma.FieldRef<"Story", 'Int'>
   readonly coverUrl: Prisma.FieldRef<"Story", 'String'>
   readonly published: Prisma.FieldRef<"Story", 'Boolean'>
-  readonly authorId: Prisma.FieldRef<"Story", 'Int'>
+  readonly authorId: Prisma.FieldRef<"Story", 'String'>
   readonly createdAt: Prisma.FieldRef<"Story", 'DateTime'>
 }
     

@@ -48,7 +48,7 @@ model Story {
   excerpt   String
   content   String?
   sport     String
-  topic     String
+  topic     String // topic is for filtering and categorization. it can be something like "match report", "transfer news", "opinion", etc.
   readTime  Int // I can also calculate this on the fly based on the content length, but that way you should calculate for every request. so I prefer to calculate it once and store it in the database.
   coverUrl  String?
   published Boolean    @default(false)
@@ -80,7 +80,7 @@ model Bookmark {
 }
 
 model SubscribeForASport {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   email     String   @unique
   sport     String
   createdAt DateTime @default(now())

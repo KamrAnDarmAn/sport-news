@@ -40,57 +40,54 @@ const Articles = () => {
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
-    <BookmarksProvider>
+    <div>
+      <SEO
+        title="Sports Articles & Long Reads"
+        description="Tactics, culture, data and stories — long-form sports journalism from Pulse."
+        jsonLd={breadcrumbJsonLd([{ name: "Articles", href: "/articles" }])}
+      />
+      <Breadcrumbs items={[{ name: "Articles", href: "/articles" }]} />
+      <PageHeader eyebrow="Long Reads" title="Sports Articles" subtitle="Tactics, culture, data and stories — written by reporters who actually love the sport." />
 
-      <div>
-        <SEO
-          title="Sports Articles & Long Reads"
-          description="Tactics, culture, data and stories — long-form sports journalism from Pulse."
-          jsonLd={breadcrumbJsonLd([{ name: "Articles", href: "/articles" }])}
-        />
-        <Breadcrumbs items={[{ name: "Articles", href: "/articles" }]} />
-        <PageHeader eyebrow="Long Reads" title="Sports Articles" subtitle="Tactics, culture, data and stories — written by reporters who actually love the sport." />
+      <section className="container py-12 mx-auto">
+        <div className="grid gap-4 mb-8">
+          <SearchBar value={q} onChange={setQ} placeholder="Search long reads, authors…" />
+          <FilterChips
+            label="Topic"
+            options={TAGS.map((t) => ({ value: t, label: t === "all" ? "All topics" : t }))}
+            value={tag}
+            onChange={(v) => { setTag(v); setPage(1); }}
+          />
+        </div>
 
-        <section className="container py-12 mx-auto">
-          <div className="grid gap-4 mb-8">
-            <SearchBar value={q} onChange={setQ} placeholder="Search long reads, authors…" />
-            <FilterChips
-              label="Topic"
-              options={TAGS.map((t) => ({ value: t, label: t === "all" ? "All topics" : t }))}
-              value={tag}
-              onChange={(v) => { setTag(v); setPage(1); }}
-            />
-          </div>
-
-          {paged.length === 0 ? (
-            <p className="text-muted-foreground">No articles match.</p>
-          ) : (
-            <>
-              <div className="grid md:grid-cols-2 gap-6">
-                {paged.map((a, i) => (
-                  <article key={a.id} style={{ animationDelay: `${i * 80}ms` }} className="group relative p-8 rounded-3xl bg-card border border-border hover:border-primary hover:shadow-glow transition-smooth cursor-pointer animate-scale-in overflow-hidden">
-                    <div className="absolute top-6 right-6 flex items-center gap-2">
-                      <BookmarkButton item={{ id: a.id, title: a.title, href: `/articles#${a.id}`, sport: a.tag, excerpt: a.title }} />
-                      <ArrowUpRight className="w-6 h-6 text-muted-foreground group-hover:text-primary group-hover:rotate-45 transition-smooth" />
-                    </div>
-                    <div className="flex items-center gap-3 mb-4 text-xs">
-                      <span className="px-3 py-1 rounded-full bg-gradient-primary text-primary-foreground font-bold uppercase tracking-wider">{a.tag}</span>
-                      <span className="inline-flex items-center gap-1 text-muted-foreground"><BookOpen className="w-3 h-3" /> {a.read} read</span>
-                    </div>
-                    <h3 className="text-2xl font-black leading-tight mb-4 group-hover:text-gradient-primary transition-smooth pr-24">{a.title}</h3>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-7 h-7 rounded-full bg-gradient-electric" />
-                      <span>By <span className="font-semibold text-foreground">{a.author}</span></span>
-                    </div>
-                  </article>
-                ))}
-              </div>
-              <Pager page={page} total={totalPages} onChange={setPage} />
-            </>
-          )}
-        </section>
-      </div>
-    </BookmarksProvider>
+        {paged.length === 0 ? (
+          <p className="text-muted-foreground">No articles match.</p>
+        ) : (
+          <>
+            <div className="grid md:grid-cols-2 gap-6">
+              {paged.map((a, i) => (
+                <article key={a.id} style={{ animationDelay: `${i * 80}ms` }} className="group relative p-8 rounded-3xl bg-card border border-border hover:border-primary hover:shadow-glow transition-smooth cursor-pointer animate-scale-in overflow-hidden">
+                  <div className="absolute top-6 right-6 flex items-center gap-2">
+                    <BookmarkButton item={{ id: a.id, title: a.title, href: `/articles#${a.id}`, sport: a.tag, excerpt: a.title }} />
+                    <ArrowUpRight className="w-6 h-6 text-muted-foreground group-hover:text-primary group-hover:rotate-45 transition-smooth" />
+                  </div>
+                  <div className="flex items-center gap-3 mb-4 text-xs">
+                    <span className="px-3 py-1 rounded-full bg-gradient-primary text-primary-foreground font-bold uppercase tracking-wider">{a.tag}</span>
+                    <span className="inline-flex items-center gap-1 text-muted-foreground"><BookOpen className="w-3 h-3" /> {a.read} read</span>
+                  </div>
+                  <h3 className="text-2xl font-black leading-tight mb-4 group-hover:text-gradient-primary transition-smooth pr-24">{a.title}</h3>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="w-7 h-7 rounded-full bg-gradient-electric" />
+                    <span>By <span className="font-semibold text-foreground">{a.author}</span></span>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <Pager page={page} total={totalPages} onChange={setPage} />
+          </>
+        )}
+      </section>
+    </div>
   );
 };
 
