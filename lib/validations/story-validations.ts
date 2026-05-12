@@ -39,6 +39,8 @@ export const StoryListQuerySchema = z.object({
   topic: z.string().trim().optional(),
   type: z.enum(["news", "article"]).optional(),
   search: z.string().trim().optional(),
+  sort: z.string().trim().optional(),
+  hasNext: z.boolean().optional(),
 });
 
 export type StoryListQuery = z.infer<typeof StoryListQuerySchema>;

@@ -22,6 +22,7 @@ interface ActionResponse<T = unknown> {
   message: string;
   data?: T;
   error?: unknown;
+  hasNext?: boolean;
 }
 
 export type StoryAuthorPreview = { id: string; fullName: string };
@@ -167,6 +168,103 @@ export async function getStories(query: StoryListQueryInput = {}): Promise<
     items: StoryListItem[];
     page: number;
     pageSize: number;
+    hasNext?: boolean;
+    total: number;
+  }>
+> {
+  const parsed = StoryListQuerySchema.safeParse(query);
+  if (!parsed.success) {
+    return { success: false, message: "Invalid query", error: parsed.error };
+  }
+
+  const { page, pageSize, published, sport, topic, type, search } = parsed.data;
+
+  const skip = (page - 1) * pageSize;
+  const take = pageSize;
+
+  const where: Prisma.StoryWhereInput = {
+    ...(typeof published === "boolean" ? { published } : {}),
+    ...(sport
+      ? { sport: { equals: sport, mode: "insensitive" as const } }
+      : {}),
+    ...(topic
+      ? { topic: { equals: topic, mode: "insensitive" as const } }
+      : {}),
+    ...(type ? { type: type === "article" ? "ARTICLE" : "NEWS" } : {}),
+    ...(search
+      ? {
+          OR: [
+            { title: { contains: search, mode: "insensitive" as const } },
+            { excerpt: { contains: search, mode: "insensitive" as const } },
+            { sport: { contains: search, mode: "insensitive" as const } },
+            { topic: { contains: search, mode: "insensitive" as const } },
+          ],
+        }
+      : {}),
+  };
+
+  try {
+    const [total, rows] = await prisma.$transaction([
+      prisma.story.count({ where }),
+      prisma.story.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * pageSize,
+        take,
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          type: true,
+          excerpt: true,
+          sport: true,
+          topic: true,
+          readTime: true,
+          coverUrl: true,
+          published: true,
+          createdAt: true,
+          author: { select: { id: true, fullName: true } },
+        },
+      }),
+    ]);
+
+    const items: StoryListItem[] = rows.map((s) => ({
+      id: s.id,
+      title: s.title,
+      slug: s.slug,
+      type: s.type,
+      excerpt: s.excerpt,
+      sport: s.sport,
+      topic: s.topic,
+      readTime: s.readTime,
+      coverUrl: s.coverUrl,
+      published: s.published,
+      tag: s.topic, // tag
+      createdAt: s.createdAt,
+      author: s.author,
+      // TODO design this format for time:  (2 min ago, 3 hr ago)
+      time: new Date(s.createdAt.getHours()).toString(),
+    }));
+
+    return {
+      success: true,
+      message: "OK",
+      data: { items, page, pageSize, total },
+      error: null,
+      hasNext: total > skip + rows.length,
+    };
+  } catch (error) {
+    return { success: false, message: "Unexpected Error", error };
+  }
+}
+
+export async function getStoriesForCategories(
+  query: StoryListQueryInput = {},
+): Promise<
+  ActionResponse<{
+    items: StoryListItem[];
+    page: number;
+    pageSize: number;
     total: number;
   }>
 > {
@@ -234,8 +332,11 @@ export async function getStories(query: StoryListQueryInput = {}): Promise<
       readTime: s.readTime,
       coverUrl: s.coverUrl,
       published: s.published,
+      tag: s.topic, // tag
       createdAt: s.createdAt,
       author: s.author,
+      // TODO design this format for time:  (2 min ago, 3 hr ago)
+      time: new Date(s.createdAt.getHours()).toString(),
     }));
 
     return {
@@ -247,7 +348,6 @@ export async function getStories(query: StoryListQueryInput = {}): Promise<
     return { success: false, message: "Unexpected Error", error };
   }
 }
-
 export async function getStoryBySlug(
   slug: string,
 ): Promise<ActionResponse<StoryDetail | null>> {

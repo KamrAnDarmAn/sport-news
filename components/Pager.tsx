@@ -1,5 +1,7 @@
+'use client'
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Props {
     page: number;
@@ -17,9 +19,28 @@ const pageList = (current: number, total: number): (number | "…")[] => {
     return [1, "…", current - 1, current, current + 1, "…", total];
 };
 
-export const Pager = ({ page, total, onChange }: Props) => {
-    if (total <= 1) return null;
-    const items = pageList(page, total);
+export const Pager = ({ page, total }: Props) => {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+
+    const handleNavigation = (type: "prev" | "next") => {
+        const nextPageNumber =
+            type === "prev" ? Number(page) - 1 : Number(page) + 1;
+
+
+        // / {
+        // params: searchParams.toString(),
+        //     key: "page",
+        //         value: nextPageNumber.toString(),
+        // }
+
+
+        router.push(window.location.href + `?page=${page}`);
+    };
+    const items = Array(total)
+
+
+
     return (
         <nav aria-label="Pagination" className="flex items-center justify-center gap-1.5 mt-12">
             <button
@@ -45,7 +66,8 @@ export const Pager = ({ page, total, onChange }: Props) => {
                                 : "bg-card border border-border hover:border-primary",
                         )}
                     >
-                        {it}
+                        {/* {it} */}
+                        {i + 1}
                     </button>
                 ),
             )}

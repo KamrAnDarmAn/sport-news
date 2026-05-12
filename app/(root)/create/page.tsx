@@ -188,7 +188,7 @@ export default function CreateArticle() {
       }
 
       toast.success(asDraft ? "Draft saved" : "Published!");
-      router.replace(asDraft ? "/dashboard" : `/articles/${result.data.slug}`);
+      router.replace(asDraft ? "/dashboard" : `/articlessc/${result.data.slug}`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to publish";
       toast.error(message);

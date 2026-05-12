@@ -1,24 +1,27 @@
+
 import { PageHeader } from "@/components/PageHeader";
+import { Pager } from "@/components/Pager";
 import { getStories } from "@/lib/actions/story.actions";
 import { Clock } from "lucide-react";
 import Link from "next/link";
 
-// const items = [
-//     { time: "2 min ago", tag: "Football", title: "Manager confirms star striker fit for weekend clash", excerpt: "After two weeks on the sidelines, the talisman returns to full training..." },
-//     { time: "18 min ago", tag: "NBA", title: "Trade deadline shake-up: three teams, six picks involved", excerpt: "A late-night blockbuster reshapes the playoff picture..." },
-//     { time: "47 min ago", tag: "Tennis", title: "Wildcard upset rocks Madrid Open day one", excerpt: "Qualifier sends seeded star packing in straight sets..." },
-//     { time: "1 hr ago", tag: "F1", title: "Team unveils radical aero package ahead of Imola", excerpt: "Engineers chase tenths with bold sidepod redesign..." },
-//     { time: "2 hr ago", tag: "Cricket", title: "Young opener smashes maiden double-century", excerpt: "A breakthrough innings that signals a new era..." },
-//     { time: "3 hr ago", tag: "Esports", title: "Worlds qualifier: underdog roster shocks favorites", excerpt: "An unranked squad punches their ticket to the main event..." },
-// ];
 
-const Recent = async () => {
-    const recent = await getStories();
-    if (!(recent).success)
+const Recent = async ({ searchParams }: any) => {
+    const { page, pageSize, query, filter } = await searchParams;
+    const sort = filter === "popular" ? "popular" : "newest";
+    const { success, data, error } = await getStories({
+        page: Number(page) || 1,
+        pageSize: Number(pageSize) || 10,
+        search: query,
+        sort: sort as any,
+    });
+
+    if (!success)
         return <p>Stories not found</p>
 
 
-    const items = recent.data?.items
+    const { items, total, hasMore } = data || {};
+
 
     return (
         <div>
@@ -41,7 +44,9 @@ const Recent = async () => {
                         </div>
                     ))}
                 </div>
+                <Pager page={page || 1} total={pageSize} />
             </section>
+
         </div>
     )
 }

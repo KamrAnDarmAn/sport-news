@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "../prisma";
-import { console } from "inspector/promises";
+import { redirect } from "next/navigation";
 
 export const BOOKMARK_ACTIONS = {
   ADD: "ADD",
@@ -55,19 +55,31 @@ export const addAndRemoveBookmark = async (storyId: string) => {
   }
 };
 
-export const getUserBookmarks = async (userId: string) => {
+export const getUserBookmarks = async () => {
   try {
+    const session = await auth();
+    if (!session) redirect("/auth");
     const bookmarks = await prisma.bookmark.findMany({
       where: {
-        userId: userId,
+        userId: session?.user.id,
       },
       include: {
         story: true,
       },
     });
+
+    // story id: 06a41eea-976c-4be8-9c65-f306b3f0e68b
+    // user id: c3cb038a-0ea9-4459-a61d-ab86284884a6
+    // await prisma.bookmark.create({
+    //   data: {
+    //     storyId: "06a41eea-976c-4be8-9c65-f306b3f0e68b",
+    //     userId: "c3cb038a-0ea9-4459-a61d-ab86284884a6",
+    //   },
+    // });
+    console.log("BOOKMARKS IN ACTION: ", bookmarks);
     return {
       success: true,
-      bookmarks,
+      bookmarks: bookmarks.map((b) => b.story),
     };
   } catch (error) {
     return {
