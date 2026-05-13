@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "crypto";
+import { formatDistanceToNow } from "date-fns";
 import { Prisma } from "@/generated/prisma/client";
 
 import { auth } from "@/auth";
@@ -40,6 +41,11 @@ export type StoryListItem = {
   published: boolean;
   createdAt: Date;
   author: StoryAuthorPreview;
+  /** Display: relative created time */
+  timeAgo: string;
+  /** Display: topic label */
+  tag: string;
+  commentCount: number;
 };
 
 export type StoryDetail = StoryListItem & {
@@ -69,7 +75,6 @@ export async function createStory(
   input: Story,
 ): Promise<ActionResponse<{ id: string; slug: string }>> {
   try {
-    console.log("LOG - 1", input);
     const session = await auth();
     const userId = session?.user?.id;
     if (!userId || typeof userId !== "string") {
@@ -95,7 +100,6 @@ export async function createStory(
       };
     }
 
-    console.log("LOG - 2", parsed.data);
     const {
       title,
       content,
@@ -111,7 +115,6 @@ export async function createStory(
     const slug = uniqueSlug(base);
     const readTime = estimateReadTimeMinutes(content);
 
-    console.log("LOG - 3", { base, slug, readTime });
     const excerptDb = excerpt?.trim() ?? "";
     const sportDb = sport?.trim() ? sport.trim() : "General";
     const topicDb = topic?.trim() ? topic.trim() : "general";
@@ -135,8 +138,6 @@ export async function createStory(
         },
         select: { id: true, slug: true },
       });
-      console.log("LOG - 4", created);
-
       revalidatePath("/dashboard");
       revalidatePath("/news");
 
@@ -177,13 +178,15 @@ export async function getStories(query: StoryListQueryInput = {}): Promise<
     return { success: false, message: "Invalid query", error: parsed.error };
   }
 
-  const { page, pageSize, published, sport, topic, type, search } = parsed.data;
+  const { page, pageSize, published, sport, topic, type, search, sort, authorId } =
+    parsed.data;
 
   const skip = (page - 1) * pageSize;
   const take = pageSize;
 
   const where: Prisma.StoryWhereInput = {
     ...(typeof published === "boolean" ? { published } : {}),
+    ...(authorId ? { authorId } : {}),
     ...(sport
       ? { sport: { equals: sport, mode: "insensitive" as const } }
       : {}),
@@ -203,12 +206,17 @@ export async function getStories(query: StoryListQueryInput = {}): Promise<
       : {}),
   };
 
+  const orderBy: Prisma.StoryOrderByWithRelationInput[] =
+    sort === "popular"
+      ? [{ comments: { _count: "desc" } }, { createdAt: "desc" }]
+      : [{ createdAt: "desc" }];
+
   try {
     const [total, rows] = await prisma.$transaction([
       prisma.story.count({ where }),
       prisma.story.findMany({
         where,
-        orderBy: { createdAt: "desc" },
+        orderBy,
         skip: (page - 1) * pageSize,
         take,
         select: {
@@ -224,6 +232,7 @@ export async function getStories(query: StoryListQueryInput = {}): Promise<
           published: true,
           createdAt: true,
           author: { select: { id: true, fullName: true } },
+          _count: { select: { comments: true } },
         },
       }),
     ]);
@@ -239,11 +248,11 @@ export async function getStories(query: StoryListQueryInput = {}): Promise<
       readTime: s.readTime,
       coverUrl: s.coverUrl,
       published: s.published,
-      tag: s.topic, // tag
       createdAt: s.createdAt,
       author: s.author,
-      // TODO design this format for time:  (2 min ago, 3 hr ago)
-      time: new Date(s.createdAt.getHours()).toString(),
+      tag: s.topic,
+      timeAgo: formatDistanceToNow(s.createdAt, { addSuffix: true }),
+      commentCount: s._count.comments,
     }));
 
     return {
@@ -273,10 +282,12 @@ export async function getStoriesForCategories(
     return { success: false, message: "Invalid query", error: parsed.error };
   }
 
-  const { page, pageSize, published, sport, topic, type, search } = parsed.data;
+  const { page, pageSize, published, sport, topic, type, search, sort, authorId } =
+    parsed.data;
 
   const where: Prisma.StoryWhereInput = {
     ...(typeof published === "boolean" ? { published } : {}),
+    ...(authorId ? { authorId } : {}),
     ...(sport
       ? { sport: { equals: sport, mode: "insensitive" as const } }
       : {}),
@@ -296,12 +307,17 @@ export async function getStoriesForCategories(
       : {}),
   };
 
+  const orderBy: Prisma.StoryOrderByWithRelationInput[] =
+    sort === "popular"
+      ? [{ comments: { _count: "desc" } }, { createdAt: "desc" }]
+      : [{ createdAt: "desc" }];
+
   try {
     const [total, rows] = await prisma.$transaction([
       prisma.story.count({ where }),
       prisma.story.findMany({
         where,
-        orderBy: { createdAt: "desc" },
+        orderBy,
         skip: (page - 1) * pageSize,
         take: pageSize,
         select: {
@@ -317,6 +333,7 @@ export async function getStoriesForCategories(
           published: true,
           createdAt: true,
           author: { select: { id: true, fullName: true } },
+          _count: { select: { comments: true } },
         },
       }),
     ]);
@@ -332,11 +349,11 @@ export async function getStoriesForCategories(
       readTime: s.readTime,
       coverUrl: s.coverUrl,
       published: s.published,
-      tag: s.topic, // tag
       createdAt: s.createdAt,
       author: s.author,
-      // TODO design this format for time:  (2 min ago, 3 hr ago)
-      time: new Date(s.createdAt.getHours()).toString(),
+      tag: s.topic,
+      timeAgo: formatDistanceToNow(s.createdAt, { addSuffix: true }),
+      commentCount: s._count.comments,
     }));
 
     return {
@@ -374,6 +391,7 @@ export async function getStoryBySlug(
         author: {
           select: { id: true, fullName: true, email: true, role: true },
         },
+        _count: { select: { comments: true } },
       },
     });
 
@@ -394,7 +412,10 @@ export async function getStoryBySlug(
       coverUrl: story.coverUrl,
       published: story.published,
       createdAt: story.createdAt,
-      author: story.author,
+      author: { id: story.author.id, fullName: story.author.fullName },
+      tag: story.topic,
+      timeAgo: formatDistanceToNow(story.createdAt, { addSuffix: true }),
+      commentCount: story._count.comments,
     };
 
     return { success: true, message: "OK", data };
@@ -523,6 +544,84 @@ export async function deleteStory(
     revalidatePath(`/article/${existing.slug}`);
 
     return { success: true, message: "Story deleted", data: { id } };
+  } catch (error) {
+    return { success: false, message: "Unexpected Error", error };
+  }
+}
+
+export type EditorialRow = {
+  id: string;
+  slug: string;
+  title: string;
+  author: string;
+  sport: string;
+  status: "draft" | "review" | "scheduled" | "published";
+  updated: string;
+};
+
+export async function getEditorialStories(): Promise<
+  ActionResponse<EditorialRow[]>
+> {
+  try {
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId || typeof userId !== "string") {
+      return { success: false, message: "You must be signed in" };
+    }
+    if (!canPublish(session.user.role)) {
+      return { success: false, message: "You do not have permission" };
+    }
+
+    const isAdmin = session.user.role === "ADMIN";
+    const where: Prisma.StoryWhereInput = isAdmin ? {} : { authorId: userId };
+
+    const rows = await prisma.story.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      take: 200,
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        sport: true,
+        published: true,
+        createdAt: true,
+        author: { select: { fullName: true } },
+      },
+    });
+
+    const data: EditorialRow[] = rows.map((r) => ({
+      id: r.id,
+      slug: r.slug,
+      title: r.title,
+      author: r.author.fullName,
+      sport: r.sport,
+      status: r.published ? "published" : "draft",
+      updated: formatDistanceToNow(r.createdAt, { addSuffix: true }),
+    }));
+
+    return { success: true, message: "OK", data };
+  } catch (error) {
+    return { success: false, message: "Unexpected Error", error };
+  }
+}
+
+/** Lowercased sport label → count of published stories (best-effort aggregation). */
+export async function getPublishedStoryCountsBySport(): Promise<
+  ActionResponse<Record<string, number>>
+> {
+  try {
+    const rows = await prisma.story.groupBy({
+      by: ["sport"],
+      where: { published: true },
+      _count: { _all: true },
+    });
+    const data: Record<string, number> = {};
+    for (const r of rows) {
+      const key = r.sport.trim().toLowerCase();
+      data[key] = (data[key] ?? 0) + r._count._all;
+    }
+    return { success: true, message: "OK", data };
   } catch (error) {
     return { success: false, message: "Unexpected Error", error };
   }

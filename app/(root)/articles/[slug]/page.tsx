@@ -1,34 +1,20 @@
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Clock, User as UserIcon } from "lucide-react";
-// import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { SEO, breadcrumbJsonLd, newsArticleJsonLd } from "@/components/SEO";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BookmarkButton } from "@/components/BookMarkButton";
-import { track } from "@/lib/analytics";
 import Image from "next/image";
 import Link from "next/link";
 import { getStoryBySlug } from "@/lib/actions/story.actions";
 
-interface Post {
-    id: string; title: string; excerpt: string | null; content: string;
-    cover_image_url: string | null; sport: string | null; type: string;
-    created_at: string; updated_at?: string; author_id: string; slug: string;
-}
-interface Profile { display_name: string | null; avatar_url: string | null; }
-
-
 export default async function ArticleDetail({ params }: { params: Promise<{ slug: string }> }) {
-    const loading = false;
     const { slug } = await params;
 
-    const data = await getStoryBySlug(slug)
+    const data = await getStoryBySlug(slug);
+    const author = data.data?.author;
+    const post = data.data;
 
-    const author = data.data?.author
-    const post = data.data
-    console.log("LOG - 0", post);
-    // const author: Profile | null = post ? { display_name: "Author Name", avatar_url: null } : null; // Replace with actual author fetching logic
-
-    if (loading) return <div className="container py-20 text-muted-foreground">Loading…</div>;
     if (!post) return (
         <div className="container py-20 text-center">
             <SEO title="Article not found" noIndex />
@@ -37,64 +23,64 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
         </div>
     );
 
-    const url = typeof window !== "undefined" ? `${window.location.origin}/article/${post.slug}` : `/article/${post.slug}`;
-    const parent = post.type === "news" ? { name: "News", href: "/news" } : { name: "Articles", href: "/articles" };
+    const url = `/article/${post.slug}`;
+    const parent = post.type === "NEWS" ? { name: "News", href: "/news" } : { name: "Articles", href: "/articles" };
+    const typeLabel = post.type === "NEWS" ? "news" : "article";
 
     return (
         <article className="animate-fade-in">
-            {/* <SEO
+            <SEO
                 title={post.title}
                 description={post.excerpt ?? undefined}
-                image={post.cover_image_url ?? undefined}
+                image={post.coverUrl ?? undefined}
                 type="article"
                 canonical={url}
                 jsonLd={[
-                    breadcrumbJsonLd([parent, { name: post.title, href: `/article/${post.slug}` }]),
-                    newsArticleJsonLd({
-                        title: post.title,
-                        description: post.excerpt ?? undefined,
-                        image: post.cover_image_url ?? undefined,
-                        datePublished: post.created_at,
-                        dateModified: post.updated_at,
-                        authorName: author?.display_name ?? undefined,
-                        url,
-                    }),
+                    // breadcrumbJsonLd([parent, { name: post.title, href: `/article/${post.slug}` }]),
+                    // newsArticleJsonLd({
+                    //     title: post.title,
+                    //     description: post.excerpt ?? undefined,
+                    //     image: post.coverUrl ?? undefined,
+                    //     datePublished: post.createdAt.toISOString(),
+                    //     authorName: author?.fullName ?? undefined,
+                    //     url,
+                    // }),
                 ]}
-            /> */}
+            />
 
             <Breadcrumbs items={[parent, { name: post.title, href: `/article/${post.slug}` }]} />
 
-            {post.cover_image_url && (
+            {post.coverUrl && (
                 <div className="relative h-[50vh] overflow-hidden mt-4">
-                    <Image src={post.cover_image_url} width={40} alt={post.title} className="w-full h-full object-cover" />
+                    <Image src={post.coverUrl} width={1200} height={600} alt={post.title} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-transparent" />
                 </div>
             )}
             <div className="container max-w-3xl py-12 mx-auto ">
                 <div className="flex items-center justify-between mb-6">
-                    <Link href={post.type === "news" ? "/news" : "/articles"} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+                    <Link href={post.type === "NEWS" ? "/news" : "/articles"} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
                         <ArrowLeft className="w-4 h-4" /> Back
                     </Link>
                     <BookmarkButton
                         variant="labeled"
-                        item={{ id: post.id, title: post.title, href: `/article/${post.slug}`, sport: post.sport ?? undefined, image: post.cover_image_url ?? undefined, excerpt: post.excerpt ?? undefined }}
+                        item={{ id: post.id, title: post.title, href: `/article/${post.slug}`, sport: post.sport ?? undefined, image: post.coverUrl ?? undefined, excerpt: post.excerpt ?? undefined }}
                     />
                 </div>
                 <div className="flex items-center gap-2 mb-4">
                     {post.sport && <span className="px-3 py-1 rounded-full bg-gradient-primary text-primary-foreground text-xs font-bold uppercase tracking-wider">{post.sport}</span>}
-                    <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">{post.type}</span>
+                    <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">{typeLabel}</span>
                 </div>
                 <h1 className="text-4xl md:text-6xl font-black leading-tight mb-6 animate-fade-in">{post.title}</h1>
                 {post.excerpt && <p className="text-xl text-muted-foreground mb-8">{post.excerpt}</p>}
 
-                <Card className="flex items-center gap-4 p-4 mb-10 border-border/50">
+                <Card className="flex items-center gap-4 p-4 mb-10 border-border/50 flex-row">
                     <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center text-primary-foreground">
-                        {author?.avatar_url ? <Image height={20} src={author.avatar_url} alt="" className="w-full h-full rounded-full object-cover" /> : <UserIcon className="w-5 h-5" />}
+                        <UserIcon className="w-5 h-5" />
                     </div>
                     <div className="flex-1">
-                        <div className="font-semibold">{author?.display_name ?? "Editor"}</div>
+                        <div className="font-semibold">{author?.fullName ?? "Editor"}</div>
                         <div className="text-xs text-muted-foreground flex items-center gap-1">
-                            {/* <Clock className="w-3 h-3" /> {formatDistanceToNow(new Date(post.created_at).toString(), { addSuffix: true })} */}
+                            <Clock className="w-3 h-3" /> {formatDistanceToNow(post.createdAt, { addSuffix: true })}
                         </div>
                     </div>
                 </Card>

@@ -301,3 +301,22 @@ export const SPORTS: Record<string, SportInfo> = {
 };
 
 export const SPORT_LIST = Object.values(SPORTS);
+
+/** Match grouped DB sport keys (lowercase) to a curated category slug/name. */
+export function storyCountForSport(
+  counts: Record<string, number>,
+  slug: string,
+  name: string,
+): number {
+  const candidates = [
+    name.toLowerCase(),
+    slug.toLowerCase(),
+    slug.replace(/-/g, " ").toLowerCase(),
+  ];
+  let n = 0;
+  for (const k of candidates) n = Math.max(n, counts[k] ?? 0);
+  if (slug === "f1-racing") {
+    n = Math.max(n, counts["f1"] ?? 0, counts["formula 1"] ?? 0);
+  }
+  return n;
+}

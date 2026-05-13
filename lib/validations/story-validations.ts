@@ -41,6 +41,7 @@ export const StoryListQuerySchema = z.object({
   search: z.string().trim().optional(),
   sort: z.string().trim().optional(),
   hasNext: z.boolean().optional(),
+  authorId: z.string().trim().min(1).optional(),
 });
 
 export type StoryListQuery = z.infer<typeof StoryListQuerySchema>;

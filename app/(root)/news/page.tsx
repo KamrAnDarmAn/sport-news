@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { SEO, breadcrumbJsonLd } from "@/components/SEO";
@@ -14,6 +14,7 @@ import { Newspaper, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { track } from "@/lib/analytics";
 import Image from "next/image";
+import { getStories, type StoryListItem } from "@/lib/actions/story.actions";
 
 interface Post {
     id: string;
@@ -32,36 +33,62 @@ interface Post {
 const SPORTS = ["all", "football", "basketball", "tennis", "f1-racing", "cricket", "esports"];
 const PAGE_SIZE = 9;
 
-const posts: Post[] = [
-    { tag: "Tactics", read: "12 min", title: "The False 9 Renaissance: How modern teams are reinventing Cruyff's idea", author: "M. Calvo", cover_image_url: '', created_at: '', excerpt: " teams are reinventing Cruyff's idea", id: " teams are reinventing Cruyff's idea", slug: " teams are reinventing Cruyff's idea", sport: 'footbal', type: 'news' },
-    { tag: "Long Read", read: "18 min", title: "Inside the academy that quietly produces half of Europe's top defenders", author: "S. Okafor", cover_image_url: '', created_at: '', excerpt: " teams are reinventing Cruyff's idea", id: " teams are reinventing Cruyff's idea", slug: " teams are reinventing Cruyff's idea", sport: 'footbal', type: 'news' },
-    { tag: "Interview", read: "8 min", title: "On burnout, comebacks, and what's next: a candid sit-down", author: "L. Tanaka", cover_image_url: '', created_at: '', excerpt: " teams are reinventing Cruyff's idea", id: " teams are reinventing Cruyff's idea", slug: " teams are reinventing Cruyff's idea", sport: 'footbal', type: 'news' },
-    { tag: "Data", read: "10 min", title: "xG isn't enough anymore — meet the metrics shaping 2026", author: "R. Patel", cover_image_url: "", created_at: new Date().toISOString(), excerpt: "Metrics recap", id: "data-xg", slug: "xg-metrics-2026", sport: "football", type: "news" },
-    { tag: "Culture", read: "15 min", title: "Ultras 2.0: how fan culture is being rewritten by Gen Z", author: "A. Nowak", cover_image_url: '', created_at: '', excerpt: " teams are reinventing Cruyff's idea", id: " teams are reinventing Cruyff's idea", slug: " teams are reinventing Cruyff's idea", sport: 'footbal', type: 'news' },
-    { tag: "Opinion", read: "6 min", title: "Why the salary cap conversation is finally serious", author: "J. Brooks", cover_image_url: '', created_at: '', excerpt: " teams are reinventing Cruyff's idea", id: " teams are reinventing Cruyff's idea", slug: " teams are reinventing Cruyff's idea", sport: 'footbal', type: 'news' },
-];
+function mapStory(s: StoryListItem): Post {
+    return {
+        id: s.id,
+        title: s.title,
+        slug: s.slug,
+        excerpt: s.excerpt,
+        cover_image_url: s.coverUrl,
+        sport: s.sport,
+        type: s.type === "NEWS" ? "news" : "article",
+        created_at: s.createdAt.toISOString(),
+        tag: s.tag,
+        read: `${s.readTime} min`,
+        author: s.author.fullName,
+    };
+}
 
 export default function News() {
-
     const [q, setQ] = useState("");
     const [sport, setSport] = useState("all");
     const [page, setPage] = useState(1);
-    const loading = false;
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [total, setTotal] = useState(0);
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        setPage(1);
+    }, [q, sport]);
 
-    useEffect(() => { setPage(1); }, [q, sport]);
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            setLoading(true);
+            const res = await getStories({
+                page,
+                pageSize: PAGE_SIZE,
+                published: true,
+                type: "news",
+                search: q.trim() || undefined,
+                sport: sport !== "all" ? sport : undefined,
+            });
+            if (cancelled) return;
+            if (res.success && res.data) {
+                setPosts(res.data.items.map(mapStory));
+                setTotal(res.data.total);
+            } else {
+                setPosts([]);
+                setTotal(0);
+            }
+            setLoading(false);
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [page, q, sport]);
 
-    const filtered = useMemo(() => {
-        const needle = q.trim().toLowerCase();
-        return posts.filter((p) => {
-            if (sport !== "all" && p.sport?.toLowerCase() !== sport) return false;
-            if (!needle) return true;
-            return p.title.toLowerCase().includes(needle) || p.excerpt?.toLowerCase().includes(needle);
-        });
-    }, [posts, q, sport]);
-
-    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-    const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
     return (
         <div>
@@ -84,7 +111,7 @@ export default function News() {
                     />
                     {!loading && (
                         <p className="text-xs text-muted-foreground">
-                            {filtered.length} {filtered.length === 1 ? "story" : "stories"}
+                            {total} {total === 1 ? "story" : "stories"}
                             {q && <> matching "<span className="text-foreground font-semibold">{q}</span>"</>}
                         </p>
                     )}
@@ -92,7 +119,7 @@ export default function News() {
 
                 {loading ? (
                     <p className="text-muted-foreground">Loading…</p>
-                ) : filtered.length === 0 ? (
+                ) : posts.length === 0 ? (
                     <Card className="p-12 text-center">
                         <Newspaper className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                         <h3 className="text-xl font-bold mb-2">No stories match</h3>
@@ -101,20 +128,19 @@ export default function News() {
                 ) : (
                     <>
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {paged.map((p, i) => (
+                            {posts.map((p, i) => (
                                 <div key={p.id} className="group relative animate-fade-in" style={{ animationDelay: `${i * 40}ms` }}>
                                     <Link href={`/article/${p.slug}`} onClick={() => track("article_open", { id: p.id, scope: "news" })}>
                                         <Card className="overflow-hidden h-full hover:shadow-glow transition-smooth border-border/50">
                                             {p.cover_image_url ? (
-                                                <Image height={200} src={p.cover_image_url} alt={p.title} className="w-full h-48 object-cover group-hover:scale-105 transition-smooth" />
+                                                <Image height={200} width={800} src={p.cover_image_url} alt={p.title} className="w-full h-48 object-cover group-hover:scale-105 transition-smooth" />
                                             ) : (
-                                                // Placeholder for articles without a cover image
                                                 <div className="w-full h-48 bg-gradient-primary opacity-80" />
                                             )}
                                             <div className="p-5">
                                                 <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
                                                     {p.sport && <span className="px-2 py-0.5 rounded-full bg-muted font-semibold uppercase tracking-wider">{p.sport}</span>}
-                                                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{new Date().toISOString()}</span>
+                                                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{formatDistanceToNow(new Date(p.created_at), { addSuffix: true })}</span>
                                                 </div>
                                                 <h3 className="text-lg font-bold mb-2 group-hover:text-gradient-primary transition-smooth line-clamp-2">{p.title}</h3>
                                                 {p.excerpt && <p className="text-sm text-muted-foreground line-clamp-3">{p.excerpt}</p>}

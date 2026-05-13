@@ -1,15 +1,46 @@
 'use client'
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, Clock, Star, Trophy } from "lucide-react";
-import { SPORTS, SPORT_LIST } from "@/lib/sports-data";
+import { SPORTS, SPORT_LIST, storyCountForSport } from "@/lib/sports-data";
 import { SEO, breadcrumbJsonLd } from "@/components/SEO";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { getPublishedStoryCountsBySport, getStories, type StoryListItem } from "@/lib/actions/story.actions";
 
 const SportDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const sportName = slug;
   const sport = sportName ? SPORTS[sportName.toLowerCase()] : undefined;
+  const [dbNews, setDbNews] = useState<StoryListItem[]>([]);
+  const [storyCount, setStoryCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!slug) return;
+    const sp = SPORTS[slug.toLowerCase()];
+    if (!sp) return;
+    let cancelled = false;
+    (async () => {
+      const [storiesRes, countsRes] = await Promise.all([
+        getStories({
+          page: 1,
+          pageSize: 10,
+          published: true,
+          sport: sp.name,
+          sort: "popular",
+        }),
+        getPublishedStoryCountsBySport(),
+      ]);
+      if (cancelled) return;
+      if (storiesRes.success && storiesRes.data) setDbNews(storiesRes.data.items);
+      if (countsRes.success && countsRes.data) {
+        setStoryCount(storyCountForSport(countsRes.data, sp.slug, sp.name));
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
 
   if (!sport) {
     return (
@@ -26,14 +57,14 @@ const SportDetail = () => {
   }
 
   const others = SPORT_LIST.filter((s) => s.slug !== sport.slug).slice(0, 5);
-  const crumbs = [{ name: "Category", href: "/category" }, { name: sport.name, href: `/sport/${sport.slug}` }];
+  const crumbs = [{ name: "Category", href: "/category" }, { name: sport.name, href: `/categories/${sport.slug}` }];
 
   return (
     <div className="mx-auto">
       <SEO
         title={`${sport.name} News & Coverage`}
         description={sport.description}
-        canonical={typeof window !== "undefined" ? `${window.location.origin}/sport/${sport.slug}` : undefined}
+        canonical={typeof window !== "undefined" ? `${window.location.origin}/categories/${sport.slug}` : undefined}
         jsonLd={breadcrumbJsonLd(crumbs)}
       />
       <Breadcrumbs items={crumbs} />
@@ -61,7 +92,7 @@ const SportDetail = () => {
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mb-6">{sport.description}</p>
               <div className="flex flex-wrap gap-3">
-                <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">{sport.count} stories</span>
+                <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">{storyCount ?? sport.count} stories</span>
                 <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">Live coverage</span>
                 <span className="px-3 py-1.5 rounded-full bg-gradient-primary text-primary-foreground text-xs font-bold">Editor's pick</span>
               </div>
@@ -81,16 +112,25 @@ const SportDetail = () => {
             </Link>
           </div>
           <div className="space-y-4">
-            {sport.topNews.map((n, i) => (
-              <article key={i} style={{ animationDelay: `${i * 80}ms` }} className="group p-6 rounded-2xl bg-card border border-border hover:border-primary hover:shadow-glow transition-smooth cursor-pointer animate-fade-in">
-                <div className="flex items-center gap-3 mb-2 text-xs">
-                  <span className="inline-flex items-center gap-1 text-primary font-bold"><Clock className="w-3 h-3" /> {n.time}</span>
-                  <span className="px-2 py-0.5 rounded-full bg-muted font-bold uppercase tracking-wider">{sport.name}</span>
-                </div>
-                <h3 className="text-xl font-bold mb-2 group-hover:text-gradient-primary transition-smooth">{n.title}</h3>
-                <p className="text-sm text-muted-foreground">{n.excerpt}</p>
-              </article>
-            ))}
+            {dbNews.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-6">No published stories in this sport yet.</p>
+            ) : (
+              dbNews.map((n, i) => (
+                <Link
+                  key={n.id}
+                  href={n.type === "NEWS" ? `/news/${n.slug}` : `/articles/${n.slug}`}
+                  style={{ animationDelay: `${i * 80}ms` }}
+                  className="block group p-6 rounded-2xl bg-card border border-border hover:border-primary hover:shadow-glow transition-smooth cursor-pointer animate-fade-in"
+                >
+                  <div className="flex items-center gap-3 mb-2 text-xs">
+                    <span className="inline-flex items-center gap-1 text-primary font-bold"><Clock className="w-3 h-3" /> {n.timeAgo}</span>
+                    <span className="px-2 py-0.5 rounded-full bg-muted font-bold uppercase tracking-wider">{sport.name}</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 group-hover:text-gradient-primary transition-smooth">{n.title}</h3>
+                  <p className="text-sm text-muted-foreground">{n.excerpt}</p>
+                </Link>
+              ))
+            )}
           </div>
         </div>
 
@@ -124,7 +164,7 @@ const SportDetail = () => {
             <h3 className="text-lg font-black mb-4">Other Sports</h3>
             <div className="space-y-2">
               {others.map((o) => (
-                <Link key={o.slug} href={`/sport/${o.slug}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted transition-smooth group">
+                <Link key={o.slug} href={`/categories/${o.slug}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted transition-smooth group">
                   <span className="text-2xl">{o.icon}</span>
                   <span className="font-semibold text-sm flex-1 group-hover:text-primary transition-smooth">{o.name}</span>
                   <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-smooth" />

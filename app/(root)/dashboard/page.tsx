@@ -25,6 +25,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { getStories } from "@/lib/actions/story.actions";
 
 interface Post {
   id: string;
@@ -51,7 +52,7 @@ const StatCard = ({ icon: Icon, label, value, accent }: { icon: any; label: stri
 
 export default function Dashboard() {
   const { items: bookmarks } = useBookmarks();
-  const [myPosts, setMyPosts] = useState<Post[] | null>(null);
+  const [myPosts, setMyPosts] = useState<Post[]>([]);
   const [allPosts, setAllPosts] = useState<Post[] | null>(null);
   const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null } | null>(null);
   const router = useRouter();
@@ -60,33 +61,54 @@ export default function Dashboard() {
   const isAdmin = user ? session.user.role === 'ADMIN' : false;
   const loading = status === "loading";
   useEffect(() => {
-    // if (!user) return;
-    // (async () => {
-    //   const { data: p } = await supabase
-    //     .from("profiles")
-    //     .select("display_name,avatar_url")
-    //     .eq("id", user.id)
-    //     .maybeSingle();
-    //   setProfile(p as any);
+    if (!user?.id) return;
+    let cancelled = false;
+    (async () => {
+      const mine = await getStories({
+        authorId: user.id,
+        pageSize: 50,
+      });
+      if (cancelled) return;
+      if (mine.success && mine.data) {
+        setMyPosts(
+          mine.data.items.map((s) => ({
+            id: s.id,
+            title: s.title,
+            slug: s.slug,
+            type: s.type === "NEWS" ? "news" : "article",
+            sport: s.sport,
+            published: s.published,
+            created_at: s.createdAt.toISOString(),
+            cover_image_url: s.coverUrl,
+          })),
+        );
+      } else setMyPosts([]);
 
-    //   const { data: mine } = await supabase
-    //     .from("posts")
-    //     .select("id,title,slug,type,sport,published,created_at,cover_image_url")
-    //     .eq("author_id", user.id)
-    //     .order("created_at", { ascending: false })
-    //     .limit(20);
-    //   setMyPosts((mine as Post[]) ?? []);
-
-    //   if (isAdmin) {
-    //     const { data: all } = await supabase
-    //       .from("posts")
-    //       .select("id,title,slug,type,sport,published,created_at,cover_image_url")
-    //       .order("created_at", { ascending: false })
-    //       .limit(20);
-    //     setAllPosts((all as Post[]) ?? []);
-    //   }
-    // })();
-  }, [user, isAdmin]);
+      if (isAdmin) {
+        const all = await getStories({ pageSize: 50 });
+        if (cancelled) return;
+        if (all.success && all.data) {
+          setAllPosts(
+            all.data.items.map((s) => ({
+              id: s.id,
+              title: s.title,
+              slug: s.slug,
+              type: s.type === "NEWS" ? "news" : "article",
+              sport: s.sport,
+              published: s.published,
+              created_at: s.createdAt.toISOString(),
+              cover_image_url: s.coverUrl,
+            })),
+          );
+        } else setAllPosts([]);
+      } else {
+        setAllPosts(null);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id, isAdmin]);
 
   if (loading) {
     return (
@@ -146,7 +168,7 @@ export default function Dashboard() {
           <StatCard icon={Bookmark} label="Bookmarks" value={bookmarks.length} />
           {isAdmin ? (
             <>
-              <StatCard icon={FileText} label="Your posts" value={myPosts?.length ?? "—"} accent="bg-blue-500" />
+              <StatCard icon={FileText} label="Your posts" value={myPosts.length} accent="bg-blue-500" />
               <StatCard icon={Newspaper} label="All posts" value={allPosts?.length ?? "—"} accent="bg-emerald-500" />
               <StatCard icon={Users} label="Team" value={3} accent="bg-amber-500" />
             </>
@@ -194,9 +216,7 @@ export default function Dashboard() {
 
           {/* My posts */}
           <TabsContent value="mine" className="mt-6">
-            {!myPosts ? (
-              <Skeleton className="h-40 w-full" />
-            ) : myPosts.length === 0 ? (
+            {myPosts.length === 0 ? (
               <Card className="p-12 text-center border-dashed">
                 <PenLine className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
                 <p className="text-muted-foreground mb-4">You haven&apos;t published anything yet.</p>

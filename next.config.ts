@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["source.unsplash.com"],
   },
+  async rewrites() {
+    return [{ source: "/article/:slug", destination: "/articles/:slug" }];
+  },
 };
 
 export default nextConfig;

@@ -11,7 +11,6 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Flame, Mail, Lock, User as UserIcon } from "lucide-react";
 import Link from "next/link";
-import { registerUser } from "@/lib/actions/register-user";
 import { signInWithCredentials, signUpWithCredentials } from "@/lib/actions/auth.actions";
 
 const schema = z.object({

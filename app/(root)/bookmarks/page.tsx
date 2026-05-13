@@ -2,10 +2,9 @@
 import { PageHeader } from "@/components/PageHeader";
 import { SEO } from "@/components/SEO";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { Bookmark as BIcon, Trash2, Clock } from "lucide-react";
+import { Bookmark as BIcon, Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { formatDistanceToNow } from "date-fns";
 // import { breadcrumbJsonLd } from "@/components/SEO";
 import Link from "next/link";
 import Image from "next/image";
@@ -16,7 +15,6 @@ import { redirect } from "next/navigation";
 const Bookmarks = async () => {
     // const { items, remove, clear } = useBookmarks();
     const data = await getUserBookmarks()
-    console.log('BOOKMARS, DATA: ', data)
     if (!data.success)
         redirect('/')
 
@@ -61,9 +59,9 @@ const Bookmarks = async () => {
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {bookmarks && bookmarks.map((b, i) => (
                                 <Card key={b.id} className="group overflow-hidden border-border/50 animate-fade-in" style={{ animationDelay: `${i * 50}ms` }}>
-                                    <Link href={`news/${b.id}`}>
-                                        {b.image ? (
-                                            <Image height={30} src={b.image} alt={b.title} className="w-full h-44 object-cover group-hover:scale-105 transition-smooth" />
+                                    <Link href={`/article/${b.slug}`}>
+                                        {b.coverUrl ? (
+                                            <Image height={176} width={400} src={b.coverUrl} alt={b.title} className="w-full h-44 object-cover group-hover:scale-105 transition-smooth" />
                                         ) : (
                                             <div className="w-full h-44 bg-gradient-primary opacity-80" />
                                         )}
@@ -71,10 +69,9 @@ const Bookmarks = async () => {
                                     <div className="p-5">
                                         <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
                                             {b.sport && <span className="px-2 py-0.5 rounded-full bg-muted font-semibold uppercase tracking-wider">{b.sport}</span>}
-                                            {/* <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" />Saved {formatDistanceToNow(new Date(b.savedAt), { addSuffix: true })}</span> */}
-                                            <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" />Saved {new Date().getFullYear()}</span>
+                                            <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" />Saved {b.timeAgo}</span>
                                         </div>
-                                        <Link href={`news/${b.id}`}><h3 className="text-lg font-bold mb-2 group-hover:text-gradient-primary transition-smooth line-clamp-2">{b.title}</h3></Link>
+                                        <Link href={`/article/${b.slug}`}><h3 className="text-lg font-bold mb-2 group-hover:text-gradient-primary transition-smooth line-clamp-2">{b.title}</h3></Link>
                                         {b.excerpt && <p className="text-sm text-muted-foreground line-clamp-3 mb-3">{b.excerpt}</p>}
                                         {/* <button onClick={() => remove(b.id)} className="text-xs font-bold text-muted-foreground hover:text-destructive transition-smooth inline-flex items-center gap-1">
                                             <Trash2 className="w-3 h-3" /> Remove
