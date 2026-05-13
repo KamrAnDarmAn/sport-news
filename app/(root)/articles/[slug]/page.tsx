@@ -48,7 +48,6 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
                 ]}
             />
 
-            <Breadcrumbs items={[parent, { name: post.title, href: `/article/${post.slug}` }]} />
 
             {post.coverUrl && (
                 <div className="relative h-[50vh] overflow-hidden mt-4">
@@ -56,7 +55,8 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
                     <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-transparent" />
                 </div>
             )}
-            <div className="container max-w-3xl py-12 mx-auto ">
+            <div className="container max-w-3xl py-12 mx-auto space-y-2">
+                <Breadcrumbs items={[parent, { name: post.title, href: `/article/${post.slug}` }]} />
                 <div className="flex items-center justify-between mb-6">
                     <Link href={post.type === "NEWS" ? "/news" : "/articles"} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
                         <ArrowLeft className="w-4 h-4" /> Back

@@ -7,6 +7,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getPublishedStoryCountsBySport, getStories, type StoryListItem } from "@/lib/actions/story.actions";
+import { PageHeader } from "@/components/PageHeader";
 
 const SportDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -60,49 +61,30 @@ const SportDetail = () => {
   const crumbs = [{ name: "Category", href: "/category" }, { name: sport.name, href: `/categories/${sport.slug}` }];
 
   return (
-    <div className="mx-auto">
+    <div >
       <SEO
         title={`${sport.name} News & Coverage`}
         description={sport.description}
         canonical={typeof window !== "undefined" ? `${window.location.origin}/categories/${sport.slug}` : undefined}
         jsonLd={breadcrumbJsonLd(crumbs)}
       />
-      <Breadcrumbs items={crumbs} />
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-border mx-auto">
-        <div className={`absolute inset-0 bg-gradient-to-br ${sport.gradient} opacity-20`} />
-        <div className="absolute inset-0 grid-pattern opacity-30" />
-        <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-gradient-primary blur-3xl opacity-20 animate-float" />
-        <div className="container relative py-20 md:py-28 animate-fade-in">
-          <Link href="/category" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-smooth mb-8">
-            <ArrowLeft className="w-4 h-4" /> All categories
-          </Link>
-          <div className="flex items-start gap-6 flex-wrap">
-            <div className="text-8xl md:text-9xl animate-float">{sport.icon}</div>
-            <div className="flex-1 min-w-0">
-              <span className="inline-block px-4 py-1.5 rounded-full bg-muted border border-border text-xs font-bold uppercase tracking-widest mb-4">
-                {sport.tagline}
-              </span>
-              <h1 className="text-5xl md:text-7xl font-black leading-[0.95] mb-4">
-                {sport.name.split(" ").map((w, i, arr) => (
-                  <span key={i} className={i === arr.length - 1 ? "text-gradient-primary" : ""}>
-                    {w}{i < arr.length - 1 ? " " : ""}
-                  </span>
-                ))}
-              </h1>
-              <p className="text-lg text-muted-foreground max-w-2xl mb-6">{sport.description}</p>
-              <div className="flex flex-wrap gap-3">
-                <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">{storyCount ?? sport.count} stories</span>
-                <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">Live coverage</span>
-                <span className="px-3 py-1.5 rounded-full bg-gradient-primary text-primary-foreground text-xs font-bold">Editor's pick</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
+
+      <PageHeader
+        title={sport.name}
+        eyebrow={sport.tagline}
+        subtitle={sport.description}
+
+      >
+        <div className="flex flex-wrap gap-3">
+          <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">{storyCount ?? sport.count} stories</span>
+          <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">Live coverage</span>
+          <span className="px-3 py-1.5 rounded-full bg-gradient-primary text-primary-foreground text-xs font-bold">Editor's pick</span>
+        </div>
+      </PageHeader>
       {/* CONTENT */}
-      <section className="container py-16 grid lg:grid-cols-3 gap-10">
+      <section className="container py-16 grid lg:grid-cols-3 gap-10 mx-auto">
         {/* News */}
         <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-6">
