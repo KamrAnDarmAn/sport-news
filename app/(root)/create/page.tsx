@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -33,13 +33,14 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
-import { redirect, useRouter } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { createStory } from "@/lib/actions/story.actions";
+import { createStory, getStoryById, updateStory } from "@/lib/actions/story.actions";
 import {
   CreateStoryFormSchema,
   type CreateStoryFormValues,
 } from "@/lib/validations/story-validations";
+import { canPublish } from "@/lib/authz";
 
 const slugify = (s: string) =>
   s
@@ -79,7 +80,7 @@ const FORM_ID = "create-story-form";
 export default function CreateArticle() {
   const { data: session } = useSession();
   const user = session?.user;
-  const isAdmin = user ? session.user.role === "ADMIN" : false;
+  const isEditor = user ? canPublish(session.user.role) : false;
   const loading = false;
   const contentRef = useRef<HTMLTextAreaElement>(null);
   const [tags, setTags] = useState<string[]>([]);
@@ -87,6 +88,8 @@ export default function CreateArticle() {
   const [saving, setSaving] = useState(false);
   const [tab, setTab] = useState<"write" | "preview">("write");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("edit");
 
   const form = useForm<CreateStoryFormValues>({
     resolver: zodResolver(CreateStoryFormSchema),
@@ -117,7 +120,7 @@ export default function CreateArticle() {
     redirect("/auth");
     return null;
   }
-  if (!isAdmin) {
+  if (!isEditor) {
     return (
       <div className="container py-20 max-w-xl">
         <SEO title="Editor — Access denied" noIndex />
@@ -125,12 +128,42 @@ export default function CreateArticle() {
           <ShieldAlert className="w-12 h-12 mx-auto mb-4 text-primary" />
           <h2 className="text-2xl font-bold mb-2">Editors only</h2>
           <p className="text-muted-foreground">
-            Only editors with admin privileges can publish posts. Ask an admin to grant you the role.
+            Sign in with an editor or admin account to publish posts.
           </p>
         </Card>
       </div>
     );
   }
+
+  useEffect(() => {
+    if (!editId) return;
+    let cancelled = false;
+    (async () => {
+      const res = await getStoryById(editId);
+      if (cancelled) return;
+      if (!res.success || !res.data) return;
+
+      form.setValue("title", res.data.title, { shouldDirty: false });
+      form.setValue("excerpt", res.data.excerpt ?? "", { shouldDirty: false });
+      form.setValue("content", res.data.content ?? "", { shouldDirty: false });
+      form.setValue("cover_image_url", res.data.coverUrl ?? "", { shouldDirty: false });
+      form.setValue("sport", res.data.sport ?? "", { shouldDirty: false });
+      form.setValue(
+        "type",
+        res.data.type === "NEWS" ? "news" : "article",
+        { shouldDirty: false },
+      );
+      const t = (res.data.topic ?? "")
+        .split(",")
+        .map((x) => x.trim())
+        .filter(Boolean);
+      setTags(t);
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editId]);
 
   const wrap = (before: string, after = before, placeholder = "text") => {
     const el = contentRef.current;
@@ -174,21 +207,23 @@ export default function CreateArticle() {
   const processSubmit = async (data: CreateStoryFormValues, asDraft: boolean) => {
     setSaving(true);
     try {
-      const result = await createStory({
+      const payload = {
         ...data,
         published: !asDraft,
         topic: tags.length > 0 ? tags.join(", ") : undefined,
-      });
+      };
 
-      console.log('RESULT: ', result)
+      const result = editId
+        ? await updateStory({ id: editId, ...payload, published: !asDraft })
+        : await createStory(payload);
 
       if (!result.success || !result.data) {
         toast.error(result.message);
         return;
       }
 
-      toast.success(asDraft ? "Draft saved" : "Published!");
-      router.replace(asDraft ? "/dashboard" : `/articlessc/${result.data.slug}`);
+      toast.success(asDraft ? "Draft saved" : (editId ? "Updated!" : "Published!"));
+      router.replace(asDraft ? "/dashboard" : `/article/${result.data.slug}`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to publish";
       toast.error(message);
@@ -216,11 +251,11 @@ export default function CreateArticle() {
     <div>
       <SEO title="Write a story" noIndex />
       <Breadcrumbs
-        items={[{ name: "Editorial", href: "/editorial" }, { name: "New", href: "/create" }]}
+        items={[{ name: "Editorial", href: "/editorial" }, { name: editId ? "Edit" : "New", href: "/create" }]}
       />
       <PageHeader
         eyebrow="Editor"
-        title="Publish a Story"
+        title={editId ? "Edit Story" : "Publish a Story"}
         subtitle="Craft news flashes or long-form articles for the Pulse audience."
       />
 

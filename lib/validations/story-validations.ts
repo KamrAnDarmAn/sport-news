@@ -15,6 +15,9 @@ export const StorySchema = z.object({
   slug: z.string().trim().max(200).optional(),
   topic: z.string().trim().max(100).optional(),
   published: z.boolean().optional(),
+  /** ISO datetime string; if in the future, story is scheduled (unpublished until then). */
+  scheduled_publish_at: z.string().trim().optional(),
+  in_review: z.boolean().optional(),
 });
 
 export type Story = z.infer<typeof StorySchema>;
@@ -57,6 +60,9 @@ export const StoryUpdateSchema = z.object({
   topic: z.string().trim().max(100).optional(),
   type: z.enum(["news", "article"]).optional(),
   published: z.boolean().optional(),
+  in_review: z.boolean().optional(),
+  /** ISO datetime for schedule; empty string clears scheduling. */
+  scheduled_publish_at: z.union([z.string(), z.literal("")]).optional(),
 });
 
 export type StoryUpdate = z.infer<typeof StoryUpdateSchema>;

@@ -109,8 +109,11 @@ export const StoryScalarFieldEnum = {
   readTime: 'readTime',
   coverUrl: 'coverUrl',
   published: 'published',
+  scheduledPublishAt: 'scheduledPublishAt',
+  inReview: 'inReview',
   authorId: 'authorId',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type StoryScalarFieldEnum = (typeof StoryScalarFieldEnum)[keyof typeof StoryScalarFieldEnum]

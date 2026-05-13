@@ -9,6 +9,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { CalendarClock, FileEdit, CheckCircle2, AlertCircle, PenLine, Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
 import type { EditorialRow } from "@/lib/actions/story.actions";
+import { deleteStory, publishStory, setStoryInReview, unpublishStory } from "@/lib/actions/story.actions";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type Status = "draft" | "review" | "scheduled" | "published";
 
@@ -29,6 +32,8 @@ export default function EditorialClient({
     access: Access;
 }) {
     const [tab, setTab] = useState<Status | "all">("all");
+    const [busyId, setBusyId] = useState<string | null>(null);
+    const router = useRouter();
 
     if (access !== "ok") {
         return (
@@ -47,6 +52,49 @@ export default function EditorialClient({
 
     const filtered = tab === "all" ? items : items.filter((i) => i.status === tab);
     const counts = items.reduce<Record<string, number>>((a, i) => ({ ...a, [i.status]: (a[i.status] || 0) + 1 }), {});
+
+    const doDelete = async (id: string) => {
+        setBusyId(id);
+        try {
+            const res = await deleteStory(id);
+            if (!res.success) toast.error(res.message);
+            else {
+                toast.success("Deleted");
+                router.refresh();
+            }
+        } finally {
+            setBusyId(null);
+        }
+    };
+
+    const doTogglePublish = async (row: EditorialRow) => {
+        setBusyId(row.id);
+        try {
+            const res = row.status === "published" ? await unpublishStory(row.id) : await publishStory(row.id);
+            if (!res.success) toast.error(res.message);
+            else {
+                toast.success(res.message);
+                router.refresh();
+            }
+        } finally {
+            setBusyId(null);
+        }
+    };
+
+    const doToggleReview = async (row: EditorialRow) => {
+        setBusyId(row.id);
+        try {
+            const next = row.status !== "review";
+            const res = await setStoryInReview(row.id, next);
+            if (!res.success) toast.error(res.message);
+            else {
+                toast.success(next ? "Sent to review" : "Moved to draft");
+                router.refresh();
+            }
+        } finally {
+            setBusyId(null);
+        }
+    };
 
     return (
         <div>
@@ -105,16 +153,26 @@ export default function EditorialClient({
                                 <div className="col-span-4 md:col-span-2 text-sm">{it.author}</div>
                                 <div className="col-span-4 md:col-span-2 text-sm text-muted-foreground">{it.sport}</div>
                                 <div className="col-span-4 md:col-span-2">
-                                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${cfg.tone}`}>
+                                    <button
+                                        type="button"
+                                        onClick={(e) => (e.shiftKey ? doToggleReview(it) : doTogglePublish(it))}
+                                        disabled={busyId === it.id}
+                                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${cfg.tone} disabled:opacity-60`}
+                                        title={it.status === "published" ? "Unpublish" : "Publish now (Shift: review)"}
+                                    >
                                         <cfg.icon className="w-3 h-3" /> {cfg.label}
-                                    </span>
+                                    </button>
                                 </div>
                                 <div className="col-span-12 md:col-span-1 flex justify-end gap-1">
                                     <Button size="icon" variant="ghost" aria-label="Preview" asChild>
                                         <Link href={`/article/${it.slug}`}><Eye className="w-4 h-4" /></Link>
                                     </Button>
-                                    <Button size="icon" variant="ghost" aria-label="Edit"><PenLine className="w-4 h-4" /></Button>
-                                    <Button size="icon" variant="ghost" aria-label="Delete"><Trash2 className="w-4 h-4" /></Button>
+                                    <Button size="icon" variant="ghost" aria-label="Edit" asChild>
+                                        <Link href={`/create?edit=${it.id}`}><PenLine className="w-4 h-4" /></Link>
+                                    </Button>
+                                    <Button size="icon" variant="ghost" aria-label="Delete" onClick={() => doDelete(it.id)} disabled={busyId === it.id}>
+                                        <Trash2 className="w-4 h-4" />
+                                    </Button>
                                 </div>
                             </div>
                         );

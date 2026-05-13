@@ -25,7 +25,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { getStories } from "@/lib/actions/story.actions";
+import { getDashboardActivity, getStories } from "@/lib/actions/story.actions";
 
 interface Post {
   id: string;
@@ -55,6 +55,7 @@ export default function Dashboard() {
   const [myPosts, setMyPosts] = useState<Post[]>([]);
   const [allPosts, setAllPosts] = useState<Post[] | null>(null);
   const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null } | null>(null);
+  const [activity, setActivity] = useState<{ icon: any; text: string; time: string }[]>([]);
   const router = useRouter();
   const { data: session, status } = useSession();
   const user = session?.user;
@@ -109,6 +110,29 @@ export default function Dashboard() {
       cancelled = true;
     };
   }, [user?.id, isAdmin]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    let cancelled = false;
+    (async () => {
+      const res = await getDashboardActivity();
+      if (cancelled) return;
+      if (!res.success || !res.data) {
+        setActivity([]);
+        return;
+      }
+      setActivity(
+        res.data.map((a) => ({
+          icon: a.kind === "bookmark" ? Bookmark : FileText,
+          text: a.text,
+          time: a.timeAgo,
+        })),
+      );
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id]);
 
   if (loading) {
     return (
@@ -237,11 +261,10 @@ export default function Dashboard() {
           {/* Activity feed (placeholder/local) */}
           <TabsContent value="activity" className="mt-6">
             <Card className="divide-y divide-border">
-              {[
-                { icon: Bookmark, text: `You bookmarked ${bookmarks.length} stories`, time: "today" },
-                { icon: Eye, text: "Read 3 stories about football", time: "yesterday" },
-                { icon: Sparkles, text: "Welcome to Pulse — explore the editorial section", time: "3d ago" },
-              ].map((a, i) => (
+              {(activity.length > 0
+                ? activity
+                : [{ icon: Sparkles, text: "Welcome to Pulse — explore the editorial section", time: "today" }]
+              ).map((a, i) => (
                 <div key={i} className="flex items-center gap-4 px-5 py-4">
                   <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center">
                     <a.icon className="w-4 h-4" />

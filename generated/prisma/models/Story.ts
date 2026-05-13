@@ -46,8 +46,11 @@ export type StoryMinAggregateOutputType = {
   readTime: number | null
   coverUrl: string | null
   published: boolean | null
+  scheduledPublishAt: Date | null
+  inReview: boolean | null
   authorId: string | null
   createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type StoryMaxAggregateOutputType = {
@@ -62,8 +65,11 @@ export type StoryMaxAggregateOutputType = {
   readTime: number | null
   coverUrl: string | null
   published: boolean | null
+  scheduledPublishAt: Date | null
+  inReview: boolean | null
   authorId: string | null
   createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type StoryCountAggregateOutputType = {
@@ -78,8 +84,11 @@ export type StoryCountAggregateOutputType = {
   readTime: number
   coverUrl: number
   published: number
+  scheduledPublishAt: number
+  inReview: number
   authorId: number
   createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -104,8 +113,11 @@ export type StoryMinAggregateInputType = {
   readTime?: true
   coverUrl?: true
   published?: true
+  scheduledPublishAt?: true
+  inReview?: true
   authorId?: true
   createdAt?: true
+  updatedAt?: true
 }
 
 export type StoryMaxAggregateInputType = {
@@ -120,8 +132,11 @@ export type StoryMaxAggregateInputType = {
   readTime?: true
   coverUrl?: true
   published?: true
+  scheduledPublishAt?: true
+  inReview?: true
   authorId?: true
   createdAt?: true
+  updatedAt?: true
 }
 
 export type StoryCountAggregateInputType = {
@@ -136,8 +151,11 @@ export type StoryCountAggregateInputType = {
   readTime?: true
   coverUrl?: true
   published?: true
+  scheduledPublishAt?: true
+  inReview?: true
   authorId?: true
   createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -239,8 +257,11 @@ export type StoryGroupByOutputType = {
   readTime: number
   coverUrl: string | null
   published: boolean
+  scheduledPublishAt: Date | null
+  inReview: boolean
   authorId: string
   createdAt: Date
+  updatedAt: Date
   _count: StoryCountAggregateOutputType | null
   _avg: StoryAvgAggregateOutputType | null
   _sum: StorySumAggregateOutputType | null
@@ -278,8 +299,11 @@ export type StoryWhereInput = {
   readTime?: Prisma.IntFilter<"Story"> | number
   coverUrl?: Prisma.StringNullableFilter<"Story"> | string | null
   published?: Prisma.BoolFilter<"Story"> | boolean
+  scheduledPublishAt?: Prisma.DateTimeNullableFilter<"Story"> | Date | string | null
+  inReview?: Prisma.BoolFilter<"Story"> | boolean
   authorId?: Prisma.StringFilter<"Story"> | string
   createdAt?: Prisma.DateTimeFilter<"Story"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Story"> | Date | string
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   comments?: Prisma.CommentListRelationFilter
   bookmarks?: Prisma.BookmarkListRelationFilter
@@ -297,8 +321,11 @@ export type StoryOrderByWithRelationInput = {
   readTime?: Prisma.SortOrder
   coverUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   published?: Prisma.SortOrder
+  scheduledPublishAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  inReview?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   author?: Prisma.UserOrderByWithRelationInput
   comments?: Prisma.CommentOrderByRelationAggregateInput
   bookmarks?: Prisma.BookmarkOrderByRelationAggregateInput
@@ -319,8 +346,11 @@ export type StoryWhereUniqueInput = Prisma.AtLeast<{
   readTime?: Prisma.IntFilter<"Story"> | number
   coverUrl?: Prisma.StringNullableFilter<"Story"> | string | null
   published?: Prisma.BoolFilter<"Story"> | boolean
+  scheduledPublishAt?: Prisma.DateTimeNullableFilter<"Story"> | Date | string | null
+  inReview?: Prisma.BoolFilter<"Story"> | boolean
   authorId?: Prisma.StringFilter<"Story"> | string
   createdAt?: Prisma.DateTimeFilter<"Story"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Story"> | Date | string
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   comments?: Prisma.CommentListRelationFilter
   bookmarks?: Prisma.BookmarkListRelationFilter
@@ -338,8 +368,11 @@ export type StoryOrderByWithAggregationInput = {
   readTime?: Prisma.SortOrder
   coverUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   published?: Prisma.SortOrder
+  scheduledPublishAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  inReview?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.StoryCountOrderByAggregateInput
   _avg?: Prisma.StoryAvgOrderByAggregateInput
   _max?: Prisma.StoryMaxOrderByAggregateInput
@@ -362,8 +395,11 @@ export type StoryScalarWhereWithAggregatesInput = {
   readTime?: Prisma.IntWithAggregatesFilter<"Story"> | number
   coverUrl?: Prisma.StringNullableWithAggregatesFilter<"Story"> | string | null
   published?: Prisma.BoolWithAggregatesFilter<"Story"> | boolean
+  scheduledPublishAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Story"> | Date | string | null
+  inReview?: Prisma.BoolWithAggregatesFilter<"Story"> | boolean
   authorId?: Prisma.StringWithAggregatesFilter<"Story"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Story"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Story"> | Date | string
 }
 
 export type StoryCreateInput = {
@@ -378,7 +414,10 @@ export type StoryCreateInput = {
   readTime: number
   coverUrl?: string | null
   published?: boolean
+  scheduledPublishAt?: Date | string | null
+  inReview?: boolean
   createdAt?: Date | string
+  updatedAt?: Date | string
   author: Prisma.UserCreateNestedOneWithoutStoriesInput
   comments?: Prisma.CommentCreateNestedManyWithoutStoryInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStoryInput
@@ -396,8 +435,11 @@ export type StoryUncheckedCreateInput = {
   readTime: number
   coverUrl?: string | null
   published?: boolean
+  scheduledPublishAt?: Date | string | null
+  inReview?: boolean
   authorId: string
   createdAt?: Date | string
+  updatedAt?: Date | string
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutStoryInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStoryInput
 }
@@ -414,7 +456,10 @@ export type StoryUpdateInput = {
   readTime?: Prisma.IntFieldUpdateOperationsInput | number
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  scheduledPublishAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inReview?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   author?: Prisma.UserUpdateOneRequiredWithoutStoriesNestedInput
   comments?: Prisma.CommentUpdateManyWithoutStoryNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutStoryNestedInput
@@ -432,8 +477,11 @@ export type StoryUncheckedUpdateInput = {
   readTime?: Prisma.IntFieldUpdateOperationsInput | number
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  scheduledPublishAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inReview?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authorId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   comments?: Prisma.CommentUncheckedUpdateManyWithoutStoryNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStoryNestedInput
 }
@@ -450,8 +498,11 @@ export type StoryCreateManyInput = {
   readTime: number
   coverUrl?: string | null
   published?: boolean
+  scheduledPublishAt?: Date | string | null
+  inReview?: boolean
   authorId: string
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type StoryUpdateManyMutationInput = {
@@ -466,7 +517,10 @@ export type StoryUpdateManyMutationInput = {
   readTime?: Prisma.IntFieldUpdateOperationsInput | number
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  scheduledPublishAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inReview?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type StoryUncheckedUpdateManyInput = {
@@ -481,8 +535,11 @@ export type StoryUncheckedUpdateManyInput = {
   readTime?: Prisma.IntFieldUpdateOperationsInput | number
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  scheduledPublishAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inReview?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authorId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type StoryListRelationFilter = {
@@ -507,8 +564,11 @@ export type StoryCountOrderByAggregateInput = {
   readTime?: Prisma.SortOrder
   coverUrl?: Prisma.SortOrder
   published?: Prisma.SortOrder
+  scheduledPublishAt?: Prisma.SortOrder
+  inReview?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type StoryAvgOrderByAggregateInput = {
@@ -527,8 +587,11 @@ export type StoryMaxOrderByAggregateInput = {
   readTime?: Prisma.SortOrder
   coverUrl?: Prisma.SortOrder
   published?: Prisma.SortOrder
+  scheduledPublishAt?: Prisma.SortOrder
+  inReview?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type StoryMinOrderByAggregateInput = {
@@ -543,8 +606,11 @@ export type StoryMinOrderByAggregateInput = {
   readTime?: Prisma.SortOrder
   coverUrl?: Prisma.SortOrder
   published?: Prisma.SortOrder
+  scheduledPublishAt?: Prisma.SortOrder
+  inReview?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type StorySumOrderByAggregateInput = {
@@ -614,6 +680,10 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 export type StoryCreateNestedOneWithoutCommentsInput = {
   create?: Prisma.XOR<Prisma.StoryCreateWithoutCommentsInput, Prisma.StoryUncheckedCreateWithoutCommentsInput>
   connectOrCreate?: Prisma.StoryCreateOrConnectWithoutCommentsInput
@@ -654,7 +724,10 @@ export type StoryCreateWithoutAuthorInput = {
   readTime: number
   coverUrl?: string | null
   published?: boolean
+  scheduledPublishAt?: Date | string | null
+  inReview?: boolean
   createdAt?: Date | string
+  updatedAt?: Date | string
   comments?: Prisma.CommentCreateNestedManyWithoutStoryInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStoryInput
 }
@@ -671,7 +744,10 @@ export type StoryUncheckedCreateWithoutAuthorInput = {
   readTime: number
   coverUrl?: string | null
   published?: boolean
+  scheduledPublishAt?: Date | string | null
+  inReview?: boolean
   createdAt?: Date | string
+  updatedAt?: Date | string
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutStoryInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStoryInput
 }
@@ -717,8 +793,11 @@ export type StoryScalarWhereInput = {
   readTime?: Prisma.IntFilter<"Story"> | number
   coverUrl?: Prisma.StringNullableFilter<"Story"> | string | null
   published?: Prisma.BoolFilter<"Story"> | boolean
+  scheduledPublishAt?: Prisma.DateTimeNullableFilter<"Story"> | Date | string | null
+  inReview?: Prisma.BoolFilter<"Story"> | boolean
   authorId?: Prisma.StringFilter<"Story"> | string
   createdAt?: Prisma.DateTimeFilter<"Story"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Story"> | Date | string
 }
 
 export type StoryCreateWithoutCommentsInput = {
@@ -733,7 +812,10 @@ export type StoryCreateWithoutCommentsInput = {
   readTime: number
   coverUrl?: string | null
   published?: boolean
+  scheduledPublishAt?: Date | string | null
+  inReview?: boolean
   createdAt?: Date | string
+  updatedAt?: Date | string
   author: Prisma.UserCreateNestedOneWithoutStoriesInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStoryInput
 }
@@ -750,8 +832,11 @@ export type StoryUncheckedCreateWithoutCommentsInput = {
   readTime: number
   coverUrl?: string | null
   published?: boolean
+  scheduledPublishAt?: Date | string | null
+  inReview?: boolean
   authorId: string
   createdAt?: Date | string
+  updatedAt?: Date | string
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStoryInput
 }
 
@@ -783,7 +868,10 @@ export type StoryUpdateWithoutCommentsInput = {
   readTime?: Prisma.IntFieldUpdateOperationsInput | number
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  scheduledPublishAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inReview?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   author?: Prisma.UserUpdateOneRequiredWithoutStoriesNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutStoryNestedInput
 }
@@ -800,8 +888,11 @@ export type StoryUncheckedUpdateWithoutCommentsInput = {
   readTime?: Prisma.IntFieldUpdateOperationsInput | number
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  scheduledPublishAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inReview?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authorId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStoryNestedInput
 }
 
@@ -817,7 +908,10 @@ export type StoryCreateWithoutBookmarksInput = {
   readTime: number
   coverUrl?: string | null
   published?: boolean
+  scheduledPublishAt?: Date | string | null
+  inReview?: boolean
   createdAt?: Date | string
+  updatedAt?: Date | string
   author: Prisma.UserCreateNestedOneWithoutStoriesInput
   comments?: Prisma.CommentCreateNestedManyWithoutStoryInput
 }
@@ -834,8 +928,11 @@ export type StoryUncheckedCreateWithoutBookmarksInput = {
   readTime: number
   coverUrl?: string | null
   published?: boolean
+  scheduledPublishAt?: Date | string | null
+  inReview?: boolean
   authorId: string
   createdAt?: Date | string
+  updatedAt?: Date | string
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutStoryInput
 }
 
@@ -867,7 +964,10 @@ export type StoryUpdateWithoutBookmarksInput = {
   readTime?: Prisma.IntFieldUpdateOperationsInput | number
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  scheduledPublishAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inReview?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   author?: Prisma.UserUpdateOneRequiredWithoutStoriesNestedInput
   comments?: Prisma.CommentUpdateManyWithoutStoryNestedInput
 }
@@ -884,8 +984,11 @@ export type StoryUncheckedUpdateWithoutBookmarksInput = {
   readTime?: Prisma.IntFieldUpdateOperationsInput | number
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  scheduledPublishAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inReview?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authorId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   comments?: Prisma.CommentUncheckedUpdateManyWithoutStoryNestedInput
 }
 
@@ -901,7 +1004,10 @@ export type StoryCreateManyAuthorInput = {
   readTime: number
   coverUrl?: string | null
   published?: boolean
+  scheduledPublishAt?: Date | string | null
+  inReview?: boolean
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type StoryUpdateWithoutAuthorInput = {
@@ -916,7 +1022,10 @@ export type StoryUpdateWithoutAuthorInput = {
   readTime?: Prisma.IntFieldUpdateOperationsInput | number
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  scheduledPublishAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inReview?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   comments?: Prisma.CommentUpdateManyWithoutStoryNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutStoryNestedInput
 }
@@ -933,7 +1042,10 @@ export type StoryUncheckedUpdateWithoutAuthorInput = {
   readTime?: Prisma.IntFieldUpdateOperationsInput | number
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  scheduledPublishAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inReview?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   comments?: Prisma.CommentUncheckedUpdateManyWithoutStoryNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStoryNestedInput
 }
@@ -950,7 +1062,10 @@ export type StoryUncheckedUpdateManyWithoutAuthorInput = {
   readTime?: Prisma.IntFieldUpdateOperationsInput | number
   coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  scheduledPublishAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inReview?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -1005,8 +1120,11 @@ export type StorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   readTime?: boolean
   coverUrl?: boolean
   published?: boolean
+  scheduledPublishAt?: boolean
+  inReview?: boolean
   authorId?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   comments?: boolean | Prisma.Story$commentsArgs<ExtArgs>
   bookmarks?: boolean | Prisma.Story$bookmarksArgs<ExtArgs>
@@ -1025,8 +1143,11 @@ export type StorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   readTime?: boolean
   coverUrl?: boolean
   published?: boolean
+  scheduledPublishAt?: boolean
+  inReview?: boolean
   authorId?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["story"]>
 
@@ -1042,8 +1163,11 @@ export type StorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   readTime?: boolean
   coverUrl?: boolean
   published?: boolean
+  scheduledPublishAt?: boolean
+  inReview?: boolean
   authorId?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["story"]>
 
@@ -1059,11 +1183,14 @@ export type StorySelectScalar = {
   readTime?: boolean
   coverUrl?: boolean
   published?: boolean
+  scheduledPublishAt?: boolean
+  inReview?: boolean
   authorId?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type StoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "type" | "excerpt" | "content" | "sport" | "topic" | "readTime" | "coverUrl" | "published" | "authorId" | "createdAt", ExtArgs["result"]["story"]>
+export type StoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "type" | "excerpt" | "content" | "sport" | "topic" | "readTime" | "coverUrl" | "published" | "scheduledPublishAt" | "inReview" | "authorId" | "createdAt" | "updatedAt", ExtArgs["result"]["story"]>
 export type StoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   comments?: boolean | Prisma.Story$commentsArgs<ExtArgs>
@@ -1096,8 +1223,11 @@ export type $StoryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     readTime: number
     coverUrl: string | null
     published: boolean
+    scheduledPublishAt: Date | null
+    inReview: boolean
     authorId: string
     createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["story"]>
   composites: {}
 }
@@ -1535,8 +1665,11 @@ export interface StoryFieldRefs {
   readonly readTime: Prisma.FieldRef<"Story", 'Int'>
   readonly coverUrl: Prisma.FieldRef<"Story", 'String'>
   readonly published: Prisma.FieldRef<"Story", 'Boolean'>
+  readonly scheduledPublishAt: Prisma.FieldRef<"Story", 'DateTime'>
+  readonly inReview: Prisma.FieldRef<"Story", 'Boolean'>
   readonly authorId: Prisma.FieldRef<"Story", 'String'>
   readonly createdAt: Prisma.FieldRef<"Story", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Story", 'DateTime'>
 }
     
 

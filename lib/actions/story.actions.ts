@@ -4,10 +4,11 @@ import { revalidatePath } from "next/cache";
 import { randomUUID } from "crypto";
 import { formatDistanceToNow } from "date-fns";
 import { Prisma } from "@/generated/prisma/client";
+import type { Role } from "@/generated/prisma/client";
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { canPublish } from "@/lib/authz";
+import { canPublish, isAdmin } from "@/lib/authz";
 import {
   StorySchema,
   StoryListQuerySchema,
@@ -16,7 +17,6 @@ import {
   type StoryListQueryInput,
   type StoryUpdate,
 } from "@/lib/validations/story-validations";
-import { redirect } from "next/navigation";
 
 interface ActionResponse<T = unknown> {
   success: boolean;
@@ -39,7 +39,11 @@ export type StoryListItem = {
   readTime: number;
   coverUrl: string | null;
   published: boolean;
+  scheduledPublishAt: Date | null;
+  inReview: boolean;
   createdAt: Date;
+  updatedAt: Date;
+  authorId: string;
   author: StoryAuthorPreview;
   /** Display: relative created time */
   timeAgo: string;
@@ -69,6 +73,46 @@ function estimateReadTimeMinutes(content: string) {
 function uniqueSlug(base: string) {
   const prefix = base.length > 0 ? base : "story";
   return `${prefix}-${Date.now().toString(36)}-${randomUUID().slice(0, 8)}`;
+}
+
+async function releaseDueScheduledStories() {
+  await prisma.story.updateMany({
+    where: {
+      published: false,
+      scheduledPublishAt: { not: null, lte: new Date() },
+    },
+    data: {
+      published: true,
+      scheduledPublishAt: null,
+      inReview: false,
+    },
+  });
+}
+
+function deriveEditorialStatus(r: {
+  published: boolean;
+  scheduledPublishAt: Date | null;
+  inReview: boolean;
+}): "draft" | "review" | "scheduled" | "published" {
+  if (r.published) return "published";
+  if (r.scheduledPublishAt && r.scheduledPublishAt > new Date())
+    return "scheduled";
+  if (r.inReview) return "review";
+  return "draft";
+}
+
+function revalidateStorySlug(slug: string) {
+  revalidatePath("/dashboard");
+  revalidatePath("/news");
+  revalidatePath("/editorial");
+  revalidatePath(`/article/${slug}`);
+}
+
+function ensureEditor(session: { user?: { id?: string; role?: Role } } | null) {
+  const userId = session?.user?.id;
+  if (!userId || typeof userId !== "string") return { ok: false as const, userId: null };
+  if (!canPublish(session?.user?.role)) return { ok: false as const, userId: null };
+  return { ok: true as const, userId };
 }
 
 export async function createStory(
@@ -109,6 +153,8 @@ export async function createStory(
       sport,
       topic,
       published,
+      scheduled_publish_at,
+      in_review,
     } = parsed.data;
 
     const base = slugify(title);
@@ -120,6 +166,16 @@ export async function createStory(
     const topicDb = topic?.trim() ? topic.trim() : "general";
     const coverUrl =
       cover_image_url && cover_image_url.length > 0 ? cover_image_url : null;
+
+    let scheduledAt: Date | null = null;
+    if (scheduled_publish_at && scheduled_publish_at.length > 0) {
+      const d = new Date(scheduled_publish_at);
+      if (!Number.isNaN(d.getTime())) scheduledAt = d;
+    }
+    const now = new Date();
+    const isFutureSchedule = scheduledAt !== null && scheduledAt > now;
+    const publishedDb =
+      Boolean(published) && !isFutureSchedule && !(in_review === true);
 
     try {
       const created = await prisma.story.create({
@@ -133,13 +189,14 @@ export async function createStory(
           topic: topicDb,
           readTime,
           coverUrl,
-          published: Boolean(published),
+          published: publishedDb,
+          scheduledPublishAt: isFutureSchedule ? scheduledAt : null,
+          inReview: in_review === true && !publishedDb,
           authorId: userId,
         },
         select: { id: true, slug: true },
       });
-      revalidatePath("/dashboard");
-      revalidatePath("/news");
+      revalidateStorySlug(created.slug);
 
       return { success: true, message: "Story created", data: created };
     } catch (error) {
@@ -180,6 +237,11 @@ export async function getStories(query: StoryListQueryInput = {}): Promise<
 
   const { page, pageSize, published, sport, topic, type, search, sort, authorId } =
     parsed.data;
+
+  // Best-effort auto release of due scheduled stories.
+  if (published === true) {
+    await releaseDueScheduledStories();
+  }
 
   const skip = (page - 1) * pageSize;
   const take = pageSize;
@@ -230,7 +292,11 @@ export async function getStories(query: StoryListQueryInput = {}): Promise<
           readTime: true,
           coverUrl: true,
           published: true,
+          scheduledPublishAt: true,
+          inReview: true,
           createdAt: true,
+          updatedAt: true,
+          authorId: true,
           author: { select: { id: true, fullName: true } },
           _count: { select: { comments: true } },
         },
@@ -248,7 +314,11 @@ export async function getStories(query: StoryListQueryInput = {}): Promise<
       readTime: s.readTime,
       coverUrl: s.coverUrl,
       published: s.published,
+      scheduledPublishAt: s.scheduledPublishAt,
+      inReview: s.inReview,
       createdAt: s.createdAt,
+      updatedAt: s.updatedAt,
+      authorId: s.authorId,
       author: s.author,
       tag: s.topic,
       timeAgo: formatDistanceToNow(s.createdAt, { addSuffix: true }),
@@ -284,6 +354,10 @@ export async function getStoriesForCategories(
 
   const { page, pageSize, published, sport, topic, type, search, sort, authorId } =
     parsed.data;
+
+  if (published === true) {
+    await releaseDueScheduledStories();
+  }
 
   const where: Prisma.StoryWhereInput = {
     ...(typeof published === "boolean" ? { published } : {}),
@@ -331,7 +405,11 @@ export async function getStoriesForCategories(
           readTime: true,
           coverUrl: true,
           published: true,
+          scheduledPublishAt: true,
+          inReview: true,
           createdAt: true,
+          updatedAt: true,
+          authorId: true,
           author: { select: { id: true, fullName: true } },
           _count: { select: { comments: true } },
         },
@@ -349,7 +427,11 @@ export async function getStoriesForCategories(
       readTime: s.readTime,
       coverUrl: s.coverUrl,
       published: s.published,
+      scheduledPublishAt: s.scheduledPublishAt,
+      inReview: s.inReview,
       createdAt: s.createdAt,
+      updatedAt: s.updatedAt,
+      authorId: s.authorId,
       author: s.author,
       tag: s.topic,
       timeAgo: formatDistanceToNow(s.createdAt, { addSuffix: true }),
@@ -373,6 +455,8 @@ export async function getStoryBySlug(
   }
 
   try {
+    await releaseDueScheduledStories();
+
     const story = await prisma.story.findUnique({
       where: { slug },
       select: {
@@ -387,7 +471,11 @@ export async function getStoryBySlug(
         readTime: true,
         coverUrl: true,
         published: true,
+        scheduledPublishAt: true,
+        inReview: true,
         createdAt: true,
+        updatedAt: true,
+        authorId: true,
         author: {
           select: { id: true, fullName: true, email: true, role: true },
         },
@@ -411,7 +499,11 @@ export async function getStoryBySlug(
       readTime: story.readTime,
       coverUrl: story.coverUrl,
       published: story.published,
+      scheduledPublishAt: story.scheduledPublishAt,
+      inReview: story.inReview,
       createdAt: story.createdAt,
+      updatedAt: story.updatedAt,
+      authorId: story.authorId,
       author: { id: story.author.id, fullName: story.author.fullName },
       tag: story.topic,
       timeAgo: formatDistanceToNow(story.createdAt, { addSuffix: true }),
@@ -434,29 +526,23 @@ export async function updateStory(
 
   try {
     const session = await auth();
-    const userId = session?.user?.id;
-    if (!userId || typeof userId !== "string") {
-      return {
-        success: false,
-        message: "You must be signed in to update a story",
-      };
-    }
-
-    if (!canPublish(session.user.role)) {
+    const guard = ensureEditor(session);
+    if (!guard.ok) {
       return {
         success: false,
         message: "You do not have permission to edit stories",
       };
     }
+    const userId = guard.userId;
 
     const { id, ...patch } = parsed.data;
 
     const existing = await prisma.story.findUnique({
       where: { id },
-      select: { authorId: true },
+      select: { authorId: true, slug: true, published: true },
     });
     if (!existing) return { success: false, message: "Story not found" };
-    if (existing.authorId !== userId) {
+    if (existing.authorId !== userId && !isAdmin(session?.user?.role)) {
       return { success: false, message: "You can only edit your own stories" };
     }
 
@@ -473,7 +559,25 @@ export async function updateStory(
     if (patch.type !== undefined) {
       data.type = patch.type === "article" ? "ARTICLE" : "NEWS";
     }
-    if (patch.published !== undefined) data.published = patch.published;
+    if (patch.in_review !== undefined) data.inReview = patch.in_review;
+    if (patch.scheduled_publish_at !== undefined) {
+      const v = patch.scheduled_publish_at;
+      if (!v || v.length === 0) {
+        data.scheduledPublishAt = null;
+      } else {
+        const d = new Date(v);
+        if (!Number.isNaN(d.getTime())) data.scheduledPublishAt = d;
+      }
+    }
+    if (patch.published !== undefined) {
+      if (patch.published) {
+        data.published = true;
+        data.scheduledPublishAt = null;
+        data.inReview = false;
+      } else {
+        data.published = false;
+      }
+    }
     if (patch.cover_image_url !== undefined) {
       data.coverUrl =
         patch.cover_image_url && patch.cover_image_url.length > 0
@@ -491,11 +595,174 @@ export async function updateStory(
       select: { id: true, slug: true },
     });
 
-    revalidatePath("/dashboard");
-    revalidatePath("/news");
-    revalidatePath(`/article/${updated.slug}`);
+    revalidateStorySlug(updated.slug);
 
     return { success: true, message: "Story updated", data: updated };
+  } catch (error) {
+    return { success: false, message: "Unexpected Error", error };
+  }
+}
+
+export async function getStoryById(
+  id: string,
+): Promise<ActionResponse<StoryDetail | null>> {
+  if (!id || typeof id !== "string") return { success: false, message: "Invalid id" };
+  try {
+    const session = await auth();
+    const guard = ensureEditor(session);
+    if (!guard.ok) return { success: false, message: "Forbidden" };
+
+    const story = await prisma.story.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        type: true,
+        excerpt: true,
+        content: true,
+        sport: true,
+        topic: true,
+        readTime: true,
+        coverUrl: true,
+        published: true,
+        scheduledPublishAt: true,
+        inReview: true,
+        authorId: true,
+        createdAt: true,
+        updatedAt: true,
+        author: { select: { id: true, fullName: true } },
+        _count: { select: { comments: true } },
+      },
+    });
+    if (!story) return { success: true, message: "OK", data: null };
+
+    if (story.authorId !== guard.userId && !isAdmin(session?.user?.role)) {
+      return { success: false, message: "Forbidden" };
+    }
+
+    const data: StoryDetail = {
+      id: story.id,
+      title: story.title,
+      slug: story.slug,
+      type: story.type,
+      excerpt: story.excerpt,
+      content: story.content,
+      sport: story.sport,
+      topic: story.topic,
+      readTime: story.readTime,
+      coverUrl: story.coverUrl,
+      published: story.published,
+      scheduledPublishAt: story.scheduledPublishAt,
+      inReview: story.inReview,
+      createdAt: story.createdAt,
+      updatedAt: story.updatedAt,
+      authorId: story.authorId,
+      author: story.author,
+      tag: story.topic,
+      timeAgo: formatDistanceToNow(story.createdAt, { addSuffix: true }),
+      commentCount: story._count.comments,
+    };
+    return { success: true, message: "OK", data };
+  } catch (error) {
+    return { success: false, message: "Unexpected Error", error };
+  }
+}
+
+export async function publishStory(id: string) {
+  if (!id || typeof id !== "string") return { success: false, message: "Invalid id" };
+  try {
+    const session = await auth();
+    const guard = ensureEditor(session);
+    if (!guard.ok) return { success: false, message: "Forbidden" };
+
+    const s = await prisma.story.findUnique({ where: { id }, select: { authorId: true, slug: true } });
+    if (!s) return { success: false, message: "Story not found" };
+    if (s.authorId !== guard.userId && !isAdmin(session?.user?.role)) {
+      return { success: false, message: "Forbidden" };
+    }
+
+    await prisma.story.update({
+      where: { id },
+      data: { published: true, scheduledPublishAt: null, inReview: false },
+    });
+    revalidateStorySlug(s.slug);
+    return { success: true, message: "Published" };
+  } catch (error) {
+    return { success: false, message: "Unexpected Error", error };
+  }
+}
+
+export async function unpublishStory(id: string) {
+  if (!id || typeof id !== "string") return { success: false, message: "Invalid id" };
+  try {
+    const session = await auth();
+    const guard = ensureEditor(session);
+    if (!guard.ok) return { success: false, message: "Forbidden" };
+
+    const s = await prisma.story.findUnique({ where: { id }, select: { authorId: true, slug: true } });
+    if (!s) return { success: false, message: "Story not found" };
+    if (s.authorId !== guard.userId && !isAdmin(session?.user?.role)) {
+      return { success: false, message: "Forbidden" };
+    }
+
+    await prisma.story.update({
+      where: { id },
+      data: { published: false },
+    });
+    revalidateStorySlug(s.slug);
+    return { success: true, message: "Unpublished" };
+  } catch (error) {
+    return { success: false, message: "Unexpected Error", error };
+  }
+}
+
+export async function setStoryInReview(id: string, inReview: boolean) {
+  if (!id || typeof id !== "string") return { success: false, message: "Invalid id" };
+  try {
+    const session = await auth();
+    const guard = ensureEditor(session);
+    if (!guard.ok) return { success: false, message: "Forbidden" };
+
+    const s = await prisma.story.findUnique({ where: { id }, select: { authorId: true, slug: true } });
+    if (!s) return { success: false, message: "Story not found" };
+    if (s.authorId !== guard.userId && !isAdmin(session?.user?.role)) {
+      return { success: false, message: "Forbidden" };
+    }
+
+    await prisma.story.update({
+      where: { id },
+      data: { inReview: Boolean(inReview), published: false },
+    });
+    revalidateStorySlug(s.slug);
+    return { success: true, message: "OK" };
+  } catch (error) {
+    return { success: false, message: "Unexpected Error", error };
+  }
+}
+
+export async function scheduleStoryPublish(id: string, isoDate: string) {
+  if (!id || typeof id !== "string") return { success: false, message: "Invalid id" };
+  try {
+    const session = await auth();
+    const guard = ensureEditor(session);
+    if (!guard.ok) return { success: false, message: "Forbidden" };
+
+    const d = new Date(isoDate);
+    if (Number.isNaN(d.getTime())) return { success: false, message: "Invalid date" };
+
+    const s = await prisma.story.findUnique({ where: { id }, select: { authorId: true, slug: true } });
+    if (!s) return { success: false, message: "Story not found" };
+    if (s.authorId !== guard.userId && !isAdmin(session?.user?.role)) {
+      return { success: false, message: "Forbidden" };
+    }
+
+    await prisma.story.update({
+      where: { id },
+      data: { published: false, scheduledPublishAt: d, inReview: false },
+    });
+    revalidateStorySlug(s.slug);
+    return { success: true, message: "Scheduled" };
   } catch (error) {
     return { success: false, message: "Unexpected Error", error };
   }
@@ -510,27 +777,18 @@ export async function deleteStory(
 
   try {
     const session = await auth();
-    const userId = session?.user?.id;
-    if (!userId || typeof userId !== "string") {
-      return {
-        success: false,
-        message: "You must be signed in to delete a story",
-      };
+    const guard = ensureEditor(session);
+    if (!guard.ok) {
+      return { success: false, message: "You do not have permission to delete stories" };
     }
-
-    if (!canPublish(session.user.role)) {
-      return {
-        success: false,
-        message: "You do not have permission to delete stories",
-      };
-    }
+    const userId = guard.userId;
 
     const existing = await prisma.story.findUnique({
       where: { id },
       select: { authorId: true, slug: true },
     });
     if (!existing) return { success: false, message: "Story not found" };
-    if (existing.authorId !== userId) {
+    if (existing.authorId !== userId && !isAdmin(session?.user?.role)) {
       return {
         success: false,
         message: "You can only delete your own stories",
@@ -539,9 +797,7 @@ export async function deleteStory(
 
     await prisma.story.delete({ where: { id } });
 
-    revalidatePath("/dashboard");
-    revalidatePath("/news");
-    revalidatePath(`/article/${existing.slug}`);
+    revalidateStorySlug(existing.slug);
 
     return { success: true, message: "Story deleted", data: { id } };
   } catch (error) {
@@ -564,20 +820,16 @@ export async function getEditorialStories(): Promise<
 > {
   try {
     const session = await auth();
-    const userId = session?.user?.id;
-    if (!userId || typeof userId !== "string") {
-      return { success: false, message: "You must be signed in" };
-    }
-    if (!canPublish(session.user.role)) {
-      return { success: false, message: "You do not have permission" };
-    }
+    const guard = ensureEditor(session);
+    if (!guard.ok) return { success: false, message: "You do not have permission" };
 
-    const isAdmin = session.user.role === "ADMIN";
-    const where: Prisma.StoryWhereInput = isAdmin ? {} : { authorId: userId };
+    const where: Prisma.StoryWhereInput = isAdmin(session?.user?.role)
+      ? {}
+      : { authorId: guard.userId };
 
     const rows = await prisma.story.findMany({
       where,
-      orderBy: { createdAt: "desc" },
+      orderBy: { updatedAt: "desc" },
       take: 200,
       select: {
         id: true,
@@ -585,7 +837,9 @@ export async function getEditorialStories(): Promise<
         title: true,
         sport: true,
         published: true,
-        createdAt: true,
+        scheduledPublishAt: true,
+        inReview: true,
+        updatedAt: true,
         author: { select: { fullName: true } },
       },
     });
@@ -596,8 +850,12 @@ export async function getEditorialStories(): Promise<
       title: r.title,
       author: r.author.fullName,
       sport: r.sport,
-      status: r.published ? "published" : "draft",
-      updated: formatDistanceToNow(r.createdAt, { addSuffix: true }),
+      status: deriveEditorialStatus({
+        published: r.published,
+        scheduledPublishAt: r.scheduledPublishAt,
+        inReview: r.inReview,
+      }),
+      updated: formatDistanceToNow(r.updatedAt, { addSuffix: true }),
     }));
 
     return { success: true, message: "OK", data };
@@ -622,6 +880,85 @@ export async function getPublishedStoryCountsBySport(): Promise<
       data[key] = (data[key] ?? 0) + r._count._all;
     }
     return { success: true, message: "OK", data };
+  } catch (error) {
+    return { success: false, message: "Unexpected Error", error };
+  }
+}
+
+export type DashboardActivityItem = {
+  kind: "bookmark" | "story";
+  text: string;
+  time: Date;
+  timeAgo: string;
+};
+
+export async function getDashboardActivity(): Promise<
+  ActionResponse<DashboardActivityItem[]>
+> {
+  try {
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId || typeof userId !== "string") {
+      return { success: false, message: "You must be signed in" };
+    }
+
+    const [bookmarks, stories] = await Promise.all([
+      prisma.bookmark.findMany({
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+        select: {
+          createdAt: true,
+          story: { select: { title: true, slug: true } },
+        },
+      }),
+      prisma.story.findMany({
+        where: { authorId: userId },
+        orderBy: { updatedAt: "desc" },
+        take: 10,
+        select: {
+          title: true,
+          published: true,
+          inReview: true,
+          scheduledPublishAt: true,
+          updatedAt: true,
+        },
+      }),
+    ]);
+
+    const items: DashboardActivityItem[] = [
+      ...bookmarks.map((b) => ({
+        kind: "bookmark" as const,
+        text: `You bookmarked "${b.story.title}"`,
+        time: b.createdAt,
+        timeAgo: formatDistanceToNow(b.createdAt, { addSuffix: true }),
+      })),
+      ...stories.map((s) => {
+        const status = deriveEditorialStatus({
+          published: s.published,
+          inReview: s.inReview,
+          scheduledPublishAt: s.scheduledPublishAt,
+        });
+        const verb =
+          status === "published"
+            ? "Published"
+            : status === "scheduled"
+              ? "Scheduled"
+              : status === "review"
+                ? "Sent to review"
+                : "Saved draft";
+        return {
+          kind: "story" as const,
+          text: `${verb}: "${s.title}"`,
+          time: s.updatedAt,
+          timeAgo: formatDistanceToNow(s.updatedAt, { addSuffix: true }),
+        };
+      }),
+    ]
+      .sort((a, b) => b.time.getTime() - a.time.getTime())
+      .slice(0, 12);
+
+    return { success: true, message: "OK", data: items };
   } catch (error) {
     return { success: false, message: "Unexpected Error", error };
   }

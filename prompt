@@ -1,0 +1,5 @@
+Can you help me complete and fully implement I have partially implemented some of the stuff:
+ - Pagination (@/components/Pager.tsx)
+ - use real data in all the routes fetch data for all the routes from database and create actions for all of the (action folder: @/lib/actions)
+ 
+Note: Don't change and modify the style this is most, no ui should changed.

@@ -41,22 +41,25 @@ model Account {
 }
 
 model Story {
-  id        String     @id @default(uuid())
-  title     String
-  slug      String     @unique
-  type      StoryType  @default(ARTICLE)
-  excerpt   String
-  content   String?
-  sport     String
-  topic     String // topic is for filtering and categorization. it can be something like "match report", "transfer news", "opinion", etc.
-  readTime  Int // I can also calculate this on the fly based on the content length, but that way you should calculate for every request. so I prefer to calculate it once and store it in the database.
-  coverUrl  String?
-  published Boolean    @default(false)
-  authorId  String
-  author    User       @relation(fields: [authorId], references: [id])
-  createdAt DateTime   @default(now())
-  comments  Comment[]
-  bookmarks Bookmark[]
+  id                   String    @id @default(uuid())
+  title                String
+  slug                 String    @unique
+  type                 StoryType @default(ARTICLE)
+  excerpt              String
+  content              String?
+  sport                String
+  topic                String
+  readTime             Int
+  coverUrl             String?
+  published            Boolean   @default(false)
+  scheduledPublishAt   DateTime?
+  inReview             Boolean   @default(false)
+  authorId             String
+  author               User      @relation(fields: [authorId], references: [id])
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @default(now()) @updatedAt
+  comments             Comment[]
+  bookmarks            Bookmark[]
 }
 
 model Comment {
