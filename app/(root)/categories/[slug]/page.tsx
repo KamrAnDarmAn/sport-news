@@ -70,7 +70,6 @@ const SportDetail = () => {
       />
       {/* HERO */}
 
-
       <PageHeader
         title={sport.name}
         eyebrow={sport.tagline}
@@ -85,6 +84,7 @@ const SportDetail = () => {
       </PageHeader>
       {/* CONTENT */}
       <section className="container py-16 grid lg:grid-cols-3 gap-10 mx-auto">
+
         {/* News */}
         <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-6">

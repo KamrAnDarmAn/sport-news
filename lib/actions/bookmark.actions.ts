@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import { auth } from "@/auth";
 import { prisma } from "../prisma";
 import { redirect } from "next/navigation";
@@ -28,6 +30,8 @@ export const addAndRemoveBookmark = async (storyId: string) => {
       await prisma.bookmark.delete({
         where: { id: bookmark.id },
       });
+      revalidatePath("/bookmarks");
+      revalidatePath("/dashboard");
       return {
         success: true,
         action: BOOKMARK_ACTIONS.REMOVE,
@@ -41,6 +45,8 @@ export const addAndRemoveBookmark = async (storyId: string) => {
         userId,
       },
     });
+    revalidatePath("/bookmarks");
+    revalidatePath("/dashboard");
     return {
       success: true,
       action: BOOKMARK_ACTIONS.ADD,
@@ -86,6 +92,22 @@ export const getUserBookmarks = async () => {
     };
   }
 };
+
+export async function getBookmarkCount() {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return { success: true as const, count: 0 };
+    }
+    const count = await prisma.bookmark.count({
+      where: { userId: session.user.id },
+    });
+    return { success: true as const, count };
+  } catch (error) {
+    console.error("[getBookmarkCount]", error);
+    return { success: false as const, count: 0 };
+  }
+}
 
 export const isStoryBookmarkedByUser = async (
   storyId: string,

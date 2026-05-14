@@ -77,7 +77,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         create: {
           email,
           fullName: name,
-          password: null,
         },
         update: {
           fullName: name,

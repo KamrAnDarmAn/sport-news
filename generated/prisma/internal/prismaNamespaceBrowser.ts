@@ -54,6 +54,7 @@ export const ModelName = {
   User: 'User',
   Account: 'Account',
   Story: 'Story',
+  View: 'View',
   Comment: 'Comment',
   Bookmark: 'Bookmark',
   SubscribeForASport: 'SubscribeForASport'
@@ -117,6 +118,15 @@ export const StoryScalarFieldEnum = {
 } as const
 
 export type StoryScalarFieldEnum = (typeof StoryScalarFieldEnum)[keyof typeof StoryScalarFieldEnum]
+
+
+export const ViewScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  storyId: 'storyId'
+} as const
+
+export type ViewScalarFieldEnum = (typeof ViewScalarFieldEnum)[keyof typeof ViewScalarFieldEnum]
 
 
 export const CommentScalarFieldEnum = {

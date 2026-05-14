@@ -270,7 +270,11 @@ export async function getStories(query: StoryListQueryInput = {}): Promise<
 
   const orderBy: Prisma.StoryOrderByWithRelationInput[] =
     sort === "popular"
-      ? [{ comments: { _count: "desc" } }, { createdAt: "desc" }]
+      ? [
+          { views: { _count: "desc" } },
+          { comments: { _count: "desc" } },
+          { createdAt: "desc" },
+        ]
       : [{ createdAt: "desc" }];
 
   try {
@@ -298,7 +302,7 @@ export async function getStories(query: StoryListQueryInput = {}): Promise<
           updatedAt: true,
           authorId: true,
           author: { select: { id: true, fullName: true } },
-          _count: { select: { comments: true } },
+          _count: { select: { comments: true, views: true } },
         },
       }),
     ]);
@@ -383,7 +387,11 @@ export async function getStoriesForCategories(
 
   const orderBy: Prisma.StoryOrderByWithRelationInput[] =
     sort === "popular"
-      ? [{ comments: { _count: "desc" } }, { createdAt: "desc" }]
+      ? [
+          { views: { _count: "desc" } },
+          { comments: { _count: "desc" } },
+          { createdAt: "desc" },
+        ]
       : [{ createdAt: "desc" }];
 
   try {
@@ -411,7 +419,7 @@ export async function getStoriesForCategories(
           updatedAt: true,
           authorId: true,
           author: { select: { id: true, fullName: true } },
-          _count: { select: { comments: true } },
+          _count: { select: { comments: true, views: true } },
         },
       }),
     ]);

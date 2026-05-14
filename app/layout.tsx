@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthSessionProvider } from "@/components/auth-session-provider";
+import { BookmarksProvider } from "@/hooks/use-bookmarks";
 import { Toaster } from "@/components/ui/sonner";
 
 const dmSans = localFont({
@@ -37,17 +38,19 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col ">
         <AuthSessionProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Navbar />
-            {children}
-            <Footer />
-            <Toaster />
-          </ThemeProvider>
+          <BookmarksProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Navbar />
+              {children}
+              <Footer />
+              <Toaster />
+            </ThemeProvider>
+          </BookmarksProvider>
         </AuthSessionProvider>
       </body>
     </html>

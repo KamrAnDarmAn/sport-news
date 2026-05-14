@@ -387,6 +387,7 @@ export const ModelName = {
   User: 'User',
   Account: 'Account',
   Story: 'Story',
+  View: 'View',
   Comment: 'Comment',
   Bookmark: 'Bookmark',
   SubscribeForASport: 'SubscribeForASport'
@@ -405,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "story" | "comment" | "bookmark" | "subscribeForASport"
+    modelProps: "user" | "account" | "story" | "view" | "comment" | "bookmark" | "subscribeForASport"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -628,6 +629,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.StoryCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.StoryCountAggregateOutputType> | number
+        }
+      }
+    }
+    View: {
+      payload: Prisma.$ViewPayload<ExtArgs>
+      fields: Prisma.ViewFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ViewFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ViewPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ViewFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ViewPayload>
+        }
+        findFirst: {
+          args: Prisma.ViewFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ViewPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ViewFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ViewPayload>
+        }
+        findMany: {
+          args: Prisma.ViewFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ViewPayload>[]
+        }
+        create: {
+          args: Prisma.ViewCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ViewPayload>
+        }
+        createMany: {
+          args: Prisma.ViewCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ViewCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ViewPayload>[]
+        }
+        delete: {
+          args: Prisma.ViewDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ViewPayload>
+        }
+        update: {
+          args: Prisma.ViewUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ViewPayload>
+        }
+        deleteMany: {
+          args: Prisma.ViewDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ViewUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ViewUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ViewPayload>[]
+        }
+        upsert: {
+          args: Prisma.ViewUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ViewPayload>
+        }
+        aggregate: {
+          args: Prisma.ViewAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateView>
+        }
+        groupBy: {
+          args: Prisma.ViewGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ViewGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ViewCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ViewCountAggregateOutputType> | number
         }
       }
     }
@@ -936,6 +1011,15 @@ export const StoryScalarFieldEnum = {
 export type StoryScalarFieldEnum = (typeof StoryScalarFieldEnum)[keyof typeof StoryScalarFieldEnum]
 
 
+export const ViewScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  storyId: 'storyId'
+} as const
+
+export type ViewScalarFieldEnum = (typeof ViewScalarFieldEnum)[keyof typeof ViewScalarFieldEnum]
+
+
 export const CommentScalarFieldEnum = {
   id: 'id',
   content: 'content',
@@ -1202,6 +1286,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   account?: Prisma.AccountOmit
   story?: Prisma.StoryOmit
+  view?: Prisma.ViewOmit
   comment?: Prisma.CommentOmit
   bookmark?: Prisma.BookmarkOmit
   subscribeForASport?: Prisma.SubscribeForASportOmit

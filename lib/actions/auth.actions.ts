@@ -14,7 +14,9 @@ interface ActionResponse {
   message: string;
 }
 
-export async function signUpWithCredentials(params): Promise<ActionResponse> {
+export async function signUpWithCredentials(
+  params: unknown,
+): Promise<ActionResponse> {
   // console.log("LOG - 0 ", params);
   const validationResult = SignUpSchema.safeParse(params);
 

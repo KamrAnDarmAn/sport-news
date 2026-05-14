@@ -187,6 +187,7 @@ export type UserWhereInput = {
   bookmarks?: Prisma.BookmarkListRelationFilter
   subscribeForASports?: Prisma.SubscribeForASportListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
+  views?: Prisma.ViewListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -200,6 +201,7 @@ export type UserOrderByWithRelationInput = {
   bookmarks?: Prisma.BookmarkOrderByRelationAggregateInput
   subscribeForASports?: Prisma.SubscribeForASportOrderByRelationAggregateInput
   accounts?: Prisma.AccountOrderByRelationAggregateInput
+  views?: Prisma.ViewOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -216,6 +218,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   bookmarks?: Prisma.BookmarkListRelationFilter
   subscribeForASports?: Prisma.SubscribeForASportListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
+  views?: Prisma.ViewListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -251,6 +254,7 @@ export type UserCreateInput = {
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
   subscribeForASports?: Prisma.SubscribeForASportCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  views?: Prisma.ViewCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -264,6 +268,7 @@ export type UserUncheckedCreateInput = {
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
   subscribeForASports?: Prisma.SubscribeForASportUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  views?: Prisma.ViewUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -277,6 +282,7 @@ export type UserUpdateInput = {
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
   subscribeForASports?: Prisma.SubscribeForASportUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  views?: Prisma.ViewUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -290,6 +296,7 @@ export type UserUncheckedUpdateInput = {
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
   subscribeForASports?: Prisma.SubscribeForASportUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  views?: Prisma.ViewUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -390,6 +397,22 @@ export type UserUpdateOneRequiredWithoutStoriesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutStoriesInput, Prisma.UserUpdateWithoutStoriesInput>, Prisma.UserUncheckedUpdateWithoutStoriesInput>
 }
 
+export type UserCreateNestedOneWithoutViewsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutViewsInput, Prisma.UserUncheckedCreateWithoutViewsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutViewsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutViewsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutViewsInput, Prisma.UserUncheckedCreateWithoutViewsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutViewsInput
+  upsert?: Prisma.UserUpsertWithoutViewsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutViewsInput, Prisma.UserUpdateWithoutViewsInput>, Prisma.UserUncheckedUpdateWithoutViewsInput>
+}
+
 export type UserCreateNestedOneWithoutCommentsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutCommentsInput, Prisma.UserUncheckedCreateWithoutCommentsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommentsInput
@@ -444,6 +467,7 @@ export type UserCreateWithoutAccountsInput = {
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
   subscribeForASports?: Prisma.SubscribeForASportCreateNestedManyWithoutUserInput
+  views?: Prisma.ViewCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -456,6 +480,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
   subscribeForASports?: Prisma.SubscribeForASportUncheckedCreateNestedManyWithoutUserInput
+  views?: Prisma.ViewUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -484,6 +509,7 @@ export type UserUpdateWithoutAccountsInput = {
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
   subscribeForASports?: Prisma.SubscribeForASportUpdateManyWithoutUserNestedInput
+  views?: Prisma.ViewUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -496,6 +522,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
   subscribeForASports?: Prisma.SubscribeForASportUncheckedUpdateManyWithoutUserNestedInput
+  views?: Prisma.ViewUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutStoriesInput = {
@@ -508,6 +535,7 @@ export type UserCreateWithoutStoriesInput = {
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
   subscribeForASports?: Prisma.SubscribeForASportCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  views?: Prisma.ViewCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutStoriesInput = {
@@ -520,6 +548,7 @@ export type UserUncheckedCreateWithoutStoriesInput = {
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
   subscribeForASports?: Prisma.SubscribeForASportUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  views?: Prisma.ViewUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutStoriesInput = {
@@ -548,6 +577,7 @@ export type UserUpdateWithoutStoriesInput = {
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
   subscribeForASports?: Prisma.SubscribeForASportUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  views?: Prisma.ViewUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutStoriesInput = {
@@ -556,6 +586,75 @@ export type UserUncheckedUpdateWithoutStoriesInput = {
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  subscribeForASports?: Prisma.SubscribeForASportUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  views?: Prisma.ViewUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutViewsInput = {
+  id?: string
+  email: string
+  fullName: string
+  role?: $Enums.Role
+  createdAt?: Date | string
+  stories?: Prisma.StoryCreateNestedManyWithoutAuthorInput
+  comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  subscribeForASports?: Prisma.SubscribeForASportCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutViewsInput = {
+  id?: string
+  email: string
+  fullName: string
+  role?: $Enums.Role
+  createdAt?: Date | string
+  stories?: Prisma.StoryUncheckedCreateNestedManyWithoutAuthorInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  subscribeForASports?: Prisma.SubscribeForASportUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutViewsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutViewsInput, Prisma.UserUncheckedCreateWithoutViewsInput>
+}
+
+export type UserUpsertWithoutViewsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutViewsInput, Prisma.UserUncheckedUpdateWithoutViewsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutViewsInput, Prisma.UserUncheckedCreateWithoutViewsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutViewsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutViewsInput, Prisma.UserUncheckedUpdateWithoutViewsInput>
+}
+
+export type UserUpdateWithoutViewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stories?: Prisma.StoryUpdateManyWithoutAuthorNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  subscribeForASports?: Prisma.SubscribeForASportUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutViewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stories?: Prisma.StoryUncheckedUpdateManyWithoutAuthorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
   subscribeForASports?: Prisma.SubscribeForASportUncheckedUpdateManyWithoutUserNestedInput
@@ -572,6 +671,7 @@ export type UserCreateWithoutCommentsInput = {
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
   subscribeForASports?: Prisma.SubscribeForASportCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  views?: Prisma.ViewCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCommentsInput = {
@@ -584,6 +684,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
   subscribeForASports?: Prisma.SubscribeForASportUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  views?: Prisma.ViewUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCommentsInput = {
@@ -612,6 +713,7 @@ export type UserUpdateWithoutCommentsInput = {
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
   subscribeForASports?: Prisma.SubscribeForASportUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  views?: Prisma.ViewUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -624,6 +726,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
   subscribeForASports?: Prisma.SubscribeForASportUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  views?: Prisma.ViewUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBookmarksInput = {
@@ -636,6 +739,7 @@ export type UserCreateWithoutBookmarksInput = {
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   subscribeForASports?: Prisma.SubscribeForASportCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  views?: Prisma.ViewCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBookmarksInput = {
@@ -648,6 +752,7 @@ export type UserUncheckedCreateWithoutBookmarksInput = {
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   subscribeForASports?: Prisma.SubscribeForASportUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  views?: Prisma.ViewUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBookmarksInput = {
@@ -676,6 +781,7 @@ export type UserUpdateWithoutBookmarksInput = {
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   subscribeForASports?: Prisma.SubscribeForASportUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  views?: Prisma.ViewUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBookmarksInput = {
@@ -688,6 +794,7 @@ export type UserUncheckedUpdateWithoutBookmarksInput = {
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   subscribeForASports?: Prisma.SubscribeForASportUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  views?: Prisma.ViewUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSubscribeForASportsInput = {
@@ -700,6 +807,7 @@ export type UserCreateWithoutSubscribeForASportsInput = {
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  views?: Prisma.ViewCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSubscribeForASportsInput = {
@@ -712,6 +820,7 @@ export type UserUncheckedCreateWithoutSubscribeForASportsInput = {
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  views?: Prisma.ViewUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSubscribeForASportsInput = {
@@ -740,6 +849,7 @@ export type UserUpdateWithoutSubscribeForASportsInput = {
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  views?: Prisma.ViewUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubscribeForASportsInput = {
@@ -752,6 +862,7 @@ export type UserUncheckedUpdateWithoutSubscribeForASportsInput = {
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  views?: Prisma.ViewUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -765,6 +876,7 @@ export type UserCountOutputType = {
   bookmarks: number
   subscribeForASports: number
   accounts: number
+  views: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -773,6 +885,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   bookmarks?: boolean | UserCountOutputTypeCountBookmarksArgs
   subscribeForASports?: boolean | UserCountOutputTypeCountSubscribeForASportsArgs
   accounts?: boolean | UserCountOutputTypeCountAccountsArgs
+  views?: boolean | UserCountOutputTypeCountViewsArgs
 }
 
 /**
@@ -820,6 +933,13 @@ export type UserCountOutputTypeCountAccountsArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.AccountWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountViewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ViewWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -832,6 +952,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   bookmarks?: boolean | Prisma.User$bookmarksArgs<ExtArgs>
   subscribeForASports?: boolean | Prisma.User$subscribeForASportsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
+  views?: boolean | Prisma.User$viewsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -866,6 +987,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   bookmarks?: boolean | Prisma.User$bookmarksArgs<ExtArgs>
   subscribeForASports?: boolean | Prisma.User$subscribeForASportsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
+  views?: boolean | Prisma.User$viewsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -879,6 +1001,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     bookmarks: Prisma.$BookmarkPayload<ExtArgs>[]
     subscribeForASports: Prisma.$SubscribeForASportPayload<ExtArgs>[]
     accounts: Prisma.$AccountPayload<ExtArgs>[]
+    views: Prisma.$ViewPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1285,6 +1408,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   bookmarks<T extends Prisma.User$bookmarksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$bookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   subscribeForASports<T extends Prisma.User$subscribeForASportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscribeForASportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscribeForASportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   accounts<T extends Prisma.User$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  views<T extends Prisma.User$viewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$viewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ViewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1829,6 +1953,30 @@ export type User$accountsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.AccountScalarFieldEnum | Prisma.AccountScalarFieldEnum[]
+}
+
+/**
+ * User.views
+ */
+export type User$viewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the View
+   */
+  select?: Prisma.ViewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the View
+   */
+  omit?: Prisma.ViewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ViewInclude<ExtArgs> | null
+  where?: Prisma.ViewWhereInput
+  orderBy?: Prisma.ViewOrderByWithRelationInput | Prisma.ViewOrderByWithRelationInput[]
+  cursor?: Prisma.ViewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ViewScalarFieldEnum | Prisma.ViewScalarFieldEnum[]
 }
 
 /**

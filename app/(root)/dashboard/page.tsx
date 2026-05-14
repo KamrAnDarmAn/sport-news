@@ -158,7 +158,7 @@ export default function Dashboard() {
         noIndex
         jsonLd={breadcrumbJsonLd([{ name: "Dashboard", href: "/dashboard" }])}
       />
-      <Breadcrumbs items={[{ name: "Dashboard", href: "/dashboard" }]} />
+      {/* <Breadcrumbs items={[{ name: "Dashboard", href: "/dashboard" }]} /> */}
       <PageHeader
         eyebrow="Your space"
         title={`Welcome back, ${displayName}`}

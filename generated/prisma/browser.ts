@@ -33,6 +33,11 @@ export type Account = Prisma.AccountModel
  */
 export type Story = Prisma.StoryModel
 /**
+ * Model View
+ * 
+ */
+export type View = Prisma.ViewModel
+/**
  * Model Comment
  * 
  */
