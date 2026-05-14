@@ -12,6 +12,7 @@ import { getStoryBySlug } from "@/lib/actions/story.actions";
 import { auth } from "@/auth";
 import { isStoryBookmarkedByUser } from "@/lib/actions/bookmark.actions";
 import { getCommentsByStoryId } from "@/lib/actions/comment.actions";
+import { StoryBody } from "@/components/editor/StoryBody";
 
 export default async function ArticleDetail({
   params,
@@ -130,9 +131,7 @@ export default async function ArticleDetail({
           </div>
         </Card>
 
-        <div className="prose prose-invert max-w-none prose-p:text-foreground/90 prose-headings:text-foreground prose-a:text-primary whitespace-pre-wrap">
-          {post.content}
-        </div>
+        <StoryBody content={post.content} />
 
         <CommentsSection storyId={post.id} initialComments={initialComments} />
       </div>

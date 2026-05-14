@@ -25,7 +25,6 @@ export const Navbar = () => {
   const isAdmin = user ? session.user.role === 'ADMIN' : false;
   const bookmarks = []
 
-  console.log('SESSION: ', session)
   const signOut = () => {
     signOutUser();
   }

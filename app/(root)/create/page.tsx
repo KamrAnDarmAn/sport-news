@@ -1,37 +1,20 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/PageHeader";
 import { SEO } from "@/components/SEO";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SPORT_LIST } from "@/lib/sports-data";
-import {
-  Bold,
-  Italic,
-  Quote,
-  List,
-  Heading2,
-  Link2,
-  Image as ImageIcon,
-  Code,
-  Eye,
-  Save,
-  ShieldAlert,
-  Sparkles,
-  X,
-} from "lucide-react";
+import { Image as ImageIcon, Eye, Save, ShieldAlert, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -41,6 +24,14 @@ import {
   type CreateStoryFormValues,
 } from "@/lib/validations/story-validations";
 import { canPublish } from "@/lib/authz";
+import { MarkdownPreview } from "@/components/editor/MarkdownPreview";
+
+const StoryEditor = dynamic(() => import("@/components/editor"), {
+  ssr: false,
+  loading: () => (
+    <div className="min-h-[480px] rounded-md border border-border bg-muted/30 animate-pulse" />
+  ),
+});
 
 const slugify = (s: string) =>
   s
@@ -52,55 +43,36 @@ const slugify = (s: string) =>
 
 const READ_WPM = 220;
 
-// Tiny markdown-ish renderer for preview
-const renderMarkdown = (md: string) => {
-  const escape = (s: string) =>
-    s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c] as string));
-  const html = escape(md)
-    .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-black mt-6 mb-3">$1</h2>')
-    .replace(/^# (.+)$/gm, '<h1 class="text-3xl font-black mt-6 mb-3">$1</h1>')
-    .replace(
-      /^&gt; (.+)$/gm,
-      '<blockquote class="border-l-4 border-primary pl-4 italic text-muted-foreground my-4">$1</blockquote>'
-    )
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*(.+?)\*/g, "<em>$1</em>")
-    .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-muted text-xs">$1</code>')
-    .replace(
-      /\[(.+?)\]\((.+?)\)/g,
-      '<a class="text-primary underline" href="$2" target="_blank" rel="noreferrer">$1</a>'
-    )
-    .replace(/^- (.+)$/gm, '<li class="ml-5 list-disc">$1</li>')
-    .replace(/\n\n/g, "</p><p class=\"my-3\">");
-  return `<p class="my-3">${html}</p>`;
-};
-
 const FORM_ID = "create-story-form";
+
+const emptyDefaults: CreateStoryFormValues = {
+  title: "",
+  excerpt: "",
+  content: "",
+  cover_image_url: "",
+  sport: "",
+  type: "article",
+};
 
 export default function CreateArticle() {
   const { data: session } = useSession();
   const user = session?.user;
   const isEditor = user ? canPublish(session.user.role) : false;
-  const loading = false;
-  const contentRef = useRef<HTMLTextAreaElement>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [saving, setSaving] = useState(false);
   const [tab, setTab] = useState<"write" | "preview">("write");
+  /** Bumps after async load so MDXEditor remounts with `markdown` from the server (prop is only read on mount). */
+  const [editorSession, setEditorSession] = useState(0);
+  /** Avoid resetting the form on first paint when there is no `edit` query (defaults are already empty). */
+  const hadLoadedEditRef = useRef(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const editId = searchParams.get("edit");
 
   const form = useForm<CreateStoryFormValues>({
     resolver: zodResolver(CreateStoryFormSchema),
-    defaultValues: {
-      title: "",
-      excerpt: "",
-      content: "",
-      cover_image_url: "",
-      sport: "",
-      type: "article",
-    },
+    defaultValues: emptyDefaults,
   });
 
   const titleWatch = form.watch("title");
@@ -109,13 +81,11 @@ export default function CreateArticle() {
 
   const wordCount = useMemo(
     () => contentWatch.trim().split(/\s+/).filter(Boolean).length,
-    [contentWatch]
+    [contentWatch],
   );
   const readingTime = Math.max(1, Math.round(wordCount / READ_WPM));
   const slugPreview = slugify(titleWatch) || "your-story-slug";
 
-  if (loading)
-    return <div className="container py-20 text-muted-foreground">Loading…</div>;
   if (!user) {
     redirect("/auth");
     return null;
@@ -136,67 +106,43 @@ export default function CreateArticle() {
   }
 
   useEffect(() => {
-    if (!editId) return;
+    if (!editId) {
+      if (hadLoadedEditRef.current) {
+        form.reset(emptyDefaults);
+        setTags([]);
+        setEditorSession((s) => s + 1);
+      }
+      hadLoadedEditRef.current = false;
+      return;
+    }
+
     let cancelled = false;
     (async () => {
       const res = await getStoryById(editId);
-      if (cancelled) return;
-      if (!res.success || !res.data) return;
-
-      form.setValue("title", res.data.title, { shouldDirty: false });
-      form.setValue("excerpt", res.data.excerpt ?? "", { shouldDirty: false });
-      form.setValue("content", res.data.content ?? "", { shouldDirty: false });
-      form.setValue("cover_image_url", res.data.coverUrl ?? "", { shouldDirty: false });
-      form.setValue("sport", res.data.sport ?? "", { shouldDirty: false });
-      form.setValue(
-        "type",
-        res.data.type === "NEWS" ? "news" : "article",
-        { shouldDirty: false },
-      );
-      const t = (res.data.topic ?? "")
+      if (cancelled || !res.success || !res.data) return;
+      const d = res.data;
+      form.reset({
+        title: d.title,
+        excerpt: d.excerpt ?? "",
+        content: d.content ?? "",
+        cover_image_url: d.coverUrl ?? "",
+        sport: d.sport ?? "",
+        type: d.type === "NEWS" ? "news" : "article",
+      });
+      const t = (d.topic ?? "")
         .split(",")
         .map((x) => x.trim())
         .filter(Boolean);
       setTags(t);
+      setEditorSession((s) => s + 1);
+      hadLoadedEditRef.current = true;
     })();
+
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- load when `editId` changes; form.reset is stable
   }, [editId]);
-
-  const wrap = (before: string, after = before, placeholder = "text") => {
-    const el = contentRef.current;
-    if (!el) return;
-    const start = el.selectionStart;
-    const end = el.selectionEnd;
-    const value = form.getValues("content");
-    const sel = value.slice(start, end) || placeholder;
-    const next = value.slice(0, start) + before + sel + after + value.slice(end);
-    form.setValue("content", next, { shouldDirty: true, shouldValidate: true });
-    requestAnimationFrame(() => {
-      el.focus();
-      el.selectionStart = start + before.length;
-      el.selectionEnd = start + before.length + sel.length;
-    });
-  };
-
-  const insertLine = (prefix: string) => {
-    const el = contentRef.current;
-    if (!el) return;
-    const start = el.selectionStart;
-    const before = form.getValues("content").slice(0, start);
-    const after = form.getValues("content").slice(start);
-    const lineStart = before.lastIndexOf("\n") + 1;
-    const full = form.getValues("content");
-    const next = full.slice(0, lineStart) + prefix + full.slice(lineStart);
-    form.setValue("content", next, { shouldDirty: true, shouldValidate: true });
-    requestAnimationFrame(() => {
-      el.focus();
-      el.selectionStart = el.selectionEnd = start + prefix.length;
-    });
-    void after;
-  };
 
   const addTag = () => {
     const t = tagInput.trim().toLowerCase();
@@ -222,7 +168,7 @@ export default function CreateArticle() {
         return;
       }
 
-      toast.success(asDraft ? "Draft saved" : (editId ? "Updated!" : "Published!"));
+      toast.success(asDraft ? "Draft saved" : editId ? "Updated!" : "Published!");
       router.replace(asDraft ? "/dashboard" : `/article/${result.data.slug}`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to publish";
@@ -232,26 +178,14 @@ export default function CreateArticle() {
     }
   };
 
-  const toolbarBtns = [
-    { icon: Heading2, label: "Heading", action: () => insertLine("## ") },
-    { icon: Bold, label: "Bold", action: () => wrap("**", "**", "bold text") },
-    { icon: Italic, label: "Italic", action: () => wrap("*", "*", "italic text") },
-    { icon: Quote, label: "Quote", action: () => insertLine("> ") },
-    { icon: List, label: "List", action: () => insertLine("- ") },
-    { icon: Link2, label: "Link", action: () => wrap("[", "](https://)", "link text") },
-    { icon: Code, label: "Code", action: () => wrap("`", "`", "code") },
-    {
-      icon: ImageIcon,
-      label: "Image",
-      action: () => wrap("![alt](", ")", "https://image.url"),
-    },
-  ];
-
   return (
     <div>
       <SEO title="Write a story" noIndex />
       <Breadcrumbs
-        items={[{ name: "Editorial", href: "/editorial" }, { name: editId ? "Edit" : "New", href: "/create" }]}
+        items={[
+          { name: "Editorial", href: "/editorial" },
+          { name: editId ? "Edit" : "New", href: "/create" },
+        ]}
       />
       <PageHeader
         eyebrow="Editor"
@@ -265,9 +199,7 @@ export default function CreateArticle() {
           onSubmit={form.handleSubmit((vals) => processSubmit(vals, false))}
           className="grid lg:grid-cols-[1fr_320px] gap-6"
         >
-          {/* Main column */}
           <div className="space-y-5 min-w-0">
-            {/* Title + slug */}
             <Card className="p-5 space-y-3">
               <Controller
                 name="title"
@@ -312,27 +244,9 @@ export default function CreateArticle() {
               </div>
             </Card>
 
-            {/* Toolbar + editor */}
             <Card className="overflow-hidden">
               <Tabs value={tab} onValueChange={(v) => setTab(v as "write" | "preview")}>
-                <div className="flex items-center justify-between border-b border-border bg-muted/30 px-3 py-2 gap-2">
-                  <div className="flex flex-wrap items-center gap-0.5">
-                    {toolbarBtns.map((b) => (
-                      <Button
-                        key={b.label}
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={b.action}
-                        title={b.label}
-                        aria-label={b.label}
-                        className="w-8 h-8"
-                        disabled={tab === "preview"}
-                      >
-                        <b.icon className="w-4 h-4" />
-                      </Button>
-                    ))}
-                  </div>
+                <div className="flex items-center justify-end border-b border-border bg-muted/30 px-3 py-2">
                   <TabsList className="h-8">
                     <TabsTrigger value="write" className="text-xs gap-1">
                       <Sparkles className="w-3 h-3" /> Write
@@ -343,45 +257,26 @@ export default function CreateArticle() {
                   </TabsList>
                 </div>
 
-                <TabsContent value="write" className="m-0">
+                <TabsContent value="write" className="m-0 border-t border-border">
                   <Controller
                     name="content"
                     control={form.control}
-                    render={({ field, fieldState }) => {
-                      const { ref, ...fieldProps } = field;
-                      return (
-                        <Field data-invalid={fieldState.invalid} className="gap-0">
-                          <Textarea
-                            {...fieldProps}
-                            ref={(node) => {
-                              contentRef.current = node;
-                              ref(node);
-                            }}
-                            rows={20}
-                            required
-                            minLength={20}
-                            maxLength={50000}
-                            placeholder="Tell the story… use **bold**, *italic*, ## heading, > quote, - list, [link](url)"
-                            aria-invalid={fieldState.invalid}
-                            className="border-0 rounded-none focus-visible:ring-0 shadow-none font-mono text-sm leading-relaxed min-h-[480px] resize-y"
-                          />
-                          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                        </Field>
-                      );
-                    }}
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid} className="gap-0">
+                        <StoryEditor
+                          key={`${editId ?? "new"}-${editorSession}`}
+                          markdown={field.value}
+                          onChange={(md) => field.onChange(md)}
+                          placeholder="Tell the story… Headings, lists, links, images, and code blocks live in the toolbar."
+                          className="rounded-none border-0 shadow-none"
+                        />
+                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                      </Field>
+                    )}
                   />
                 </TabsContent>
-                <TabsContent value="preview" className="m-0 p-6 min-h-[480px]">
-                  {contentWatch ? (
-                    <article
-                      className="prose prose-invert max-w-none prose-headings:text-foreground prose-p:text-foreground/90"
-                      dangerouslySetInnerHTML={{ __html: renderMarkdown(contentWatch) }}
-                    />
-                  ) : (
-                    <div className="text-center text-muted-foreground py-16">
-                      Nothing to preview yet.
-                    </div>
-                  )}
+                <TabsContent value="preview" className="m-0 p-6 min-h-[480px] border-t border-border">
+                  <MarkdownPreview source={contentWatch} />
                 </TabsContent>
               </Tabs>
 
@@ -394,7 +289,6 @@ export default function CreateArticle() {
             </Card>
           </div>
 
-          {/* Sidebar */}
           <aside className="space-y-5">
             <Card className="p-5 space-y-4">
               <div className="text-xs uppercase tracking-wider font-bold text-muted-foreground">

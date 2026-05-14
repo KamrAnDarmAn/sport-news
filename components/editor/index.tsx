@@ -1,5 +1,6 @@
 "use client";
 
+import type { ForwardedRef, ReactNode } from "react";
 import {
   MDXEditor,
   UndoRedo,
@@ -26,62 +27,82 @@ import {
   Separator,
   InsertThematicBreak,
   diffSourcePlugin,
-  MDXEditorMethods,
+  thematicBreakPlugin,
+  type MDXEditorMethods,
 } from "@mdxeditor/editor";
 import { basicDark } from "cm6-theme-basic-dark";
 import { useTheme } from "next-themes";
-import { Ref } from "react";
+import { cn } from "@/lib/utils";
 
 import "@mdxeditor/editor/style.css";
 import "./dark-editor.css";
 
-interface Props {
-  value: string;
-  editorRef: Ref<MDXEditorMethods> | null;
-  fieldChange: (value: string) => void;
-}
+export type { MDXEditorMethods };
 
-const Editor = ({ value, editorRef, fieldChange }: Props) => {
+export type StoryEditorProps = {
+  markdown: string;
+  onChange: (markdown: string) => void;
+  editorRef?: ForwardedRef<MDXEditorMethods | null>;
+  className?: string;
+  contentEditableClassName?: string;
+  placeholder?: ReactNode;
+};
+
+export default function StoryEditor({
+  markdown,
+  onChange,
+  editorRef,
+  className,
+  contentEditableClassName,
+  placeholder,
+}: StoryEditorProps) {
   const { resolvedTheme } = useTheme();
-
-  const themeExtension = resolvedTheme === "dark" ? [basicDark] : [];
+  const themeExtension = resolvedTheme === "light" ? [] : [basicDark];
 
   return (
     <MDXEditor
-      key={resolvedTheme}
-      markdown={value}
+      key={resolvedTheme ?? "dark"}
+      markdown={markdown}
       ref={editorRef}
-      onChange={fieldChange}
-      className="background-light800_dark200 light-border-2 markdown-editor dark-editor grid w-full border"
+      onChange={(md) => onChange(md)}
+      placeholder={placeholder}
+      className={cn(
+        "dark-editor min-h-[480px] w-full rounded-none border-0 bg-background",
+        className,
+      )}
+      contentEditableClassName={cn(
+        "prose prose-invert max-w-none px-4 py-3 font-sans text-sm leading-relaxed focus:outline-none",
+        contentEditableClassName,
+      )}
       plugins={[
         headingsPlugin(),
         listsPlugin(),
         linkPlugin(),
         linkDialogPlugin(),
         quotePlugin(),
+        thematicBreakPlugin(),
         markdownShortcutPlugin(),
         tablePlugin(),
         imagePlugin(),
         codeBlockPlugin({ defaultCodeBlockLanguage: "" }),
         codeMirrorPlugin({
           codeBlockLanguages: {
-            css: "css",
-            txt: "txt",
-            sql: "sql",
-            html: "html",
-            sass: "sass",
-            scss: "scss",
-            bash: "bash",
-            json: "json",
-            js: "javascript",
-            ts: "typescript",
-            "": "unspecified",
+            css: "CSS",
+            txt: "Plain text",
+            sql: "SQL",
+            html: "HTML",
+            sass: "Sass",
+            scss: "SCSS",
+            bash: "Bash",
+            json: "JSON",
+            js: "JavaScript",
+            ts: "TypeScript",
+            "": "Unspecified",
             tsx: "TypeScript (React)",
             jsx: "JavaScript (React)",
           },
           autoLoadLanguageSupport: true,
           codeMirrorExtensions: themeExtension,
-
         }),
         diffSourcePlugin({ viewMode: "rich-text", diffMarkdown: "" }),
         toolbarPlugin({
@@ -97,23 +118,17 @@ const Editor = ({ value, editorRef, fieldChange }: Props) => {
                     <>
                       <UndoRedo />
                       <Separator />
-
-
                       <BoldItalicUnderlineToggles />
                       <CodeToggle />
                       <Separator />
-
                       <ListsToggle />
                       <Separator />
-
                       <CreateLink />
                       <InsertImage />
                       <Separator />
-
                       <InsertTable />
                       <InsertThematicBreak />
                       <Separator />
-
                       <InsertCodeBlock />
                     </>
                   ),
@@ -125,6 +140,4 @@ const Editor = ({ value, editorRef, fieldChange }: Props) => {
       ]}
     />
   );
-};
-
-export default Editor;
+}
