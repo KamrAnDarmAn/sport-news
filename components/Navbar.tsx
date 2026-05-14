@@ -1,30 +1,19 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import Link from "next/link";
 
-import {
-  Menu,
-  X,
-  Flame,
-  LogOut,
-  LogIn,
-  Bookmark,
-  LayoutDashboard,
-} from "lucide-react";
+import { Menu, X, Flame, LogOut, PenLine, LogIn, Bookmark, LayoutDashboard } from "lucide-react";
 import { NAV_LINKS } from "@/lib/nav";
 import { cn } from "@/lib/utils";
+// import { signOut } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { signOutUser } from "@/lib/actions/auth.actions";
 import { useSession } from "next-auth/react";
 import { canPublish } from "@/lib/authz";
-import { useBookmarks } from "@/hooks/use-bookmarks";
-import { getBookmarkCount } from "@/lib/actions/bookmark.actions";
-
-const BM_CHANGE = "pulse:bookmarks-changed";
 
 export const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -33,37 +22,15 @@ export const Navbar = () => {
 
   const { data: session } = useSession();
   const user = session?.user;
+  const isAdmin = user ? session.user.role === 'ADMIN' : false;
+  const bookmarks = []
 
-  const { items: localBookmarks } = useBookmarks();
-  const [serverBookmarkCount, setServerBookmarkCount] = useState<number | null>(
-    null,
-  );
-
-  const refreshServerCount = useCallback(() => {
-    if (!user?.id) {
-      setServerBookmarkCount(null);
-      return;
-    }
-    void getBookmarkCount().then((r) => {
-      if (r.success) setServerBookmarkCount(r.count);
-    });
-  }, [user?.id]);
-
-  useEffect(() => {
-    refreshServerCount();
-  }, [refreshServerCount, pathname]);
-
-  useEffect(() => {
-    const handler = () => refreshServerCount();
-    window.addEventListener(BM_CHANGE, handler);
-    return () => window.removeEventListener(BM_CHANGE, handler);
-  }, [refreshServerCount]);
-
-  const bookmarksLen = user?.id ? (serverBookmarkCount ?? 0) : localBookmarks.length;
-
+  console.log('SESSION: ', session)
   const signOut = () => {
     signOutUser();
-  };
+  }
+
+
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border ">
@@ -72,9 +39,7 @@ export const Navbar = () => {
           <div className="w-9 h-9 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow group-hover:scale-110 transition-smooth">
             <Flame className="w-5 h-5 text-primary-foreground" />
           </div>
-          <span className="text-xl font-black tracking-tight">
-            PULSE<span className="text-gradient-primary">.</span>
-          </span>
+          <span className="text-xl font-black tracking-tight">PULSE<span className="text-gradient-primary">.</span></span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1 mx-auto">
@@ -82,12 +47,14 @@ export const Navbar = () => {
             <Link
               key={l.href}
               href={l.href}
-              className={cn(
-                "px-4 py-2 text-sm font-semibold rounded-full transition-smooth relative",
-                pathname === l.href
-                  ? "text-primary-foreground bg-gradient-primary shadow-glow"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted",
-              )}
+              className={
+                cn(
+                  "px-4 py-2 text-sm font-semibold rounded-full transition-smooth relative",
+                  pathname === l.href
+                    ? "text-primary-foreground bg-gradient-primary shadow-glow"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                )
+              }
             >
               {l.name}
             </Link>
@@ -99,24 +66,16 @@ export const Navbar = () => {
           <Button asChild size="sm" variant="ghost" className="gap-1.5 relative">
             <Link href="/bookmarks" aria-label="Bookmarks">
               <Bookmark className="w-4 h-4" />
-              {bookmarksLen > 0 && (
+              {bookmarks.length > 0 && (
                 <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-gradient-primary text-primary-foreground text-[10px] font-black flex items-center justify-center">
-                  {bookmarksLen > 99 ? "99+" : bookmarksLen}
+                  {bookmarks.length}
                 </span>
               )}
             </Link>
           </Button>
           {user && (
-            <Button
-              asChild
-              size="sm"
-              variant="ghost"
-              className="gap-1.5"
-              aria-label="Dashboard"
-            >
-              <Link href="/dashboard">
-                <LayoutDashboard className="w-4 h-4" />
-              </Link>
+            <Button asChild size="sm" variant="ghost" className="gap-1.5" aria-label="Dashboard">
+              <Link href="/dashboard"><LayoutDashboard className="w-4 h-4" /></Link>
             </Button>
           )}
           {canPublish(session?.user.role) && (
@@ -124,30 +83,19 @@ export const Navbar = () => {
               <Button asChild size="sm" variant="outline" className="gap-1.5">
                 <Link href="/editorial">Editorial</Link>
               </Button>
+              {/* <Button asChild size="sm" variant="outline" className="gap-1.5">
+                <Link href="/create"><PenLine className="w-4 h-4" />Write</Link>
+              </Button> */}
             </>
           )}
           {user ? (
-            <Button
-              size="sm"
-              variant="destructive"
-              onClick={async () => {
-                await signOut();
-                router.replace("/");
-              }}
-              className="gap-1.5 cursor-pointer"
-            >
+            <Button size="sm" variant="destructive" onClick={async () => { await signOut(); router.replace("/"); }} className="gap-1.5 cursor-pointer  ">
               <LogOut className="w-4 h-4" />
+              {/* Sign out */}
             </Button>
           ) : (
-            <Button
-              asChild
-              size="sm"
-              className="bg-gradient-primary text-primary-foreground hover:opacity-90 shadow-glow gap-1.5"
-            >
-              <Link href="/auth">
-                <LogIn className="w-4 h-4" />
-                Sign in
-              </Link>
+            <Button asChild size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 shadow-glow gap-1.5">
+              <Link href="/auth"><LogIn className="w-4 h-4" />Sign in</Link>
             </Button>
           )}
         </div>
@@ -164,6 +112,7 @@ export const Navbar = () => {
         </div>
       </div>
 
+
       {open && (
         <nav className="lg:hidden border-t border-border bg-card animate-fade-in px-4">
           <div className="container py-4 flex flex-col gap-1">
@@ -172,81 +121,26 @@ export const Navbar = () => {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className={cn(
-                  "px-4 py-3 rounded-lg text-sm font-semibold transition-smooth",
-                  pathname === l.href
-                    ? "bg-gradient-primary text-primary-foreground"
-                    : "hover:bg-muted",
-                )}
+                className={
+                  cn(
+                    "px-4 py-3 rounded-lg text-sm font-semibold transition-smooth",
+                    pathname === l.href ? "bg-gradient-primary text-primary-foreground" : "hover:bg-muted"
+                  )
+                }
               >
                 {l.name}
               </Link>
             ))}
             <div className="border-t border-border pt-2 mt-2 flex flex-col gap-1">
-              {user && (
-                <Link
-                  href="/dashboard"
-                  onClick={() => setOpen(false)}
-                  className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted"
-                >
-                  📊 Dashboard
-                </Link>
-              )}
-              <Link
-                href="/bookmarks"
-                onClick={() => setOpen(false)}
-                className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted"
-              >
-                🔖 Bookmarks{" "}
-                {bookmarksLen > 0 && (
-                  <span className="ml-1 text-xs text-primary">({bookmarksLen})</span>
-                )}
-              </Link>
-              {canPublish(session?.user.role) && (
-                <Link
-                  href="/editorial"
-                  onClick={() => setOpen(false)}
-                  className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted"
-                >
-                  📋 Editorial
-                </Link>
-              )}
-              {canPublish(session?.user.role) && (
-                <Link
-                  href="/roles"
-                  onClick={() => setOpen(false)}
-                  className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted"
-                >
-                  🛡️ Roles
-                </Link>
-              )}
-              {canPublish(session?.user.role) && (
-                <Link
-                  href="/create"
-                  onClick={() => setOpen(false)}
-                  className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted"
-                >
-                  ✍️ Write a post
-                </Link>
-              )}
+              {user && <Link href="/dashboard" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">📊 Dashboard</Link>}
+              <Link href="/bookmarks" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">🔖 Bookmarks {bookmarks.length > 0 && <span className="ml-1 text-xs text-primary">({bookmarks.length})</span>}</Link>
+              {canPublish(session?.user.role) && <Link href="/editorial" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">📋 Editorial</Link>}
+              {canPublish(session?.user.role) && <Link href="/roles" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">🛡️ Roles</Link>}
+              {canPublish(session?.user.role) && <Link href="/create" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">✍️ Write a post</Link>}
               {user ? (
-                <button
-                  onClick={async () => {
-                    await signOut();
-                    setOpen(false);
-                  }}
-                  className="text-left px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted"
-                >
-                  Sign out
-                </button>
+                <button onClick={async () => { await signOut(); setOpen(false); /* router.push('/') */ }} className="text-left px-4 py-3 rounded-lg text-sm font-semibold hover:bg-muted">Sign out</button>
               ) : (
-                <Link
-                  href="/auth"
-                  onClick={() => setOpen(false)}
-                  className="px-4 py-3 rounded-lg text-sm font-semibold bg-gradient-primary text-primary-foreground"
-                >
-                  Sign in
-                </Link>
+                <Link href="/auth" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-semibold bg-gradient-primary text-primary-foreground">Sign in</Link>
               )}
             </div>
           </div>
