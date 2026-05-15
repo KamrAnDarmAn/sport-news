@@ -35,8 +35,8 @@ const Bookmarks = async () => {
                 noIndex
             // jsonLd={breadcrumbJsonLd([{ name: "Bookmarks", href: "/bookmarks" }])}
             />
-            <Breadcrumbs items={[{ name: "Bookmarks", href: "/bookmarks" }]} />
-            <PageHeader eyebrow="Your Library" title="Saved Stories" subtitle="Your personal feed — every story you've bookmarked, in one place." />
+            <PageHeader eyebrow="Your Library" title="Saved Stories" subtitle="Your personal feed — every story you've bookmarked, in one place."
+                breadcrumbs={[{ name: "Bookmarks", href: "/bookmarks" }]} />
 
             <section className="container py-12 mx-auto">
                 {bookmarks && bookmarks.length === 0 ? (

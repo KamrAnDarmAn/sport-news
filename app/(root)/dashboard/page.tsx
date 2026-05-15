@@ -20,12 +20,15 @@ import {
   Sparkles,
   ArrowRight,
   Clock,
+  Trash2,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { getDashboardActivity, getStories } from "@/lib/actions/story.actions";
+import { getUserBookmarks } from "@/lib/actions/bookmark.actions";
+import Image from "next/image";
 
 interface Post {
   id: string;
@@ -51,7 +54,7 @@ const StatCard = ({ icon: Icon, label, value, accent }: { icon: any; label: stri
 );
 
 export default function Dashboard() {
-  const { items: bookmarks } = useBookmarks();
+  const [bookmarks, setBookmarks] = useState<any[] | undefined>([]);
   const [myPosts, setMyPosts] = useState<Post[]>([]);
   const [allPosts, setAllPosts] = useState<Post[] | null>(null);
   const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null } | null>(null);
@@ -105,6 +108,16 @@ export default function Dashboard() {
       } else {
         setAllPosts(null);
       }
+
+      // Get Book marks
+      const data = await getUserBookmarks();
+      if (!data.success)
+        setBookmarks([])
+      else {
+        const { bookmarks } = data
+        setBookmarks(bookmarks)
+      }
+
     })();
     return () => {
       cancelled = true;
@@ -158,11 +171,11 @@ export default function Dashboard() {
         noIndex
         jsonLd={breadcrumbJsonLd([{ name: "Dashboard", href: "/dashboard" }])}
       />
-      {/* <Breadcrumbs items={[{ name: "Dashboard", href: "/dashboard" }]} /> */}
       <PageHeader
         eyebrow="Your space"
         title={`Welcome back, ${displayName}`}
         subtitle="Bookmarks, drafts and the stories that matter to you — all in one place."
+        breadcrumbs={[{ name: "Dashboard", href: "/dashboard" }]}
       />
 
       <section className="container py-10 mx-auto">
@@ -223,16 +236,26 @@ export default function Dashboard() {
               </Card>
             ) : (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {bookmarks.slice(0, 9).map((b) => (
-                  <Link key={b.id} href={b.href} className="group">
-                    <Card className="overflow-hidden h-full hover:border-primary/50 transition-smooth">
-                      {b.image && <img src={b.image} alt="" className="w-full h-32 object-cover" />}
-                      <div className="p-4">
-                        {b.sport && <div className="text-[10px] uppercase tracking-wider text-primary font-bold mb-1">{b.sport}</div>}
-                        <div className="font-bold leading-snug group-hover:text-primary transition-smooth">{b.title}</div>
+                {bookmarks && bookmarks.length > 0 && bookmarks.slice(0, 9).map((b, i) => (
+
+                  <Card key={b.id} className="group overflow-hidden border-border/50 animate-fade-in" style={{ animationDelay: `${i * 50}ms` }}>
+                    <Link href={`/article/${b.slug}`}>
+                      {b.coverUrl ? (
+                        <Image height={176} width={400} src={b.coverUrl} alt={b.title} className="w-full h-44 object-cover group-hover:scale-105 transition-smooth" />
+                      ) : (
+                        // <div className="w-full h-44 bg-gradient-primary opacity-80" />
+                        <></>
+                      )}
+                    </Link>
+                    <div className="px-5">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                        {b.sport && <span className="px-2 py-0.5 rounded-full bg-muted font-semibold uppercase tracking-wider">{b.sport}</span>}
+                        <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" />Saved {b.timeAgo}</span>
                       </div>
-                    </Card>
-                  </Link>
+                      <Link href={`/article/${b.slug}`}><h3 className="text-lg font-bold mb-2 group-hover:text-gradient-primary transition-smooth line-clamp-2">{b.title}</h3></Link>
+                      {b.excerpt && <p className="text-sm text-muted-foreground line-clamp-3 mb-3">{b.excerpt}</p>}
+                    </div>
+                  </Card>
                 ))}
               </div>
             )}

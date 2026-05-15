@@ -100,8 +100,13 @@ export default function EditorialClient({
         <div>
             <SEO title="Editorial Workflow" description="Pulse newsroom — manage drafts, reviews, scheduled and published stories." noIndex
                 jsonLd={breadcrumbJsonLd([{ name: "Editorial", href: "/editorial" }])} />
-            <Breadcrumbs items={[{ name: "Editorial", href: "/editorial" }]} />
-            <PageHeader eyebrow="Newsroom" title="Editorial Workflow" subtitle="Drafts, reviews, schedules and live stories — all in one calm place." />
+            {/* <Breadcrumbs items={[{ name: "Editorial", href: "/editorial" }]} /> */}
+            <PageHeader
+                eyebrow="Newsroom"
+                title="Editorial Workflow"
+                subtitle="Drafts, reviews, schedules and live stories — all in one calm place."
+                breadcrumbs={[{ name: "Editorial", href: "/editorial" }]}
+            />
 
             <section className="container py-12 mx-auto">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">

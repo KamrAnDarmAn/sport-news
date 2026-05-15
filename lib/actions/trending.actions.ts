@@ -87,7 +87,7 @@ export async function getTrendingStories(options?: {
         ...(sport
           ? { sport: { contains: sport, mode: "insensitive" as const } }
           : {}),
-        ...(type ? { type } : {}),
+        // ...(type ? { type } : {}), // Search by type
       },
       select: {
         id: true,

@@ -70,8 +70,8 @@ const Trending = () => {
         description="The most-read, most-shared sports stories on Pulse right now."
         jsonLd={breadcrumbJsonLd([{ name: "Trending", href: "/trending" }])}
       />
-      <Breadcrumbs items={[{ name: "Trending", href: "/trending" }]} />
       <PageHeader
+        breadcrumbs={[{ name: "Trending", href: "/trending" }]}
         eyebrow="Hot Right Now"
         title="Trending News"
         subtitle="The stories everyone is reading, sharing, and arguing about — right this minute."

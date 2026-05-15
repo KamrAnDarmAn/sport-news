@@ -15,8 +15,8 @@ const Category = async () => {
             <SEO title="All Sports Categories" description="Browse every sport covered by Pulse — football, basketball, tennis, F1, cricket, esports and more."
             // jsonLd={breadcrumbJsonLd([{ name: "Category", href: "/category" }])}
             />
-            <Breadcrumbs items={[{ name: "Category", href: "/category" }]} />
-            <PageHeader eyebrow="All Sports" title="Explore Every Category" subtitle="Pick your passion. Dive into curated coverage across every major sport on the planet." />
+            {/* <Breadcrumbs items={[{ name: "Category", href: "/category" }]} /> */}
+            <PageHeader breadcrumbs={[{ name: "Category", href: "/category" }]} eyebrow="All Sports" title="Explore Every Category" subtitle="Pick your passion. Dive into curated coverage across every major sport on the planet." />
             <section className="container py-16 mx-auto">
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {SPORT_LIST.map((c, i) => {

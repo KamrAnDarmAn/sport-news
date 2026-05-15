@@ -37,7 +37,13 @@ const Recent = async ({ searchParams }: RecentProps) => {
 
     return (
         <div>
-            <PageHeader eyebrow="Just In" title="Recent News" subtitle="The freshest drops from across the sporting world, updated by the minute." />
+            <PageHeader
+                eyebrow="Just In"
+                title="Recent News"
+                subtitle="The freshest drops from across the sporting world, updated by the minute."
+                breadcrumbs={[{ name: "Recent News", href: "/recent" }]}
+
+            />
             <section className="container py-16 max-w-4xl mx-auto">
                 <div className="relative pl-8  border-l-2 border-border space-y-8">
                     {items.map((n, i) => (
