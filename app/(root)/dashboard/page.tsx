@@ -202,17 +202,17 @@ export default function Dashboard() {
 
         {/* Stat tiles */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-          <StatCard icon={Bookmark} label="Bookmarks" value={bookmarks.length} />
+          <StatCard icon={Bookmark} label="Bookmarks" value={bookmarks && bookmarks.length > 0 ? bookmarks.length : 0} />
           {isAdmin ? (
             <>
-              <StatCard icon={FileText} label="Your posts" value={myPosts.length} accent="bg-blue-500" />
-              <StatCard icon={Newspaper} label="All posts" value={allPosts?.length ?? "—"} accent="bg-emerald-500" />
+              <StatCard icon={FileText} label="Your posts" value={myPosts && myPosts.length > 0 ? myPosts.length : 0} accent="bg-blue-500" />
+              <StatCard icon={Newspaper} label="All posts" value={allPosts && allPosts.length > 0 ? allPosts.length : "—"} accent="bg-emerald-500" />
               <StatCard icon={Users} label="Team" value={3} accent="bg-amber-500" />
             </>
           ) : (
             <>
-              <StatCard icon={Eye} label="Stories read" value={Math.max(bookmarks.length * 3, 12)} accent="bg-blue-500" />
-              <StatCard icon={TrendingUp} label="Topics followed" value={new Set(bookmarks.map(b => b.sport).filter(Boolean)).size} accent="bg-emerald-500" />
+              <StatCard icon={Eye} label="Stories read" value={bookmarks && bookmarks.length > 0 ? Math.max(bookmarks.length * 3, 12) : 0} accent="bg-blue-500" />
+              <StatCard icon={TrendingUp} label="Topics followed" value={bookmarks && bookmarks.length > 0 ? new Set(bookmarks.map(b => b.sport).filter(Boolean)).size : 0} accent="bg-emerald-500" />
               <StatCard icon={Sparkles} label="Streak (days)" value={4} accent="bg-amber-500" />
             </>
           )}
@@ -228,7 +228,7 @@ export default function Dashboard() {
 
           {/* Bookmarks */}
           <TabsContent value="bookmarks" className="mt-6">
-            {bookmarks.length === 0 ? (
+            {bookmarks && bookmarks.length === 0 ? (
               <Card className="p-12 text-center border-dashed">
                 <Bookmark className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
                 <p className="text-muted-foreground mb-4">You haven&apos;t bookmarked anything yet.</p>
@@ -306,7 +306,7 @@ export default function Dashboard() {
         <div className="mt-12 grid md:grid-cols-3 gap-4">
           <QuickAction to="/news" icon={Newspaper} title="Latest news" desc="Catch up on today's headlines" />
           <QuickAction to="/category" icon={TrendingUp} title="Browse sports" desc="Find your favorite categories" />
-          <QuickAction to="/bookmarks" icon={Bookmark} title="Saved stories" desc={`${bookmarks.length} saved`} />
+          <QuickAction to="/bookmarks" icon={Bookmark} title="Saved stories" desc={`${bookmarks && bookmarks.length > 0 ? bookmarks.length : 0} saved`} />
         </div>
       </section>
     </div>
