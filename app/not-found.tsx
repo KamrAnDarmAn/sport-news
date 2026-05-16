@@ -1,15 +1,8 @@
 import { ArrowLeft, Home } from "lucide-react";
-import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import Link from "next/link";
 
 const NotFound = () => {
-    // const location = useLocation();
-
-    // useEffect(() => {
-    //     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
-    // }, [location.pathname]);
-
     return (
         <div className="min-h-screen flex flex-col">
             <main className="flex-1 relative overflow-hidden flex items-center justify-center">

@@ -2,7 +2,6 @@ import { auth } from "@/auth";
 import { canPublish } from "@/lib/authz";
 import { getEditorialStories } from "@/lib/actions/story.actions";
 import EditorialClient from "./editorial-client";
-import { getUserBookmarks } from "@/lib/actions/bookmark.actions";
 
 export default async function EditorialPage() {
     const session = await auth();

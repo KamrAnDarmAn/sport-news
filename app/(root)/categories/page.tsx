@@ -1,6 +1,5 @@
 import { PageHeader } from "@/components/PageHeader";
-import { SEO, breadcrumbJsonLd } from "@/components/SEO";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { SEO } from "@/components/SEO";
 import { SPORT_LIST, storyCountForSport } from "@/lib/sports-data";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";

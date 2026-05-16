@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { SEO, breadcrumbJsonLd } from "@/components/SEO";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";

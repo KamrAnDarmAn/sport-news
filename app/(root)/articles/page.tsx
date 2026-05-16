@@ -3,13 +3,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { SEO, breadcrumbJsonLd } from "@/components/SEO";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SearchBar } from "@/components/SearchBar";
 import { FilterChips } from "@/components/FilterChips";
 import { Pager } from "@/components/Pager";
 import { BookmarkButton } from "@/components/BookMarkButton";
 import { ArrowUpRight, BookOpen } from "lucide-react";
-import { BookmarksProvider } from "@/hooks/use-bookmarks";
 import { getStories, type StoryListItem } from "@/lib/actions/story.actions";
 
 const TAGS = ["all", "Tactics", "Long Read", "Interview", "Data", "Culture", "Opinion"];

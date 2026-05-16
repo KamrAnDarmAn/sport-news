@@ -1,6 +1,5 @@
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { PageHeader } from "@/components/PageHeader";
-import { breadcrumbJsonLd, SEO } from "@/components/SEO";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 
 const clubs = [
