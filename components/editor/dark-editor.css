@@ -60,6 +60,6 @@
     "Courier New", monospace;
 
   color: var(--baseText);
-  --basePageBg: black;
-  background: var(--basePageBg);
+  /* --basePageBg: black; */
+  background: var(--color-background);
 }
