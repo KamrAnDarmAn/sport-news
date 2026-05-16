@@ -60,14 +60,14 @@ const Hero = async () => {
                                 <div className="text-center flex-1">
                                     {/* <div className="w-16 h-16 mx-auto rounded-full bg-linear-120-to-br from-orange-500 to-red-600 flex items-center justify-center text-2xl mb-2">🦅</div>
                                     <div className="font-bold">Eagles FC</div> */}
-                                    <h1 className="text-2xl text-gradient-primary animate-float delay-150">coming</h1>
+                                    <h1 className="text-3xl text-gradient-primary animate-bounce duration-1000 ">coming</h1>
                                 </div>
                                 {/* <div className="text-5xl font-black tabular-nums">3 <span className="text-muted-foreground">:</span> 1</div> */}
                                 <div className="text-5xl font-black tabular-nums">_ <span className="text-muted-foreground">:</span> _</div>
                                 <div className="text-center flex-1">
                                     {/* <div className="w-16 h-16 mx-auto rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-2xl mb-2">🐺</div>
                                     <div className="font-bold">Wolves SC</div> */}
-                                    <h1 className="text-2xl text-gradient-primary animate-float delay-100">Soon</h1>
+                                    <h1 className="text-3xl text-gradient-primary animate-bounce duration-1000 ">Soon</h1>
                                 </div>
                             </div>
                             <div className="mt-6 pt-4 border-t border-border flex justify-between text-xs text-muted-foreground">

@@ -180,7 +180,7 @@ export default function Dashboard() {
 
       <section className="container py-10 mx-auto">
         {/* Identity card */}
-        <Card className="p-6 mb-8 flex flex-col md:flex-row md:items-center gap-5 border-border/60 bg-gradient-to-br from-card to-muted/30">
+        <Card className="p-6 mb-8 flex flex-col md:flex-row md:items-center gap-5 border-border/60 bg-linear-to-br from-card to-muted/30">
           <div className={`w-16 h-16 rounded-2xl ${roleAccent} text-primary-foreground flex items-center justify-center text-2xl font-black shadow-glow`}>
             {displayName.charAt(0).toUpperCase()}
           </div>
