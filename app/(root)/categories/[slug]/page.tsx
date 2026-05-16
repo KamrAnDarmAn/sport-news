@@ -48,7 +48,7 @@ const SportDetail = () => {
         <SEO title="Sport not found" noIndex />
         <div className="text-6xl mb-4">🤷</div>
         <h1 className="text-4xl font-black mb-3">Sport not found</h1>
-        <p className="text-muted-foreground mb-8">We don't cover "{sportName}" yet.</p>
+        <p className="text-muted-foreground mb-8">We don&apos;t cover &quot;{sportName}&quot; yet.</p>
         <Link href="/category" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-primary text-primary-foreground font-bold shadow-glow">
           <ArrowLeft className="w-4 h-4" /> Browse all sports
         </Link>
@@ -78,9 +78,10 @@ const SportDetail = () => {
         <div className="flex flex-wrap gap-3">
           <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">{storyCount ?? sport.count} stories</span>
           <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">Live coverage</span>
-          <span className="px-3 py-1.5 rounded-full bg-gradient-primary text-primary-foreground text-xs font-bold">Editor's pick</span>
+          <span className="px-3 py-1.5 rounded-full bg-gradient-primary text-primary-foreground text-xs font-bold">Editor&apos;s pick</span>
         </div>
       </PageHeader>
+
       {/* CONTENT */}
       <section className="container py-16 grid lg:grid-cols-3 gap-10 mx-auto">
 

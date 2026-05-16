@@ -25,11 +25,12 @@ import {
 } from "@/lib/validations/story-validations";
 import { canPublish } from "@/lib/authz";
 import { MarkdownPreview } from "@/components/editor/MarkdownPreview";
+import Image from "next/image";
 
 const StoryEditor = dynamic(() => import("@/components/editor"), {
   ssr: false,
   loading: () => (
-    <div className="min-h-[480px] rounded-md border border-border bg-muted/30 animate-pulse" />
+    <div className="min-h-120 rounded-md border border-border bg-muted/30 animate-pulse" />
   ),
 });
 
@@ -83,28 +84,6 @@ export default function CreateArticle() {
     () => contentWatch.trim().split(/\s+/).filter(Boolean).length,
     [contentWatch],
   );
-  const readingTime = Math.max(1, Math.round(wordCount / READ_WPM));
-  const slugPreview = slugify(titleWatch) || "your-story-slug";
-
-  if (!user) {
-    redirect("/auth");
-    return null;
-  }
-  if (!isEditor) {
-    return (
-      <div className="container py-20 max-w-xl">
-        <SEO title="Editor — Access denied" noIndex />
-        <Card className="p-8 text-center">
-          <ShieldAlert className="w-12 h-12 mx-auto mb-4 text-primary" />
-          <h2 className="text-2xl font-bold mb-2">Editors only</h2>
-          <p className="text-muted-foreground">
-            Sign in with an editor or admin account to publish posts.
-          </p>
-        </Card>
-      </div>
-    );
-  }
-
   useEffect(() => {
     if (!editId) {
       if (hadLoadedEditRef.current) {
@@ -143,6 +122,29 @@ export default function CreateArticle() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- load when `editId` changes; form.reset is stable
   }, [editId]);
+
+  const readingTime = Math.max(1, Math.round(wordCount / READ_WPM));
+  const slugPreview = slugify(titleWatch) || "your-story-slug";
+
+  if (!user) {
+    redirect("/auth");
+    return null;
+  }
+  if (!isEditor) {
+    return (
+      <div className="container py-20 max-w-xl">
+        <SEO title="Editor — Access denied" noIndex />
+        <Card className="p-8 text-center">
+          <ShieldAlert className="w-12 h-12 mx-auto mb-4 text-primary" />
+          <h2 className="text-2xl font-bold mb-2">Editors only</h2>
+          <p className="text-muted-foreground">
+            Sign in with an editor or admin account to publish posts.
+          </p>
+        </Card>
+      </div>
+    );
+  }
+
 
   const addTag = () => {
     const t = tagInput.trim().toLowerCase();
@@ -428,7 +430,8 @@ export default function CreateArticle() {
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                     {field.value ? (
                       <div className="aspect-video rounded-lg overflow-hidden bg-muted">
-                        <img
+                        <Image
+                          height={100}
                           src={field.value}
                           alt=""
                           className="w-full h-full object-cover"

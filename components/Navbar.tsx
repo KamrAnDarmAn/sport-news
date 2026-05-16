@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import Link from "next/link";
 
-import { Menu, X, Flame, LogOut, PenLine, LogIn, Bookmark, LayoutDashboard } from "lucide-react";
+import { Menu, X, Flame, LogOut, LogIn, Bookmark, LayoutDashboard } from "lucide-react";
 import { NAV_LINKS } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 // import { signOut } from "@/auth";

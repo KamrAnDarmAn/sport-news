@@ -16,13 +16,6 @@ const Bookmarks = async () => {
 
     const { bookmarks } = data || {}
 
-
-
-    const remove = () => { }
-    const clear = () => { }
-
-
-
     return (
         <div>
             <SEO

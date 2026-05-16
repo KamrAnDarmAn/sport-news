@@ -18,7 +18,6 @@ import {
   Sparkles,
   ArrowRight,
   Clock,
-  Trash2,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useRouter } from "next/navigation";
@@ -39,7 +38,7 @@ interface Post {
   cover_image_url: string | null;
 }
 
-const StatCard = ({ icon: Icon, label, value, accent }: { icon: any; label: string; value: string | number; accent?: string }) => (
+const StatCard = ({ icon: Icon, label, value, accent }: { icon: unknown; label: string; value: string | number; accent?: string }) => (
   <Card className="p-5 border-border/50 hover:border-primary/40 transition-smooth">
     <div className="flex items-center justify-between mb-3">
       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${accent ?? "bg-gradient-primary"} text-primary-foreground shadow-glow`}>
@@ -52,10 +51,9 @@ const StatCard = ({ icon: Icon, label, value, accent }: { icon: any; label: stri
 );
 
 export default function Dashboard() {
-  const [bookmarks, setBookmarks] = useState<any[] | undefined>([]);
+  const [bookmarks, setBookmarks] = useState<unknown[] | undefined>([]);
   const [myPosts, setMyPosts] = useState<Post[]>([]);
   const [allPosts, setAllPosts] = useState<Post[] | null>(null);
-  const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null } | null>(null);
   const [activity, setActivity] = useState<{ icon: any; text: string; time: string }[]>([]);
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -159,7 +157,7 @@ export default function Dashboard() {
   const role = isAdmin ? "Admin" : myPosts && myPosts.length > 0 ? "Editor" : "Reader";
   const roleAccent =
     role === "Admin" ? "bg-gradient-to-br from-primary to-accent" : role === "Editor" ? "bg-blue-500" : "bg-emerald-500";
-  const displayName = profile?.display_name || user.email?.split("@")[0] || "Friend";
+  const displayName = user.name || user.email?.split("@")[0] || "Friend";
 
   return (
     <div>

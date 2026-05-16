@@ -9,8 +9,8 @@ import { SignInSchema, SignUpSchema } from "../validations";
 
 interface ActionResponse {
   success: boolean;
-  error?: any;
-  data?: any;
+  error?: unknown;
+  data?: unknown;
   message: string;
 }
 

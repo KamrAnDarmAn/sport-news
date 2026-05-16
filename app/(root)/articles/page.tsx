@@ -41,9 +41,7 @@ const Articles = () => {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    setPage(1);
-  }, [q, tag]);
+
 
   useEffect(() => {
     let cancelled = false;
