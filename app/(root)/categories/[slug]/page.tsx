@@ -73,7 +73,7 @@ const SportDetail = () => {
         title={sport.name}
         eyebrow={sport.tagline}
         subtitle={sport.description}
-
+        breadcrumbs={[{ name: 'Category', href: '/categories' }, { name: sport.name, href: '/categories' }]}
       >
         <div className="flex flex-wrap gap-3">
           <span className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-bold">{storyCount ?? sport.count} stories</span>
