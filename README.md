@@ -41,6 +41,17 @@ To run this project locally, follow these steps:
 
 5. Open your browser and visit `http://localhost:3000`.
 
+## Technologies Used
+
+- **Next.js**: A React framework for server-side rendering and static site generation.
+- **TypeScript**: A typed superset of JavaScript that compiles to plain JavaScript.
+- **Prisma**: An ORM for database management.
+- **Tailwind CSS**: A utility-first CSS framework for styling.
+- **Vercel**: A platform for deploying Next.js applications.
+- **ESLint**: A tool for identifying and fixing code quality issues.
+- **Prettier**: An opinionated code formatter.
+- **PostgreSQL**: A powerful, open-source relational database system.
+
 ## Folder Structure
 
 The project is organized as follows:
