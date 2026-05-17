@@ -1,6 +1,10 @@
-import { Breadcrumbs } from "./Breadcrumbs";
+import { Breadcrumbs } from './Breadcrumbs';
 
-interface Props { eyebrow?: string; title: string; subtitle?: string; breadcrumbs?: any; children?: React.ReactNode }
+interface Breadcrumbs {
+  name: string;
+  href: string;
+}
+interface Props { eyebrow?: string; title: string; subtitle?: string; breadcrumbs?: Breadcrumbs[]; children?: React.ReactNode }
 
 export const PageHeader = ({ eyebrow, title, subtitle, breadcrumbs, children }: Props) => (
   <section className="relative overflow-hidden border-b border-border flex items-center justify-center px-4 md:px-0">
