@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from "react";
+import { Activity, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import Link from "next/link";
 
-import { Menu, X, Flame, LogOut, PenLine, LogIn, Bookmark, LayoutDashboard } from "lucide-react";
+import { Menu, X, Flame, LogOut, LogIn, Bookmark, LayoutDashboard } from "lucide-react";
 import { NAV_LINKS } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 // import { signOut } from "@/auth";
@@ -22,7 +22,6 @@ export const Navbar = () => {
 
   const { data: session } = useSession();
   const user = session?.user;
-  const isAdmin = user ? session.user.role === 'ADMIN' : false;
   const bookmarks = []
 
   const signOut = () => {
@@ -112,7 +111,7 @@ export const Navbar = () => {
       </div>
 
 
-      {open && (
+      <Activity mode={open ? 'visible' : 'hidden'}>
         <nav className="lg:hidden border-t border-border bg-card animate-fade-in px-4">
           <div className="container py-4 flex flex-col gap-1">
             {NAV_LINKS.map((l) => (
@@ -144,7 +143,7 @@ export const Navbar = () => {
             </div>
           </div>
         </nav>
-      )}
+      </Activity>
     </header>
   );
 };

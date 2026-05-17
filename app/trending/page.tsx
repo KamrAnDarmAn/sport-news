@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { SEO, breadcrumbJsonLd } from "@/components/SEO";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { FilterChips } from "@/components/FilterChips";
 import { BookmarkButton } from "@/components/BookMarkButton";
 import { Flame, Eye, MessageCircle } from "lucide-react";

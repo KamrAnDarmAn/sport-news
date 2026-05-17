@@ -20,7 +20,11 @@ export async function globalSearch(query: string) {
   try {
     const validation = GlobalSearchSchema.safeParse({ query });
     if (!validation.success) {
-      return { success: false as const, error: "Invalid search parameters", hits: [] as GlobalSearchHit[] };
+      return {
+        success: false as const,
+        error: "Invalid search parameters",
+        hits: [] as GlobalSearchHit[],
+      };
     }
 
     const searchQuery = validation.data.query.trim();
@@ -60,6 +64,31 @@ export async function globalSearch(query: string) {
       success: false as const,
       error: "Search failed",
       hits: [] as GlobalSearchHit[],
+    };
+  }
+}
+
+export async function getNumberOfStoriesForEachCategory() {
+  try {
+    const rows = await prisma.story.groupBy({
+      by: ["sport"],
+      where: { published: true },
+      _count: { _all: true },
+    });
+
+    const result = rows.map((s) => ({
+      sport: s.sport,
+      storiesCount: s._count._all,
+    }));
+    return {
+      success: true,
+      stoies: result,
+    };
+  } catch (error) {
+    return {
+      success: true,
+      error,
+      message: "failed while geting no. of sports",
     };
   }
 }

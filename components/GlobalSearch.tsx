@@ -28,7 +28,7 @@ import { SPORT_LIST } from "@/lib/sports-data";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { globalSearch, type GlobalSearchHit } from "@/lib/actions/search.actions";
+import { getNumberOfStoriesForEachCategory, globalSearch, type GlobalSearchHit } from "@/lib/actions/search.actions";
 
 const navIcons: Record<string, React.ElementType> = {
   "/": Home,
@@ -47,12 +47,23 @@ export const GlobalSearch = () => {
   const [debounced, setDebounced] = useState("");
   const [results, setResults] = useState<GlobalSearchHit[]>([]);
   const [loading, setLoading] = useState(false);
+  const [noOfStoriesPerCategory, setNoOfStoriesPerCategory] = useState<any[] | undefined>([])
   const nav = useRouter();
 
   const { data: session } = useSession();
   const user = session?.user;
   const isAdmin = user?.role === "ADMIN";
 
+
+  useEffect(() => {
+    (async () => {
+      const stories = await getNumberOfStoriesForEachCategory()
+      if (stories.success)
+        setNoOfStoriesPerCategory(stories.stoies)
+    })()
+  }, [])
+
+  console.log('NO OF STORIES: ', noOfStoriesPerCategory)
   useEffect(() => {
     const t = setTimeout(() => setDebounced(query.trim()), 300);
     return () => clearTimeout(t);
@@ -171,6 +182,8 @@ export const GlobalSearch = () => {
             <>
               <CommandSeparator />
               <CommandGroup heading="Sports">
+                {/* TODO */}
+                {/* {noOfStoriesPerCategory && noOfStoriesPerCategory.map((s) => ( */}
                 {sportMatches.map((s) => (
                   <CommandItem
                     key={s.slug}
@@ -219,7 +232,7 @@ export const GlobalSearch = () => {
             )}
           </CommandGroup>
         </CommandList>
-      </CommandDialog>
+      </CommandDialog >
     </>
   );
 };

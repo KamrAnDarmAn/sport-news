@@ -1,6 +1,5 @@
 import { PageHeader } from "@/components/PageHeader";
-import { SEO, breadcrumbJsonLd } from "@/components/SEO";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { SEO } from "@/components/SEO";
 import { SPORT_LIST, storyCountForSport } from "@/lib/sports-data";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -29,7 +28,7 @@ const Category = async () => {
                                 className="group relative p-8 rounded-3xl bg-card border border-border hover:border-primary hover:shadow-glow transition-smooth cursor-pointer animate-fade-in overflow-hidden"
                             >
                                 <div className="absolute -top-10 -right-10 text-9xl opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-smooth">{c.icon}</div>
-                                <div className={`absolute -inset-px bg-gradient-to-br ${c.gradient} opacity-0 group-hover:opacity-10 transition-smooth`} />
+                                <div className={`absolute -inset-px bg-linear-to-br ${c.gradient} opacity-0 group-hover:opacity-10 transition-smooth`} />
                                 <div className="relative">
                                     <div className="text-5xl mb-4">{c.icon}</div>
                                     <h3 className="text-2xl font-black mb-1">{c.name}</h3>

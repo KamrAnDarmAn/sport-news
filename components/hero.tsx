@@ -1,10 +1,10 @@
-import { prisma } from "@/lib/prisma";
+import { getTotalStories } from "@/lib/actions/story.actions";
 import hero from "@/public/images/hero-sports.jpg";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 const Hero = async () => {
-    const storiesCount = await prisma.story.count()
+    const storiesCount = await getTotalStories()
     return (
         <section className="relative min-h-[92vh]   flex items-center justify-center overflow-hidden text-white">
 
@@ -35,7 +35,7 @@ const Hero = async () => {
                     <div className="grid grid-cols-3 gap-6 mt-12 max-w-md ">
                         {
                             // { n: "850+", l: "Clubs" },
-                            [{ n: storiesCount + '+', l: "Articles" }, { n: "24/7", l: "Live" }].map((s) => (
+                            [{ n: `${storiesCount.success ? storiesCount.total : '__'}+`, l: "Articles" }, { n: "24/7", l: "Live" }].map((s) => (
                                 <div key={s.l}>
                                     <div className="text-4xl font-black text-gradient-primary ">{s.n}</div>
                                     <div className="text-sm  uppercase tracking-wider ">{s.l}</div>

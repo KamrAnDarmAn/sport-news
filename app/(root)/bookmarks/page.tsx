@@ -1,11 +1,8 @@
-// "use client";
 import { PageHeader } from "@/components/PageHeader";
 import { SEO } from "@/components/SEO";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Bookmark as BIcon, Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-// import { breadcrumbJsonLd } from "@/components/SEO";
 import Link from "next/link";
 import Image from "next/image";
 import { getUserBookmarks } from "@/lib/actions/bookmark.actions";
@@ -13,19 +10,11 @@ import { redirect } from "next/navigation";
 
 
 const Bookmarks = async () => {
-    // const { items, remove, clear } = useBookmarks();
     const data = await getUserBookmarks()
     if (!data.success)
         redirect('/')
 
     const { bookmarks } = data || {}
-
-
-
-    const remove = () => { }
-    const clear = () => { }
-
-
 
     return (
         <div>

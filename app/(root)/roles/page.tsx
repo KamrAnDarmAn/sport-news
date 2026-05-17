@@ -6,7 +6,6 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ShieldCheck, User as UserIcon, MoreHorizontal } from "lucide-react";
-import Link from "next/link";
 
 type Role = "admin" | "editor" | "user";
 interface Member { id: string; name: string; email: string; role: Role; lastSeen: string; }

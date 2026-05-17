@@ -9,18 +9,16 @@ import { SignInSchema, SignUpSchema } from "../validations";
 
 interface ActionResponse {
   success: boolean;
-  error?: any;
-  data?: any;
+  error?: unknown;
+  data?: unknown;
   message: string;
 }
 
 export async function signUpWithCredentials(
   params: unknown,
 ): Promise<ActionResponse> {
-  // console.log("LOG - 0 ", params);
   const validationResult = SignUpSchema.safeParse(params);
 
-  // console.log("LOG - 1", validationResult);
   if (!validationResult.success) {
     return {
       success: false,
@@ -39,7 +37,6 @@ export async function signUpWithCredentials(
       const user = await tx.user.findUnique({
         where: { email },
       });
-      // console.log("LOG - 2", user);
 
       if (user) {
         return {
@@ -51,10 +48,9 @@ export async function signUpWithCredentials(
 
       // 2. Hash the password before storing
       const hashedPassword = await bcrypt.hash(password, 12);
-      // console.log("LOG - 3", hashedPassword);
 
       // 3. Create the user and associated account in a single transaction
-      const newUser = await tx.user.create({
+      await tx.user.create({
         data: {
           fullName: displayName,
           email,
@@ -67,7 +63,6 @@ export async function signUpWithCredentials(
           },
         },
       });
-      // console.log("LOG - 4", newUser);
     });
     // 4. Sign in (Only call after the DB transaction is guaranteed to succeed)
     await signIn("credentials", { email, password, redirect: false });
@@ -109,7 +104,6 @@ export async function signInWithCredentials(params: {
         providerAccountId: email,
       },
     });
-    // console.log("LOG - 3", existingAccount);
 
     if (!existingAccount || !existingAccount.password) {
       return {

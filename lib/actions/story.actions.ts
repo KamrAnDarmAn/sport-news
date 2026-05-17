@@ -110,8 +110,10 @@ function revalidateStorySlug(slug: string) {
 
 function ensureEditor(session: { user?: { id?: string; role?: Role } } | null) {
   const userId = session?.user?.id;
-  if (!userId || typeof userId !== "string") return { ok: false as const, userId: null };
-  if (!canPublish(session?.user?.role)) return { ok: false as const, userId: null };
+  if (!userId || typeof userId !== "string")
+    return { ok: false as const, userId: null };
+  if (!canPublish(session?.user?.role))
+    return { ok: false as const, userId: null };
   return { ok: true as const, userId };
 }
 
@@ -235,8 +237,17 @@ export async function getStories(query: StoryListQueryInput = {}): Promise<
     return { success: false, message: "Invalid query", error: parsed.error };
   }
 
-  const { page, pageSize, published, sport, topic, type, search, sort, authorId } =
-    parsed.data;
+  const {
+    page,
+    pageSize,
+    published,
+    sport,
+    topic,
+    type,
+    search,
+    sort,
+    authorId,
+  } = parsed.data;
 
   // Best-effort auto release of due scheduled stories.
   if (published === true) {
@@ -356,8 +367,17 @@ export async function getStoriesForCategories(
     return { success: false, message: "Invalid query", error: parsed.error };
   }
 
-  const { page, pageSize, published, sport, topic, type, search, sort, authorId } =
-    parsed.data;
+  const {
+    page,
+    pageSize,
+    published,
+    sport,
+    topic,
+    type,
+    search,
+    sort,
+    authorId,
+  } = parsed.data;
 
   if (published === true) {
     await releaseDueScheduledStories();
@@ -614,7 +634,8 @@ export async function updateStory(
 export async function getStoryById(
   id: string,
 ): Promise<ActionResponse<StoryDetail | null>> {
-  if (!id || typeof id !== "string") return { success: false, message: "Invalid id" };
+  if (!id || typeof id !== "string")
+    return { success: false, message: "Invalid id" };
   try {
     const session = await auth();
     const guard = ensureEditor(session);
@@ -678,13 +699,17 @@ export async function getStoryById(
 }
 
 export async function publishStory(id: string) {
-  if (!id || typeof id !== "string") return { success: false, message: "Invalid id" };
+  if (!id || typeof id !== "string")
+    return { success: false, message: "Invalid id" };
   try {
     const session = await auth();
     const guard = ensureEditor(session);
     if (!guard.ok) return { success: false, message: "Forbidden" };
 
-    const s = await prisma.story.findUnique({ where: { id }, select: { authorId: true, slug: true } });
+    const s = await prisma.story.findUnique({
+      where: { id },
+      select: { authorId: true, slug: true },
+    });
     if (!s) return { success: false, message: "Story not found" };
     if (s.authorId !== guard.userId && !isAdmin(session?.user?.role)) {
       return { success: false, message: "Forbidden" };
@@ -702,13 +727,17 @@ export async function publishStory(id: string) {
 }
 
 export async function unpublishStory(id: string) {
-  if (!id || typeof id !== "string") return { success: false, message: "Invalid id" };
+  if (!id || typeof id !== "string")
+    return { success: false, message: "Invalid id" };
   try {
     const session = await auth();
     const guard = ensureEditor(session);
     if (!guard.ok) return { success: false, message: "Forbidden" };
 
-    const s = await prisma.story.findUnique({ where: { id }, select: { authorId: true, slug: true } });
+    const s = await prisma.story.findUnique({
+      where: { id },
+      select: { authorId: true, slug: true },
+    });
     if (!s) return { success: false, message: "Story not found" };
     if (s.authorId !== guard.userId && !isAdmin(session?.user?.role)) {
       return { success: false, message: "Forbidden" };
@@ -726,13 +755,17 @@ export async function unpublishStory(id: string) {
 }
 
 export async function setStoryInReview(id: string, inReview: boolean) {
-  if (!id || typeof id !== "string") return { success: false, message: "Invalid id" };
+  if (!id || typeof id !== "string")
+    return { success: false, message: "Invalid id" };
   try {
     const session = await auth();
     const guard = ensureEditor(session);
     if (!guard.ok) return { success: false, message: "Forbidden" };
 
-    const s = await prisma.story.findUnique({ where: { id }, select: { authorId: true, slug: true } });
+    const s = await prisma.story.findUnique({
+      where: { id },
+      select: { authorId: true, slug: true },
+    });
     if (!s) return { success: false, message: "Story not found" };
     if (s.authorId !== guard.userId && !isAdmin(session?.user?.role)) {
       return { success: false, message: "Forbidden" };
@@ -750,16 +783,21 @@ export async function setStoryInReview(id: string, inReview: boolean) {
 }
 
 export async function scheduleStoryPublish(id: string, isoDate: string) {
-  if (!id || typeof id !== "string") return { success: false, message: "Invalid id" };
+  if (!id || typeof id !== "string")
+    return { success: false, message: "Invalid id" };
   try {
     const session = await auth();
     const guard = ensureEditor(session);
     if (!guard.ok) return { success: false, message: "Forbidden" };
 
     const d = new Date(isoDate);
-    if (Number.isNaN(d.getTime())) return { success: false, message: "Invalid date" };
+    if (Number.isNaN(d.getTime()))
+      return { success: false, message: "Invalid date" };
 
-    const s = await prisma.story.findUnique({ where: { id }, select: { authorId: true, slug: true } });
+    const s = await prisma.story.findUnique({
+      where: { id },
+      select: { authorId: true, slug: true },
+    });
     if (!s) return { success: false, message: "Story not found" };
     if (s.authorId !== guard.userId && !isAdmin(session?.user?.role)) {
       return { success: false, message: "Forbidden" };
@@ -787,7 +825,10 @@ export async function deleteStory(
     const session = await auth();
     const guard = ensureEditor(session);
     if (!guard.ok) {
-      return { success: false, message: "You do not have permission to delete stories" };
+      return {
+        success: false,
+        message: "You do not have permission to delete stories",
+      };
     }
     const userId = guard.userId;
 
@@ -829,7 +870,8 @@ export async function getEditorialStories(): Promise<
   try {
     const session = await auth();
     const guard = ensureEditor(session);
-    if (!guard.ok) return { success: false, message: "You do not have permission" };
+    if (!guard.ok)
+      return { success: false, message: "You do not have permission" };
 
     const where: Prisma.StoryWhereInput = isAdmin(session?.user?.role)
       ? {}
@@ -974,3 +1016,16 @@ export async function getDashboardActivity(): Promise<
 
 /** @deprecated Use `createStory` */
 export const publicStory = createStory;
+
+export async function getTotalStories() {
+  try {
+    const totalStories = await prisma.story.count();
+    return { success: true, total: totalStories };
+  } catch (error) {
+    return {
+      success: false,
+      message: "Faild fetching total stories",
+      error,
+    };
+  }
+}
