@@ -25,8 +25,8 @@ const Rankings = () => (
             description="Live, breaking sports news as it happens. Football, basketball, tennis, F1, cricket and more on Pulse."
             jsonLd={breadcrumbJsonLd([{ name: "News", href: "/news" }])}
         /> */}
-        <Breadcrumbs items={[{ name: "News", href: "/news" }]} />
-        <PageHeader eyebrow="Power Index" title="Clubs Rankings" subtitle="Live power rankings updated weekly using form, results, and our Pulse algorithm." />
+        {/* <Breadcrumbs items={[{ name: "News", href: "/news" }]} /> */}
+        <PageHeader breadcrumbs={[{ name: "News", href: "/news" }]} eyebrow="Power Index" title="Clubs Rankings" subtitle="Live power rankings updated weekly using form, results, and our Pulse algorithm." />
         <section className="container py-16 mx-auto">
             <div className="rounded-3xl bg-card border border-border overflow-hidden">
                 <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 bg-muted/50 text-xs font-bold uppercase tracking-wider text-muted-foreground">
